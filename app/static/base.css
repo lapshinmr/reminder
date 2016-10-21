@@ -2,13 +2,17 @@ body {
     background-color: #E8F2EA;
 }
 
+header {
+    margin: 20px auto;
+    width: 940px;
+}
+
 div.wrapper {
     width: 960px;
     min-height: 1000px;
     background: #B4DCBB;
     border: 3px solid black;
     border-radius: 10px;
-    padding: 0px 10px;
     margin: 0px auto;
     text-align: center;
     box-shadow: 2px 2px 2px black;
