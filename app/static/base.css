@@ -18,9 +18,9 @@ div.wrapper {
     box-shadow: 2px 2px 2px black;
 }
 
-a.button {
-    width: 100px;
-    height: 70px;
+div.button {
+    width: 150px;
+    height: 150px;
     border-width: 1px;
     border-style: solid;
     border-radius: 20px;
@@ -31,7 +31,7 @@ a.button {
     outline: none;
 }
 
-.button:hover {
+div.button:hover {
     background-color: #E2B184;
     box-shadow: 4px 4px 2px black;
     position: relative;
@@ -40,7 +40,7 @@ a.button {
     left: -2px;
 }
 
-.button:active {
+div.button:active {
     background-color: #E2B184;
     box-shadow: 1px 1px 1px black;
     border-color: !inherit;

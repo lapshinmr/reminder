@@ -3,7 +3,37 @@
 {% block title %}Reminder{% endblock %}
 
 {% block body %}
-    <a href="reminder/press/1" class="button"></a>
-    <a href="" class="button"></a>
-    <a href="" class="button"></a>
+    <form method="post">
+        <fieldset>
+            <legend>Create new button</legend>
+            <input type="text" name="name">
+            <input type="text" name="time_loop">
+            <input type="submit" name="add_form" value="add">
+        </fieldset>
+    </form>
+    <form method="post">
+        <fieldset>
+            <legend>Update exist button</legend>
+            <input type="text" name="name">
+            <input type="text" name="new_name">
+            <input type="text" name="time_loop">
+            <input type="submit" name="update_form" value="update">
+        </fieldset>
+    </form>
+    <form method="post">
+        <fieldset>
+            <legend>Delete button</legend>
+            <input type="text" name="name">
+            <input type="submit" name="del_form" value="del">
+        </fieldset>
+    </form>
+    {% for button in buttons %}
+        <a href="reminder/press/{{ button.name }}">
+            <div class="button">
+                <p>{{ button.time_loop }}</p>
+                <p>Timer</p>
+                <p>{{ button.name }}</p>
+            </div>
+        </a>
+    {% endfor %}
 {% endblock %}
