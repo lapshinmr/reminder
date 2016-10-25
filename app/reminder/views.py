@@ -27,6 +27,9 @@ def index():
         button_name = request.form['name']
         button = Button.query.filter_by(name=button_name).first()
         if button:
+            times = Time.query.filter_by(button=button).all()
+            for time in times:
+                db.session.delete(time)
             db.session.delete(button)
             db.session.commit()
     buttons = Button.query.all()
@@ -43,5 +46,6 @@ def press(button_name):
         else:
             time = Time(button=button)
             time.time_press = time_press
+        button.time_last = time_press
         db.session.commit()
     return redirect(url_for('reminder.index'))
