@@ -1,6 +1,5 @@
 from app import db
-import datetime as dt
-from datetime import datetime
+from .reminder_tools import *
 
 
 class Button(db.Model):
@@ -18,39 +17,12 @@ class Button(db.Model):
     def show_left_time(self):
         if not self.time_last:
             return 'push to activate'
-        delta = datetime.now() - datetime.strptime(self.time_last, "%Y-%m-%d %H:%M:%S")
-        left = dt.timedelta(0, self.time_loop) - delta
-        return self.format_time(left.total_seconds())
+        duration_time = datetime.datetime.now() - datetime.datetime.strptime(self.time_last, "%Y-%m-%d %H:%M:%S")
+        left_time = datetime.timedelta(0, self.time_loop) - duration_time
+        return self.largest_timepart(left_time.total_seconds())
 
     def show_loop_time(self):
-        return self.format_time(self.time_loop)
-
-    @staticmethod
-    def format_time(input_seconds):
-        delta = dt.timedelta(0, input_seconds)
-        days, seconds = delta.days, delta.seconds
-        hours, seconds = divmod(seconds, 3600)
-        minutes, seconds = divmod(seconds, 60)
-        if days < 0:
-            return 'time is over'
-        if days == 1:
-            return '{} day'.format(days)
-        elif days > 1:
-            return '{} days'.format(days)
-        elif hours == 1:
-            return '{} hour'.format(hours)
-        elif hours > 1:
-            return '{} hours'.format(hours)
-        elif minutes == 1:
-            return '{} minute'.format(minutes)
-        elif minutes > 1:
-            return '{} minutes'.format(minutes)
-        elif seconds == 1:
-            return '{} second'.format(seconds)
-        elif seconds > 1:
-            return '{} seconds'.format(seconds)
-        else:
-            return 'time is over'
+        return self.largets_timepart(self.time_loop)
 
 
 class Time(db.Model):
