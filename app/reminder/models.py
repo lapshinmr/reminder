@@ -19,10 +19,10 @@ class Button(db.Model):
             return 'push to activate'
         duration_time = datetime.datetime.now() - datetime.datetime.strptime(self.time_last, "%Y-%m-%d %H:%M:%S")
         left_time = datetime.timedelta(0, self.time_loop) - duration_time
-        return self.largest_timepart(left_time.total_seconds())
+        return largest_timepart(left_time.total_seconds())
 
     def show_loop_time(self):
-        return self.largets_timepart(self.time_loop)
+        return largest_timepart(self.time_loop)
 
 
 class Time(db.Model):

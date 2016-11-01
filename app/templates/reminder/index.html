@@ -2,38 +2,52 @@
 
 {% block title %}Reminder{% endblock %}
 
-{% block body %}
-    <form method="post">
-        <fieldset>
-            <legend>Create new button</legend>
-            <input type="text" name="name">
-            <input type="text" name="time_loop">
-            <input type="submit" name="add_form" value="add">
-        </fieldset>
+{% block content %}
+<div class="forms grid_2 alpha">
+    <form class="control" method="post">
+        <input type="text" name="name" placeholder="name">
+        <input type="text" name="time_loop" placeholder="time loop">
+        <input type="submit" name="add_form" value="create">
     </form>
-    <form method="post">
-        <fieldset>
-            <legend>Update exist button</legend>
-            <input type="text" name="name">
-            <input type="text" name="new_name">
-            <input type="text" name="time_loop">
-            <input type="submit" name="update_form" value="update">
-        </fieldset>
+    <br />
+    <form class="control" method="post">
+        <input type="text" name="name" placeholder="button name">
+        <input type="text" name="new_name" placeholder="new button name">
+        <input type="text" name="time_loop" placeholder="loop time">
+        <input type="submit" name="update_form" value="update">
     </form>
-    <form method="post">
-        <fieldset>
-            <legend>Delete button</legend>
-            <input type="text" name="name">
-            <input type="submit" name="del_form" value="del">
-        </fieldset>
+    <br />
+    <form class="control" method="post">
+        <input class="grid_2 alpha omega" type="text" name="name" placeholder="button name">
+        <input type="submit" name="del_form" value="remove">
     </form>
-    {% for button in buttons %}
-        <a href="reminder/press/{{ button.name }}">
-            <div class="button">
-                <p>{{ button.show_loop_time() }}</p>
-                <p>{{ button.show_left_time() }}</p>
-                <p>{{ button.name }}</p>
-            </div>
-        </a>
-    {% endfor %}
+    <br />
+</div>
+<div class="buttons grid_10 omega">
+    <div class="time grid_10 alpha omega">
+        <p class="grid_10 alpha omega">today</p>
+        {% for button in buttons %}
+        <div class="button grid_2">
+            <a id="button_body_link" href="reminder/press/{{ button.name }}">
+                <div id="button_body">
+                    <p id="button_name">{{ button.name }}</p>
+                    <p id="left_time">{{ button.show_left_time() }}</p>
+                    <p id="time_loop">{{ button.show_loop_time() }}</p>
+                </div>
+            </a>
+            <a id="button_close_link" href="reminder/press/{{ button.name }}/close">
+                <div id="button_close">
+                    <p>x</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="time grid_10 alpha omega">
+        <p class="grid_10 alpha omega">tomorrow</p>
+    </div>
+    <div class="time grid_10 alpha omega">
+        <p class="grid_10 alpha omega">future</p>
+    </div>
+</div>
 {% endblock %}

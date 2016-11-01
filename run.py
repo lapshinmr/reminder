@@ -1,4 +1,4 @@
-#!/env/bin/python3
+#!env/bin/python3
 
 from app import db, create_app
 from app.reminder.models import Time, Button
