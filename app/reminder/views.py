@@ -11,9 +11,10 @@ def index():
         button_name = request.form['name']
         time_loop = request.form['time_loop']
         button = Button.query.filter_by(name=button_name).first()
-        new_button = Button(name=button_name, time_loop=time_loop)
-        db.session.add(new_button)
-        db.session.commit()
+        if not button:
+            new_button = Button(name=button_name, time_loop=time_loop)
+            db.session.add(new_button)
+            db.session.commit()
     elif 'update_form' in request.form:
         button_name = request.form['name']
         button_new_name = request.form['new_name']
@@ -25,7 +26,6 @@ def index():
             button.time_init = time_loop
         db.session.commit()
     buttons = Button.query.filter_by(time_close=None).all()
-    print(buttons)
     return render_template('reminder/index.html', buttons=buttons)
 
 
@@ -34,11 +34,8 @@ def press(button_name):
     button = Button.query.filter_by(name=button_name).first()
     time_press = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     if button:
-        if not button.time_init:
-            button.time_init = time_press
-        else:
-            time = Time(button=button)
-            time.time_press = time_press
+        time = Time(button=button)
+        time.time_press = time_press
         button.time_last = time_press
         db.session.commit()
     return redirect(url_for('reminder.index'))
@@ -47,9 +44,8 @@ def press(button_name):
 @reminder.route('/reminder/press/<button_name>/close')
 def close(button_name):
     button = Button.query.filter_by(name=button_name).first()
-    time_close = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     if button:
-        button.time_close = time_close
+        button.close()
         db.session.commit()
     return redirect(url_for('reminder.index'))
 
