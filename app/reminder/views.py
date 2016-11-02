@@ -14,7 +14,10 @@ def index():
         if not button:
             new_button = Button(name=button_name, time_loop=time_loop)
             db.session.add(new_button)
-            db.session.commit()
+        elif button.time_close:
+            button.time_close = None
+            button.time_loop = time_loop
+        db.session.commit()
     elif 'update_form' in request.form:
         button_name = request.form['name']
         button_new_name = request.form['new_name']

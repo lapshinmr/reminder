@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
+{% from "reminder/schedule.html" import create_schedule %}
+
 {% block title %}Reminder{% endblock %}
 
 {% block content %}
 <div class="forms grid_2 alpha">
     <form class="control" method="post">
-        <input type="text" name="name" placeholder="name">
-        <input type="text" name="time_loop" placeholder="time loop">
+        <input type="text" name="name" placeholder="name" required="required">
+        <input type="text" name="time_loop" placeholder="time loop" required="required">
         <input type="submit" name="add_form" value="create">
     </form>
     <br />
@@ -19,68 +21,6 @@
     <br />
 </div>
 <div class="buttons grid_10 omega">
-    <div class="time grid_10 alpha omega">
-        <p class="grid_10 alpha omega">today</p>
-        {% for button in buttons %}
-            {% if button.count_left_time() < 3600 %}
-            <div class="button grid_2">
-                <a id="button_body_link" href="reminder/press/{{ button.name }}">
-                    <div id="button_body">
-                        <p id="button_name">{{ button.name }}</p>
-                        <p id="left_time">{{ button.show_left_time() }}</p>
-                        <p id="time_loop">{{ button.show_loop_time() }}</p>
-                    </div>
-                </a>
-                <a id="button_close_link" href="reminder/press/{{ button.name }}/close">
-                    <div id="button_close">
-                        <p>x</p>
-                    </div>
-                </a>
-            </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-    <div class="time grid_10 alpha omega">
-        <p class="grid_10 alpha omega">tomorrow</p>
-        {% for button in buttons %}
-            {% if 3600 < button.count_left_time() < 7200 %}
-            <div class="button grid_2">
-                <a id="button_body_link" href="reminder/press/{{ button.name }}">
-                    <div id="button_body">
-                        <p id="button_name">{{ button.name }}</p>
-                        <p id="left_time">{{ button.show_left_time() }}</p>
-                        <p id="time_loop">{{ button.show_loop_time() }}</p>
-                    </div>
-                </a>
-                <a id="button_close_link" href="reminder/press/{{ button.name }}/close">
-                    <div id="button_close">
-                        <p>x</p>
-                    </div>
-                </a>
-            </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-    <div class="time grid_10 alpha omega">
-        <p class="grid_10 alpha omega">future</p>
-        {% for button in buttons %}
-            {% if button.count_left_time() > 7200 %}
-            <div class="button grid_2">
-                <a id="button_body_link" href="reminder/press/{{ button.name }}">
-                    <div id="button_body">
-                        <p id="button_name">{{ button.name }}</p>
-                        <p id="left_time">{{ button.show_left_time() }}</p>
-                        <p id="time_loop">{{ button.show_loop_time() }}</p>
-                    </div>
-                </a>
-                <a id="button_close_link" href="reminder/press/{{ button.name }}/close">
-                    <div id="button_close">
-                        <p>x</p>
-                    </div>
-                </a>
-            </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+    {{ create_schedule(buttons, [('today', None, 86400), ('tomorrow', 86400, 172800), ('future', 172800, None)]) }}
 </div>
 {% endblock %}
