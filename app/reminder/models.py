@@ -9,6 +9,7 @@ class Button(db.Model):
     time_loop = db.Column(db.Float)
     time_init = db.Column(db.String(64))
     time_last = db.Column(db.String(64))
+    time_close = db.Column(db.String(64))
     times = db.relationship('Time', backref='button')
 
     def __repr__(self):

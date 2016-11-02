@@ -10,6 +10,7 @@ def index():
     if 'add_form' in request.form:
         button_name = request.form['name']
         time_loop = request.form['time_loop']
+        button = Button.query.filter_by(name=button_name).first()
         new_button = Button(name=button_name, time_loop=time_loop)
         db.session.add(new_button)
         db.session.commit()
@@ -23,16 +24,8 @@ def index():
         if button_name and time_loop:
             button.time_init = time_loop
         db.session.commit()
-    elif 'del_form' in request.form:
-        button_name = request.form['name']
-        button = Button.query.filter_by(name=button_name).first()
-        if button:
-            times = Time.query.filter_by(button=button).all()
-            for time in times:
-                db.session.delete(time)
-            db.session.delete(button)
-            db.session.commit()
-    buttons = Button.query.all()
+    buttons = Button.query.filter_by(time_close=None).all()
+    print(buttons)
     return render_template('reminder/index.html', buttons=buttons)
 
 
@@ -49,3 +42,24 @@ def press(button_name):
         button.time_last = time_press
         db.session.commit()
     return redirect(url_for('reminder.index'))
+
+
+@reminder.route('/reminder/press/<button_name>/close')
+def close(button_name):
+    button = Button.query.filter_by(name=button_name).first()
+    time_close = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    if button:
+        button.time_close = time_close
+        db.session.commit()
+    return redirect(url_for('reminder.index'))
+
+
+# remove button and all times
+"""
+times = Time.query.filter_by(button=button).all()
+for time in times:
+    db.session.delete(time)
+db.session.delete(button)
+"""
+
+# time = Time(button=button)
