@@ -27,14 +27,20 @@ class Button(db.Model):
         left_time = datetime.timedelta(0, self.time_loop) - duration_time
         return left_time.total_seconds()
 
-    def show_loop_time(self):
-        return largest_timepart(self.time_loop)
-
     def show_left_time(self):
         return largest_timepart(self.count_left_time())
 
+    def show_loop_time(self):
+        return largest_timepart(self.time_loop)
+
     def close(self):
         self.time_close = datetime.datetime.now().strftime(self.time_format)
+
+    def is_active(self):
+        return not self.time_close
+
+    def is_close(self):
+        return self.time_close
 
 
 class Time(db.Model):

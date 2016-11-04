@@ -27,3 +27,21 @@ def largest_timepart(input_in_seconds):
     else:
         return 'time is over'
 
+
+class TimeUnitsRanges:
+    days = 100
+    hours = 24
+    minutes = 60
+    seconds = 60
+
+    @staticmethod
+    def gen_time_range(amount):
+        return [(idx, '{:02}'.format(idx)) for idx in range(amount)]
+
+    def gen_all(self):
+        return {
+            'days': self.gen_time_range(self.days),
+            'hours': self.gen_time_range(self.hours),
+            'minutes': self.gen_time_range(self.minutes),
+            'seconds': self.gen_time_range(self.seconds)
+        }

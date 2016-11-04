@@ -1,19 +1,18 @@
+* {
+
+}
+
 body {
     background-image: url(background.png);
     background-attachment: fixed;
     font-family: "Verdana", serif;
 }
 
-header, div.content, footer {
+
+/* header */
+header {
     margin-top: 10px;
     margin-bottom: 10px;
-}
-
-div.content {
-    overflow: auto;
-}
-
-footer {
     height: 150px;
 }
 
@@ -21,9 +20,6 @@ footer {
     background-color: #DCD7D7;
 }
 
-header {
-    height: 150px;
-}
 header p.main_logo {
     font-size: 500%;
     position: relative;
@@ -57,24 +53,155 @@ nav p {
     margin: 0px;
 }
 
-div.forms form input {
-    width: 140px;
+/* content */
+div.content {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: auto;
+}
+
+
+/* footer */
+footer {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 150px;
+}
+
+
+/* tasks adding section
+------------------------------------------------------------------------------*/
+section#add_task_section {
+    width: 100%;
+}
+
+#add_task_section input {
+    text-align: center;
+    margin: 0px;
+    margin-top: 40px;
     padding: 0px;
     border: none;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#add_task_section form {
+    text-align: center;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background-color: #a0d5e8;
+}
+
+#add_task_section #task_name {
+    width: 70%;
+    border-radius: 5px;
+}
+
+#add_task_section fieldset {
+    padding: 0px;
     margin: 0px;
+    margin-top: 30px;
+    border: none;
+    width: 100%;
 }
 
-div.time {
-    min-height: 300px;
+#add_task_section fieldset div.time_unit {
+    float: left;
+    width: 25%;
 }
 
-div.time>p {
+#add_task_section fieldset label {
+    display: block;
+    font-size: 75%;
+}
+
+#add_task_section fieldset select {
+    margin: 0px;
+    padding: 0px;
+    border: none;
+}
+
+#add_task_section #add_task_submit {
+    width: 60px;
+    height: 30px;
+    font-size: 200%;
+    background-color: #e0ab96;
+    border-radius: 50%;
+}
+
+
+/* History section
+------------------------------------------------------------------------------*/
+section#history_section {
+    width: 100%;
+}
+
+h3 {
     text-align: center;
 }
 
-/* Buttons */
+div.button_in_history {
+    display: inline;
+    float: left;
+    font-size: 75%;
+}
+
+div.button_history_info {
+    margin-bottom: 10px;
+}
+
+div.history_section > div {
+    display: block;
+    overflow: auto;
+}
+
+.activity_marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+div.active {
+    background-color: #a0d5e8;
+}
+
+div.closed {
+    background-color: #e0ab96;
+}
+
+div.restore {
+    background-color: #a0d5e8;
+}
+
+div.close {
+    background-color: #e0ab96;
+}
+
+.middle {
+    vertical-align: middle;
+}
+
+
+/* Buttons section
+------------------------------------------------------------------------------*/
+section#buttons_area {
+    width: 100%;
+}
+
+article.time {
+    width: 100%;
+    min-height: 300px;
+}
+
+article.time>p {
+    text-align: center;
+}
+
+/* Buttons
+------------------------------------------------------------------------------*/
 
 div.button {
+    display: inline-block;
     position: relative;
     height: 140px;
     width: 140px;
@@ -86,7 +213,7 @@ div#button_body {
     position: absolute;
     top: 0;
     left: 0;
-    border-radius: 70px;
+    border-radius: 50%;
     background-color: #a0d5e8;
     outline: none;
 }
@@ -94,20 +221,18 @@ div#button_body {
 div#button_body > p {
     margin: 0px;
     margin-top: 20px;
+    text-align: center;
 }
 
 div#button_body > p#button_name {
-    text-align: center;
 }
 
 div#button_body > p#left_time {
     font-size: 125%;
-    text-align: center;
 }
 
 div#button_body > p#time_loop {
     font-size: 75%;
-    text-align: center;
 }
 
 div#button_close {

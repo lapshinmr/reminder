@@ -30,10 +30,14 @@ class ButtonTestCase(unittest.TestCase):
         button = Button.query.filter_by(name='test').first()
         self.assertTrue(button)
 
-    def test_close(self):
+    def test_is_close(self):
         new_button = Button('test', 60)
         new_button.close()
-        self.assertTrue(new_button.time_close)
+        self.assertTrue(new_button.is_close())
+
+    def test_is_active(self):
+        new_button = Button('test', 60)
+        self.assertTrue(new_button.is_active())
 
 
 class ReminderToolsTestCase(unittest.TestCase):
@@ -46,4 +50,13 @@ class ReminderToolsTestCase(unittest.TestCase):
         ]
         for input_time, output_message in case:
             self.assertEqual(largest_timepart(input_time), output_message)
+
+    def test_gen_time_range(self):
+        case = [
+            ([], 0),
+            ([(0, '00'), (1, '01'), (2, '02')], 3)
+        ]
+        for output, amount in case:
+            self.assertEqual(TimeUnitsRanges.gen_time_range(amount), output)
+
 
