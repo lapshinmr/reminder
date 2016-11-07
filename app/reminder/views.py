@@ -20,8 +20,8 @@ def index():
             new_button = Button(name=button_name, time_loop=time_loop)
             db.session.add(new_button)
         elif button.time_close:
-            button.time_close = None
-            button.time_loop = time_loop
+            button.update(time_loop)
+            button.restore()
         db.session.commit()
         return redirect(url_for('reminder.index'))
     buttons = Button.query.all()
@@ -60,7 +60,10 @@ def remove(button_name, time_press):
         time = Time.query.filter_by(button=button).filter_by(time_press=time_press).first()
         if time:
             db.session.delete(time)
-            db.session.commit()
+        times = Time.query.filter_by(button=button).all()
+        if button.is_close() and not any(times):
+            db.session.delete(button)
+        db.session.commit()
     return redirect(url_for('reminder.index'))
 
 
@@ -72,12 +75,3 @@ def restore(button_name):
         db.session.commit()
     return redirect(url_for('reminder.index'))
 
-# remove button and all times
-"""
-times = Time.query.filter_by(button=button).all()
-for time in times:
-    db.session.delete(time)
-db.session.delete(button)
-"""
-
-# time = Time(button=button)

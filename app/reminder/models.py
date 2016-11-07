@@ -15,12 +15,15 @@ class Button(db.Model):
 
     def __init__(self, name, time_loop):
         self.name = name
-        self.time_loop = time_loop
-        self.time_init = datetime.datetime.now().strftime(self.time_format)
-        self.time_last = self.time_init
+        self.update(time_loop)
 
     def __repr__(self):
         return '<Button %r>' % self.name
+
+    def update(self, time_loop):
+        self.time_loop = time_loop
+        self.time_init = datetime.datetime.now().strftime(self.time_format)
+        self.time_last = self.time_init
 
     def count_left_time(self):
         duration_time = datetime.datetime.now() - datetime.datetime.strptime(self.time_last, self.time_format)
@@ -35,6 +38,9 @@ class Button(db.Model):
 
     def close(self):
         self.time_close = datetime.datetime.now().strftime(self.time_format)
+
+    def restore(self):
+        self.time_close = None
 
     def is_active(self):
         return not self.time_close
