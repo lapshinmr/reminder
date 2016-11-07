@@ -9,7 +9,6 @@
 <div id="left_side" class="grid_3 alpha">
     <section id="add_task_section">
         <form method="post">
-            <input id="task_name" type="text" name="task_name" placeholder="task" required="required">
             <fieldset class="task_duration">
                 <div class="time_unit">
                     <label>D</label>
@@ -44,7 +43,8 @@
                     </select>
                 </div>
             </fieldset>
-            <input id="add_task_submit" type="submit" name="add_task_submit" value="">
+            <input id="task_name" type="text" name="task_name" placeholder="write your task" required="required">
+            <input id="add_task_submit" type="submit" name="add_task_submit" value="+">
         </form>
     </section>
     <section id="history_section">
