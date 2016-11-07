@@ -8,15 +8,15 @@
                       (from and to and from <= button.count_left_time() < to) or
                       (not to and (from <= button.count_left_time())) %}
                     <div class="button">
-                        <a id="button_body_link" href="reminder/press/{{ button.name }}">
-                            <div id="button_body">
-                                <p id="button_name">{{ button.name }}</p>
-                                <p id="left_time">{{ button.show_left_time() }}</p>
-                                <p id="time_loop">{{ button.show_loop_time() }}</p>
+                        <a class="button_body_link" href="reminder/press/{{ button.name }}">
+                            <div class="button_body">
+                                <p class="button_name">{{ button.name }}</p>
+                                <p class="left_time">{{ button.show_left_time() }}</p>
+                                <p class="time_loop">{{ button.show_loop_time() }}</p>
                             </div>
                         </a>
-                        <a id="button_close_link" href="reminder/press/{{ button.name }}/close">
-                            <div id="button_close">
+                        <a class="button_close_link" href="reminder/press/{{ button.name }}/close">
+                            <div class="button_close">
                                 <p>x</p>
                             </div>
                         </a>
@@ -29,20 +29,22 @@
 {% endmacro %}
 
 
-{% macro show_history(buttons) %}
-    {% for button in buttons %}
-        <div class="button_history_info">
+{% macro show_history(buttons_times) %}
+    {% for button, time_press in buttons_times|reverse %}
+        <div class="history_row">
         {% if button.is_active() %}
-            <div class="button_in_history activity_marker active"></div>
-        {% else %}
-            <div class="button_in_history activity_marker closed"></div>
+            <div class="history_col activity_marker active"></div>
         {% endif %}
-            <div class="button_in_history middle">
-                <div class="name">{{ button.name }}</div>
-                <div class="last_press">{{ button.time_last }}</div>
+            <div class="history_col history_task_info">
+                <div class="task_name">{{ button.name }}</div>
+                <div class="time_press">{{ time_press }}</div>
             </div>
-            <div class="button_in_history activity_marker restore"></div>
-            <div class="button_in_history activity_marker close"></div>
+            <div class="history_col control_buttons">
+                <a class="close" href="reminder/press/{{ button.name }}/{{ time_press }}/remove"><i class="fa fa-times" aria-hidden="true"></i></a>
+                {% if button.is_close() %}
+                    <a class="restore" href="reminder/press/{{ button.name }}/restore"><i class="fa fa-undo" aria-hidden="true"></i></a>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 {% endmacro %}

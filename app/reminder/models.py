@@ -50,4 +50,4 @@ class Time(db.Model):
     button_id = db.Column(db.Integer, db.ForeignKey('buttons.id'))
 
     def __repr__(self):
-        return '<Time %r>' % self.time_press
+        return '<Time %r for button %r>' % (self.time_press, self.button_id)

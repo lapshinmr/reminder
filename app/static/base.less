@@ -1,5 +1,16 @@
-* {
+@font-face {
+    font-family: FontAwesome;
+    src: url('fonts/fontawesome-webfont.woff');
+}
 
+@temp_color: #DCD7D7;
+@active: #3bd258;
+@restore: #a0d5e8;
+@close: #e0ab96;
+@lite_gray: #a9b0aa;
+
+a {
+    text-decoration: none;
 }
 
 body {
@@ -9,63 +20,78 @@ body {
 }
 
 
-/* header */
+/* header
+------------------------------------------------------------------------------*/
+
 header {
+
     margin-top: 10px;
     margin-bottom: 10px;
     height: 150px;
+
+    &.temp_color {
+        background-color: @temp_color;
+    }
+
+    nav {
+
+        font-size: 0px;
+
+        a.apps {
+            display: inline-block;
+            font-size: 16px;
+            width: 20%;
+            margin: 0px 2.5%;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background-color: @temp_color - 20;
+        }
+    }
+
+    p.main_logo {
+        font-size: 500%;
+        position: relative;
+        top: 10px;
+        left: 20px;
+        line-height: 100%;
+        text-align: center;
+        letter-spacing: 0.7em;
+        padding: 0px 0px;
+        margin: 0px;
+        color: #51332D;
+
+        &:first-letter {
+            font-size: 150%;
+        }
+    }
+
+
 }
 
-.temp_color {
-    background-color: #DCD7D7;
-}
-
-header p.main_logo {
-    font-size: 500%;
-    position: relative;
-    top: 10px;
-    left: 20px;
-    line-height: 100%;
-    text-align: center;
-    letter-spacing: 0.7em;
-    padding: 0px 0px;
-    margin: 0px;
-    color: #51332D;
-}
-.main_logo:first-letter {
-    font-size: 150%;
-}
-
-a {
-    text-decoration: none;
-}
-
-a.apps {
-    display: inline-block;
-    height: 30px;
-}
-
-nav p {
-    width: 100%;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 30px;
-    margin: 0px;
-}
-
-/* content */
+/* content
+------------------------------------------------------------------------------*/
 div.content {
     margin-top: 10px;
     margin-bottom: 10px;
     overflow: auto;
+
+    &.temp_color {
+        background-color: @temp_color;
+    }
 }
 
 
-/* footer */
+/* footer
+------------------------------------------------------------------------------*/
 footer {
     margin-top: 10px;
     margin-bottom: 10px;
     height: 150px;
+
+    &.temp_color {
+        background-color: @temp_color;
+    }
 }
 
 
@@ -132,57 +158,82 @@ section#add_task_section {
 
 /* History section
 ------------------------------------------------------------------------------*/
+
 section#history_section {
+
     width: 100%;
+
+    h3 {
+        text-align: center;
+    }
+
+    div.history_row {
+
+        position: relative;
+        display: inline-block;
+        background-color: @lite_gray + 50;
+        margin-bottom: 15px;
+
+        &:hover {
+
+            div.history_col.control_buttons {
+                position: absolute;
+                left: 220px;
+                display: block;
+            }
+        }
+
+        div.history_col {
+            float: left;
+
+            &.activity_marker {
+                position: absolute;
+                width: 15px;
+                height: 15px;
+                border-radius: 50%;
+
+                &.active {
+                    background-color: @active;
+                }
+            }
+
+            &.history_task_info {
+                width: 220px;
+                text-align: center;
+
+                .task_name {
+                    font-size: 14px;
+                    margin-bottom: 2px;
+                }
+
+                .time_press {
+                    font-size: 10px;
+                    color: @lite_gray - 50;
+                }
+            }
+
+            &.control_buttons {
+
+                display: none;
+
+                &:hover {
+                    display: block;
+                }
+
+                a.restore {
+                    color: @restore;
+                }
+
+                a.close {
+                    color: @close;
+                }
+            }
+        }
+    }
 }
 
-h3 {
-    text-align: center;
-}
 
-div.button_in_history {
-    display: inline;
-    float: left;
-    font-size: 75%;
-}
-
-div.button_history_info {
-    margin-bottom: 10px;
-}
-
-div.history_section > div {
-    display: block;
-    overflow: auto;
-}
-
-.activity_marker {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-}
-
-div.active {
-    background-color: #a0d5e8;
-}
-
-div.closed {
-    background-color: #e0ab96;
-}
-
-div.restore {
-    background-color: #a0d5e8;
-}
-
-div.close {
-    background-color: #e0ab96;
-}
-
-.middle {
-    vertical-align: middle;
-}
-
-
-/* Buttons section
+/* Buttons area section
 ------------------------------------------------------------------------------*/
 section#buttons_area {
     width: 100%;

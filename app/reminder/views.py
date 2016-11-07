@@ -25,7 +25,11 @@ def index():
         db.session.commit()
         return redirect(url_for('reminder.index'))
     buttons = Button.query.all()
-    return render_template('reminder/index.html', buttons=buttons, time_units_ranges=TimeUnitsRanges().gen_all())
+    buttons_times = [(Button.query.filter_by(id=time.button_id).first(), time.time_press) for time in Time.query.all()]
+    return render_template(
+        'reminder/index.html', buttons=buttons, buttons_times=buttons_times,
+        time_units_ranges=TimeUnitsRanges().gen_all()
+    )
 
 
 @reminder.route('/reminder/press/<button_name>')
@@ -49,12 +53,24 @@ def close(button_name):
     return redirect(url_for('reminder.index'))
 
 
-@reminder.route('/reminder/press/<button_name>/remove')
-def remove(button_name):
+@reminder.route('/reminder/press/<button_name>/<time_press>/remove')
+def remove(button_name, time_press):
     button = Button.query.filter_by(name=button_name).first()
     if button:
-        times = Time.query.filter_by(button=button).all()
+        time = Time.query.filter_by(button=button).filter_by(time_press=time_press).first()
+        if time:
+            db.session.delete(time)
+            db.session.commit()
+    return redirect(url_for('reminder.index'))
 
+
+@reminder.route('/reminder/press/<button_name>/restore')
+def restore(button_name):
+    button = Button.query.filter_by(name=button_name).first()
+    if button:
+        button.time_close = None
+        db.session.commit()
+    return redirect(url_for('reminder.index'))
 
 # remove button and all times
 """
