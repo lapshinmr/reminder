@@ -2,15 +2,15 @@ from app import db
 from .reminder_tools import *
 
 
-class Button(db.Model):
-    __tablename__ = 'buttons'
+class Task(db.Model):
+    __tablename__ = 'tasks'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     time_loop = db.Column(db.Float)
     time_init = db.Column(db.String(64))
     time_last = db.Column(db.String(64))
     time_close = db.Column(db.String(64))
-    times = db.relationship('Time', backref='button')
+    times = db.relationship('Time', backref='task')
     time_format = "%Y-%m-%d %H:%M:%S"
 
     def __init__(self, name, time_loop):
@@ -18,7 +18,7 @@ class Button(db.Model):
         self.update(time_loop)
 
     def __repr__(self):
-        return '<Button %r>' % self.name
+        return '<Task %r>' % self.name
 
     def update(self, time_loop):
         self.time_loop = time_loop
@@ -52,8 +52,8 @@ class Button(db.Model):
 class Time(db.Model):
     __tablename__ = 'times'
     id = db.Column(db.Integer, primary_key=True)
-    time_press = db.Column(db.String(64))
-    button_id = db.Column(db.Integer, db.ForeignKey('buttons.id'))
+    time_complete = db.Column(db.String(64))
+    task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'))
 
     def __repr__(self):
-        return '<Time %r for button %r>' % (self.time_press, self.button_id)
+        return '<Time %r for task %r>' % (self.time_complete, self.task_id)

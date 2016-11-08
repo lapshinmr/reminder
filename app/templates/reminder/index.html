@@ -49,12 +49,12 @@
     </section>
     <section id="history_section">
         <h3>completed</h3>
-        {{ show_history(buttons_times) }}
+        {{ show_history(tasks_times) }}
     </section>
 </div>
 <div id="right_side" class="grid_9 omega">
-    <section id="buttons_area">
-        {{ create_schedule(buttons, [('today', None, 86400), ('tomorrow', 86400, 172800), ('future', 172800, None)]) }}
+    <section id="tasks_area">
+        {{ create_schedule(tasks, [('today', None, 86400), ('tomorrow', 86400, 172800), ('future', 172800, None)]) }}
     </section>
 </div>
 {% endblock %}

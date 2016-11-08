@@ -1,6 +1,6 @@
 import unittest
 from app import create_app, db
-from app.reminder.models import Button
+from app.reminder.models import Task
 from app.reminder.reminder_tools import *
 
 
@@ -16,28 +16,28 @@ class ButtonTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_create_button(self):
-        new_button = Button('test', 60)
-        self.assertTrue(new_button.name)
-        self.assertTrue(new_button.time_loop)
-        self.assertTrue(new_button.time_init)
-        self.assertTrue(new_button.time_last)
+    def test_create_task(self):
+        new_task = Task('test', 60)
+        self.assertTrue(new_task.name)
+        self.assertTrue(new_task.time_loop)
+        self.assertTrue(new_task.time_init)
+        self.assertTrue(new_task.time_last)
 
-    def test_write_button_to_db(self):
-        new_button = Button('test', 60)
-        db.session.add(new_button)
+    def test_write_task_to_db(self):
+        new_task = Task('test', 60)
+        db.session.add(new_task)
         db.session.commit()
-        button = Button.query.filter_by(name='test').first()
-        self.assertTrue(button)
+        task = Task.query.filter_by(name='test').first()
+        self.assertTrue(task)
 
     def test_is_close(self):
-        new_button = Button('test', 60)
-        new_button.close()
-        self.assertTrue(new_button.is_close())
+        new_task = Task('test', 60)
+        new_task.close()
+        self.assertTrue(new_task.is_close())
 
     def test_is_active(self):
-        new_button = Button('test', 60)
-        self.assertTrue(new_button.is_active())
+        new_task = Task('test', 60)
+        self.assertTrue(new_task.is_active())
 
 
 class ReminderToolsTestCase(unittest.TestCase):

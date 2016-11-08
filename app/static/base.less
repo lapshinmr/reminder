@@ -213,7 +213,7 @@ section#history_section {
                     margin-bottom: 2px;
                 }
 
-                .time_press {
+                .time_complete {
                     font-size: 10px;
                     color: @lite_gray - 50;
                 }
@@ -240,9 +240,9 @@ section#history_section {
 }
 
 
-/* Buttons area section
+/* Tasks area section
 ------------------------------------------------------------------------------*/
-section#buttons_area {
+section#tasks_area {
     width: 100%;
 
     article.time {
@@ -256,24 +256,18 @@ section#buttons_area {
 
 }
 
-/* Buttons
+/* Tasks
 ------------------------------------------------------------------------------*/
 
-div.button {
+div.task {
     display: inline-block;
     position: relative;
     height: 140px;
     width: 140px;
 
-    a.button_body_link {
+    a.task_body_link {
 
-        &:hover {
-            a.button_close_link {
-                display: block;
-            }
-        }
-
-        div.button_body {
+        div.task_body {
             width: 100%;
             height: 100%;
             position: absolute;
@@ -300,14 +294,15 @@ div.button {
         }
     }
 
-    a.button_close_link {
+    a.task_close_link {
+
         display: none;
 
         &:hover {
             display: block;
         }
 
-        div.button_close {
+        div.task_close {
             height: 36px;
             width: 36px;
             position: absolute;
@@ -326,4 +321,7 @@ div.button {
         }
     }
 
+    a.task_body_link:hover + a.task_close_link {
+        display: block;
+    }
 }

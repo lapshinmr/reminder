@@ -12,10 +12,10 @@
     <div class="container_12 clearfix">
         <header class="grid_12 temp_color">
             <nav class="grid_8 alpha omega push_4">
-                <a class="apps" href="/">Home</a>
-                <a class="apps" href="reminder">reminder</a>
-                <a class="apps" href="gallery">gallery</a>
-                <a class="apps" href="earnings">earnings</a>
+                <a class="apps" href="{{ url_for('main.index') }}">Home</a>
+                <a class="apps" href="{{ url_for('reminder.index') }}">reminder</a>
+                <a class="apps" href="#">gallery</a>
+                <a class="apps" href="#">earnings</a>
             </nav>
             <p class="grid_12 alpha omega main_logo">Assistant</p>
         </header>
