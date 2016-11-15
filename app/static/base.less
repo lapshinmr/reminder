@@ -1,15 +1,19 @@
+@temp_color: rgba(255, 255, 255, 0.2);
 @lite_blue: #a0d5e8;
 @lite_red: #e0ab96;
-@temp_color: #DCD7D7;
 @active: #3bd258;
 @restore: #a0d5e8;
 @close: #e0ab96;
 @lite_gray: #a9b0aa;
 
 body {
-    background-image: url(background.png);
-    background-attachment: fixed;
+    background-image: url(background_1920.jpg);
+    background-repeate: no-repeate;
+    background-position: center top;
     font-family: "Verdana", serif;
+    height: 1500px;
+    padding: 0px;
+    margin: 0px;
 }
 
 a {
@@ -185,7 +189,7 @@ section#history_section {
 
             div.history_col.control_buttons {
                 position: absolute;
-                left: 220px;
+                left: 180px;
                 display: block;
             }
         }
@@ -229,10 +233,16 @@ section#history_section {
 
                 a.restore {
                     color: @restore;
+                    float: left;
+                    font-size: 14px;
+                    line-height: 16px;
                 }
 
                 a.close {
                     color: @close;
+                    float: right;
+                    font-size: 16px;
+                    line-height: 16px;
                 }
             }
         }
@@ -248,10 +258,7 @@ section#tasks_area {
     article.time {
         width: 100%;
         min-height: 200px;
-
-        p {
-            text-align: center;
-        }
+        text-align: center;
     }
 
 }

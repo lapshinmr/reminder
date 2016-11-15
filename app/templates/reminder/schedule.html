@@ -36,14 +36,14 @@
             <div class="history_col activity_marker active"></div>
         {% endif %}
             <div class="history_col history_task_info">
-                <div class="task_name">{{ task.name }}</div>
                 <div class="time_complete">{{ time_complete }}</div>
+                <div class="task_name">{{ task.name }}</div>
             </div>
             <div class="history_col control_buttons">
-                <a class="close" href="{{ url_for('reminder.remove', task_name=task.name, time_complete=time_complete) }}"><i class="fa fa-times" aria-hidden="true"></i></a>
                 {% if task.is_close() %}
                     <a class="restore" href="{{ url_for('reminder.restore', task_name=task.name) }}"><i class="fa fa-undo" aria-hidden="true"></i></a>
                 {% endif %}
+                <a class="close" href="{{ url_for('reminder.remove', task_name=task.name, time_complete=time_complete) }}"><i class="fa fa-times" aria-hidden="true"></i></a>
             </div>
         </div>
     {% endfor %}

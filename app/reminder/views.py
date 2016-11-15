@@ -48,6 +48,9 @@ def complete(task_name):
 def close(task_name):
     task = Task.query.filter_by(name=task_name).first()
     if task:
+        times = Time.query.filter_by(task=task).all()
+        if not any(times):
+            db.session.delete(task)
         task.close()
         db.session.commit()
     return redirect(url_for('reminder.index'))
