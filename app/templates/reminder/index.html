@@ -13,40 +13,6 @@
         <section id="add_task_section">
             <form method="post">
                 <input type="text" class="form-control" id="duration" name="picker">
-                <fieldset class="task_duration">
-                    <div class="time_unit">
-                        <label>D</label>
-                        <select id="days" class="form-control" name="days">
-                            {% for value, text in time_units_ranges['days'] %}
-                                <option value="{{ value }}">{{ text }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="time_unit">
-                        <label>H</label>
-                        <select id="hours" class="form-control" name="hours">
-                            {% for value, text in time_units_ranges['hours'] %}
-                            <option value="{{ value }}">{{ text }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="time_unit">
-                        <label>M</label>
-                        <select id="minutes" class="form-control" name="minutes">
-                            {% for value, text in time_units_ranges['minutes'] %}
-                            <option value="{{ value }}">{{ text }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="time_unit">
-                        <label>S</label>
-                        <select id="seconds" class="form-control" name="seconds">
-                            {% for value, text in time_units_ranges['seconds'] %}
-                            <option value="{{ value }}">{{ text }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </fieldset>
                 <textarea class="form-control task_name" name="task_name" placeholder="write your task" required="required"></textarea>
                 <button type="submit" class="btn btn-success btn-lg btn-block" name="add_task_submit">create</button>
             </form>
