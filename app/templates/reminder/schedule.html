@@ -1,30 +1,21 @@
-{% macro create_schedule(tasks, periods) %}
-    {% for note, from, to in periods %}
-        <article class="time">
-            <p>{{ note }}</p>
-            {% for task in tasks %}
-                {% if task.is_active() %}
-                {% if (not from and (task.count_left_time() < to)) or
-                      (from and to and from <= task.count_left_time() < to) or
-                      (not to and (from <= task.count_left_time())) %}
-                    <div class="task">
-                        <a class="task_body_link" href="{{ url_for('reminder.complete', task_name=task.name) }}">
-                            <div class="task_body">
-                                <p class="task_name">{{ task.name }}</p>
-                                <p class="left_time">{{ task.show_left_time() }}</p>
-                                <p class="time_loop">{{ task.show_loop_time() }}</p>
-                            </div>
-                        </a>
-                        <a class="task_close_link" href="{{ url_for('reminder.close', task_name=task.name) }}">
-                            <div class="task_close">
-                                <p>x</p>
-                            </div>
-                        </a>
+{% macro create_schedule(tasks) %}
+    {% for task in tasks %}
+        {% if task.is_active() %}
+            <div class="task">
+                <a class="task_body_link" href="{{ url_for('reminder.complete', task_name=task.name) }}">
+                    <div class="task_body">
+                        <p class="task_name">{{ task.name }}</p>
+                        <p class="left_time">{{ task.show_left_time() }}</p>
+                        <p class="time_loop">{{ task.show_loop_time() }}</p>
                     </div>
-                {% endif %}
-                {% endif %}
-            {% endfor %}
-        </article>
+                </a>
+                <a class="task_close_link" href="{{ url_for('reminder.close', task_name=task.name) }}">
+                    <div class="task_close">
+                        <p>x</p>
+                    </div>
+                </a>
+            </div>
+        {% endif %}
     {% endfor %}
 {% endmacro %}
 

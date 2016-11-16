@@ -2,28 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet/less" href="{{ url_for('static', filename='base.less') }}" type="text/css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='960_12_col.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css') }}" type="text/css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="{{ url_for('static', filename='base.less') }}" rel="stylesheet/less" type="text/css">
+    <link href="{{ url_for('static', filename='bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet"  type="text/css">
+    <link href="{{ url_for('static', filename='jquery-duration-picker.css') }}" rel="stylesheet">
+
     <script src="{{ url_for('static', filename='less.js') }}" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-duration-picker.js') }}"></script>
+
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    <div class="container_12 clearfix">
-        <header class="grid_12 temp_color">
-            <nav class="grid_8 alpha omega push_4">
-                <a class="apps" href="{{ url_for('main.index') }}">Home</a>
-                <a class="apps" href="{{ url_for('reminder.index') }}">reminder</a>
-                <a class="apps" href="#">gallery</a>
-                <a class="apps" href="#">earnings</a>
-            </nav>
-            <p class="grid_12 alpha omega main_logo">Assistant</p>
-        </header>
-        <div class="grid_12 content temp_color">
-            {% block content %}{% endblock %}
+    <nav class="nav navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}"><span class="glyphicon glyphicon-globe"></span></a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                  <li class="act"><a href="{{ url_for('main.index') }}">Home</a></li>
+                  <li><a href="{{ url_for('reminder.index') }}">Reminder</a></li>
+                  <li class="dropdown">
+                    <a href="Gallery.html" class="dropdown-toggle" data-toggle="dropdown">Gallery<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a href="Gallery1.html">Birthday party</a></li>
+                      <li><a href="Gallery1.html">New Year</a></li>
+                      <li><a href="Gallery1.html">Holliday</a></li>
+                      <li><a href="Gallery1.html">Insitute</a></li>
+                      <li><a href="Gallery1.html">Home</a></li>
+                      <li><a href="Gallery1.html">Wedding</a></li>
+                      <li><a href="Gallery1.html">Friends</a></li>
+                      <li><a href="Gallery1.html">Others</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="#earnings">Earnings</a></li>
+                </ul>
+            </div>
         </div>
-        <footer class="grid_12 temp_color">
-        </footer>
+    </nav>
+    <header class="container temp_color">
+        <div class="row">
+            {% block header %}{% endblock %}
+        </div>
+    </header>
+    <div class="container content temp_color">
+        {% block content %}{% endblock %}
     </div>
+    <footer class="container temp_color">
+    </footer>
+
+
+    <script>
+        $(function () {
+            $('#duration').durationPicker({ showSeconds: true });
+        });
+    </script>
 </body>
 </html>

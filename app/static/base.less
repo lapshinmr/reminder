@@ -1,4 +1,4 @@
-@temp_color: rgba(255, 255, 255, 0.2);
+@temp_color: rgba(0, 0, 0, 0.1);
 @lite_blue: #a0d5e8;
 @lite_red: #e0ab96;
 @active: #3bd258;
@@ -7,18 +7,14 @@
 @lite_gray: #a9b0aa;
 
 body {
-    background-image: url(background_1920.jpg);
-    background-repeate: no-repeate;
-    background-position: center top;
-    font-family: "Verdana", serif;
     height: 1500px;
-    padding: 0px;
+    padding: 50px;
     margin: 0px;
 }
 
-a {
-    text-decoration: none;
-}
+/* nav
+------------------------------------------------------------------------------*/
+
 
 
 /* header
@@ -28,46 +24,18 @@ header {
 
     margin-top: 10px;
     margin-bottom: 10px;
-    height: 150px;
+    height: 50px;
 
     &.temp_color {
         background-color: @temp_color;
     }
 
-    nav {
-
-        font-size: 0px;
-
-        a.apps {
-            display: inline-block;
-            font-size: 16px;
-            width: 20%;
-            margin: 0px 2.5%;
-            height: 30px;
-            line-height: 30px;
-            text-align: center;
-            background-color: @temp_color - 20;
-        }
-    }
-
-    p.main_logo {
-        font-size: 500%;
-        position: relative;
-        top: 10px;
-        left: 20px;
-        line-height: 100%;
+    h2 {
         text-align: center;
-        letter-spacing: 0.7em;
         padding: 0px 0px;
-        margin: 0px;
-        color: #51332D;
-
-        &:first-letter {
-            font-size: 150%;
-        }
+        margin: 0px 0px;
+        line-height: 50px;
     }
-
-
 }
 
 /* content
@@ -102,68 +70,28 @@ footer {
 section#add_task_section {
     width: 100%;
 
-    form {
-        text-align: center;
-        width: 220px;
-        height: 220px;
-        border-radius: 50%;
-        background-color: @lite_blue;
-    }
-
     fieldset {
-        padding: 0px;
-        margin-left: auto;
-        margin-right: auto;
-        position: relative;
-        top: 30px;
-        border: none;
-        width: 80%;
 
         div.time_unit {
             float: left;
             width: 25%;
+
+            label {
+                display: block;
+                text-align: center;
+            }
         }
 
-        label {
-            display: block;
-            font-size: 75%;
-        }
-
-        select {
-            margin: 0px;
-            padding: 0px;
-            border: none;
-        }
     }
 
-    input {
-
-        padding: 0px;
-        margin: 0px auto 0px auto;
-        border: none;
-        text-align: center;
-        display: block;
-        position: relative;
-
-        &#task_name {
-            top: 60px;
-            width: 90%;
-            border-radius: 5px;
-            background-color: rgba(0, 0, 0, 0.05);
-            font-size: 120%;
-            padding: 10px 0px;
-        }
-
-        &#add_task_submit {
-            top: 100px;
-            width: 90px;
-            height: 30px;
-            line-height: 30px;
-            border-radius: 15px;
-            font-size: 200%;
-            background-color: @lite_red;
-        }
+    textarea.task_name {
+        font-size: 120%;
+        resize: vertical;
+        height: 50px;
+        margin: 10px 0px;
+        padding: 5px;
     }
+
 }
 
 

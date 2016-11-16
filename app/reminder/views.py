@@ -9,6 +9,7 @@ from .reminder_tools import TimeUnitsRanges
 @reminder.route('/reminder', methods=['GET', 'POST'])
 def index():
     if 'add_task_submit' in request.form:
+        print(request.form)
         task_name = request.form['task_name']
         days = int(request.form['days'])
         hours = int(request.form['hours'])
