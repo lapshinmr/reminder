@@ -1,7 +1,8 @@
 @temp_color: rgba(0, 0, 0, 0.1);
 @lite_blue: #a0d5e8;
 @lite_red: #e0ab96;
-@active: #3bd258;
+@lite_green: #5cb85c;
+@dark_green: #449d44;
 @restore: #a0d5e8;
 @close: #e0ab96;
 @lite_gray: #a9b0aa;
@@ -85,79 +86,52 @@ section#add_task_section {
 ------------------------------------------------------------------------------*/
 
 section#history_section {
-
     width: 100%;
 
     h3 {
         text-align: center;
     }
 
-    div.history_row {
+    div.history-row {
+        text-align: center;
+        padding: 0px;
+        font-size: 0px;
 
-        position: relative;
-        display: inline-block;
-        background-color: @lite_gray + 50;
-        margin-bottom: 15px;
+        span.marker {
+            display: inline-block;
+            width: 10%;
+            vertical-align: middle;
 
-        &:hover {
-
-            div.history_col.control_buttons {
-                position: absolute;
-                left: 180px;
-                display: block;
+            &.active {
+                color: @lite_green;
+                font-size: 18px;
             }
         }
 
-        div.history_col {
-            float: left;
+        p.task-name-text {
+            display: inline-block;
+            width: 80%;
+            font-size: 16px;
+            margin: 0px;
+            line-height: 16px;
+            margin: 5px 0px 7px 0px;
+            vertical-align: middle;
+        }
 
-            &.activity_marker {
-                position: absolute;
-                width: 15px;
-                height: 15px;
-                border-radius: 50%;
+        span.dropdown {
+            display: inline-block;
+            width: 10%;
+            vertical-align: middle;
 
-                &.active {
-                    background-color: @active;
-                }
-            }
-
-            &.history_task_info {
-                width: 220px;
-                text-align: center;
-
-                .task_name {
-                    font-size: 14px;
-                    margin-bottom: 2px;
-                }
-
-                .time_complete {
-                    font-size: 10px;
-                    color: @lite_gray - 50;
-                }
-            }
-
-            &.control_buttons {
-
-                display: none;
+            a {
+                font-size: 20px;
 
                 &:hover {
-                    display: block;
+                    cursor: pointer;
                 }
-
-                a.restore {
-                    color: @restore;
-                    float: left;
-                    font-size: 14px;
-                    line-height: 16px;
-                }
-
-                a.close {
-                    color: @close;
-                    float: right;
-                    font-size: 16px;
-                    line-height: 16px;
-                }
+            }
+            .dropdown-menu {
+                min-width: 100px;
             }
         }
     }
@@ -169,80 +143,48 @@ section#history_section {
 section#tasks_area {
     width: 100%;
 
-    article.time {
-        width: 100%;
-        min-height: 200px;
-        text-align: center;
-    }
+    div.task {
+        border-radius: 10px;
+        font-size: 0px;
 
-}
+        a.complete {
+            vertical-align: middle;
+            width: 5%;
+            text-align: center;
+            font-size: 30px;
+            color:  @lite_green;
 
-/* Tasks
-------------------------------------------------------------------------------*/
+            &:hover {
+                text-decoration: none;
+                color: @dark_green;
+            }
+        }
 
-div.task {
-    display: inline-block;
-    position: relative;
-    height: 140px;
-    width: 140px;
+        div.name-and-progress {
+            display: inline-block;
+            width: 90%;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 18px;
 
-    a.task_body_link {
+            div.progress {
+                margin-bottom: 0px;
+                margin-top: 5px;
+                height: 10px;
 
-        div.task_body {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-radius: 50%;
-            background-color: #a0d5e8;
-            outline: none;
-
-
-            p {
-                margin: 0px;
-                margin-top: 20px;
-                text-align: center;
-
-                &.left_time {
-                    font-size: 125%;
-                }
-
-                &.time_loop {
-                    font-size: 75%;
+                div.progress-bar {
+                    height: 10px;
                 }
             }
         }
-    }
 
-    a.task_close_link {
-
-        display: none;
-
-        &:hover {
-            display: block;
+        div.add-info {
+            display: inline-block;
+            width: 5%;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 16px;
         }
-
-        div.task_close {
-            height: 36px;
-            width: 36px;
-            position: absolute;
-            left: 75%;
-            top: 0%;
-            border-radius: 18px;
-            background-color: #e0ab96;
-            outline: none;
-
-            p {
-                text-align: center;
-                vertical-align: middle;
-                line-height: 36px;
-                margin: 0px;
-            }
-        }
-    }
-
-    a.task_body_link:hover + a.task_close_link {
-        display: block;
     }
 }
+

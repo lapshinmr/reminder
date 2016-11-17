@@ -9,13 +9,8 @@ from .reminder_tools import TimeUnitsRanges
 @reminder.route('/reminder', methods=['GET', 'POST'])
 def index():
     if 'add_task_submit' in request.form:
-        print(request.form)
         task_name = request.form['task_name']
-        days = int(request.form['days'])
-        hours = int(request.form['hours'])
-        minutes = int(request.form['minutes'])
-        seconds = int(request.form['seconds'])
-        time_loop = datetime.timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds).total_seconds()
+        time_loop = int(request.form['duration'])
         task = Task.query.filter_by(name=task_name).first()
         if not task:
             new_task = Task(name=task_name, time_loop=time_loop)
