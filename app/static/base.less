@@ -144,25 +144,35 @@ section#tasks_area {
     width: 100%;
 
     div.task {
-        border-radius: 10px;
+        border-radius: 30px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding-left: 0px;
+        padding-right: 0px;
         font-size: 0px;
 
-        a.complete {
+        div.complete {
+            display: inline-block;
+            width: 7%;
             vertical-align: middle;
-            width: 5%;
             text-align: center;
-            font-size: 30px;
-            color:  @lite_green;
+            font-size: 40px;
+            line-height: 1;
 
-            &:hover {
-                text-decoration: none;
-                color: @dark_green;
+            a {
+                color: @lite_green;
+
+                &:hover {
+                    text-decoration: none;
+                    color: @dark_green;
+                }
             }
+
         }
 
         div.name-and-progress {
             display: inline-block;
-            width: 90%;
+            width: 87%;
             text-align: center;
             vertical-align: middle;
             font-size: 18px;

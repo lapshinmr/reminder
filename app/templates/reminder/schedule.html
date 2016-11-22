@@ -2,15 +2,21 @@
     {% for task in tasks %}
         {% if task.is_active() %}
             {% set left_percents = task.count_left_time() / task.time_loop * 100 %}
+            {% if left_percents < 0 %}
+                {% set left_percents = 0 %}
+            {% endif %}
             <div class="task well well-sm">
-                <a class="complete" href="{{ url_for('reminder.complete', task_name=task.name) }}">
-                   <i class="fa fa-check-circle" aria-hidden="true"></i>
-                </a>
+                <div class="complete">
+                    <a href="{{ url_for('reminder.complete', task_name=task.name) }}">
+                        <i class="fa fa-check-circle" aria-hidden="true"></i>
+                    </a>
+                </div>
                 <div class="name-and-progress">
                     <p class="task_name">{{ task.name }}</p>
                     <div class="progress">
-                        <div class="progress-bar" role="progressbar"
-                             aria-valuenow="{{ left_percents }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ left_percents }}%"></div>
+                        <div id="{{ task.id }}" class="progress-bar" role="progressbar"
+                             aria-valuenow="{{ left_percents }}" aria-valuemin="0" aria-valuemax="100"
+                             style="width: {{ left_percents }}%"></div>
                     </div>
                 </div>
                 <div class="add-info">

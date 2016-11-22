@@ -21,6 +21,7 @@ def index():
         db.session.commit()
         return redirect(url_for('reminder.index'))
     tasks = Task.query.all()
+    tasks = sorted(tasks, key=Task.count_left_time)
     tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
     return render_template(
         'reminder/index.html', tasks=tasks, tasks_times=tasks_times,
