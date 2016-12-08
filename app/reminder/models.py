@@ -27,8 +27,11 @@ class Task(db.Model):
 
     def count_left_time(self):
         duration_time = datetime.datetime.now() - datetime.datetime.strptime(self.time_last, self.time_format)
-        left_time = datetime.timedelta(0, self.time_loop) - duration_time
-        return left_time.total_seconds()
+        left_time_obj = datetime.timedelta(0, self.time_loop) - duration_time
+        left_time = left_time_obj.total_seconds()
+        if left_time < 0:
+            left_time = 0
+        return left_time
 
     def show_left_time(self):
         return largest_timepart(self.count_left_time())

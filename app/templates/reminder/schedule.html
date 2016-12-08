@@ -14,9 +14,8 @@
                 <div class="name-and-progress">
                     <p class="task_name">{{ task.name }}</p>
                     <div class="progress">
-                        <div id="{{ task.id }}" class="progress-bar" role="progressbar"
-                             aria-valuenow="{{ left_percents }}" aria-valuemin="0" aria-valuemax="100"
-                             style="width: {{ left_percents }}%"></div>
+                        <div id="{{ task.id }}" class="progress-bar" style="width: {{ left_percents }}%"
+                        data-left-time="{{ task.count_left_time() }}"></div>
                     </div>
                 </div>
                 <div class="add-info">
