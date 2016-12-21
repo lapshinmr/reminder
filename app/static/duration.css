@@ -1,0 +1,43 @@
+
+div#duration {
+  box-shadow: 0 0 10px rgb(100, 100, 100);
+}
+
+div#duration > div {
+  display: inline-block;
+}
+
+
+div#duration div.value {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+div#duration div.arrows {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+div#duration p {
+  margin: 0;
+  padding: 0;
+
+}
+
+
+div#duration p.count {
+  text-align: center;
+  font-size: 120%;
+}
+
+div#duration p.description {
+  text-align: center;
+  font-size: 80%;
+  color: rgb(150, 150, 150);
+}
+
+div#duration i {
+  display: block;
+}
