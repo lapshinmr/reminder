@@ -2,53 +2,67 @@
 
 //view
 var view = {
-  createTimeUnit: function(name, value) {
+  createTimeUnit: function(id, value) {
     var unit = document.createElement('div');
-    unit.setAttribute('id', name);
+    unit.setAttribute('id', id);
     unit.innerHTML = (
-      '<div class="value"> \
-          <p class="count">' + value + '</p> \
-          <p class="description">' + name + '</p> \
-        </div> \
-        <div class="arrows"> \
-          <i class="fa fa-angle-up" aria-hidden="true"></i> \
-          <i class="fa fa-angle-down" aria-hidden="true"></i> \
-      </div>'
+      '\
+      <p class="arrow up"></p> \
+      <p class="count"></p> \
+      <p class="arrow down"></p> \
+      '
     );
     return unit
   },
 
-  updateTimeUnitValue: function(name, value) {
-    var unit = $('#' + name);
-    $(unit).find('.count').text(value);
+  updateTimeUnitValue: function(id, value, zeroes) {
+    if (zeroes && value < 10) {
+      value = "0" + value;
+    }
+    $('#' + id).find('.count').text(value);
   },
 
-  addButton: function() {
-    var button = document.createElement('button');
+  animateArrow: function(element) {
+    $( element ).css({
+      color: "#0ac2f9",
+      transition: "text-shadow 0.5s ease-in-out;",
+      fontWeight: "900"
+    });
+    $( element ).stop().animate({
+        color: "rgb(150, 150, 150)",
+        fontWeight: "400",
+        queue: false
+      }, 300
+    );
+  },
+
+  createSeparator: function(id, value, separator) {
+    $('#' + id).after('<p class="separator">' + separator + '</p>');
   }
 }
 
 
 //model
-function TimeUnit(name, initValue, minValue, maxValue, totalSeconds) {
-  this.name = name;
+function TimeUnit(id, initValue, minValue, maxValue, totalSeconds, zeroes) {
+  this.id = id;
   this.value = initValue;
   this.minValue = minValue;
   this.maxValue = maxValue;
   this.totalSeconds = totalSeconds;
+  this.zeroes = zeroes
 }
 
 TimeUnit.prototype.decrease = function() {
   if (this.value > this.minValue) {
     this.value--;
-    view.updateTimeUnitValue(this.name, this.value);
+    view.updateTimeUnitValue(this.id, this.value, this.zeroes);
   }
 };
 
 TimeUnit.prototype.increase = function() {
-  if (this.value < this.maxValue) {
+  if (this.maxValue === undefined || this.value < this.maxValue) {
     this.value++;
-    view.updateTimeUnitValue(this.name, this.value);
+    view.updateTimeUnitValue(this.id, this.value, this.zeroes);
   }
 };
 
@@ -56,32 +70,6 @@ TimeUnit.prototype.increase = function() {
 var model = {
   units: [ ],
 
-  attachClicksToArrows: function(unitModel, unitView) {
-    $(unitView).find('.fa.fa-angle-up').click(function() {
-      unitModel.increase()
-      console.log(model.getTime());
-    });
-    $(unitView).find('.fa.fa-angle-down').click(function() {
-      unitModel.decrease()
-      console.log(model.getTime());
-    });
-  },
-
-  createTimeTable: function() {
-    var duration = document.getElementById("duration");
-    for (var i = 0; i < arguments.length; i++) {
-      var name = arguments[i][0];
-      var value = arguments[i][1];
-      var minValue = arguments[i][2];
-      var maxValue = arguments[i][3];
-      var totalSeconds = arguments[i][4];
-      var unitModel = new TimeUnit(name, value, minValue, maxValue, totalSeconds);
-      var unitView = view.createTimeUnit(name, value);
-      this.units.push(unitModel);
-      this.attachClicksToArrows(unitModel, unitView);
-      duration.appendChild(unitView);
-    }
-  },
 
   getTime: function() {
     var time = 0;
@@ -89,6 +77,62 @@ var model = {
       time += this.units[i].value * this.units[i].totalSeconds;
     }
     return time
+  },
+
+  attachClicksToArrows: function(unitModel, unitView) {
+    var up = $(unitView).find('.arrow.up');
+    var down = $(unitView).find('.arrow.down');
+    up.click(function() {
+      unitModel.increase();
+      view.animateArrow(up);
+      $('#duration').val(model.getTime());
+    });
+    down.click(function() {
+      unitModel.decrease();
+      view.animateArrow(down);
+      $('#duration').val(model.getTime());
+    });
+  },
+
+  attachScrollToUnit: function(unitModel, unitView) {
+    var up = $(unitView).find('.arrow.up');
+    var down = $(unitView).find('.arrow.down');
+    $(unitView).on('mousewheel DOMMouseScroll', function(event) {
+      event.preventDefault();
+      if (event.originalEvent.wheelDelta < 0) {
+        unitModel.decrease();
+        view.animateArrow(down);
+      } else if (event.originalEvent.wheelDelta > 0) {
+        unitModel.increase();
+        view.animateArrow(up);
+      };
+      $('#duration').val(model.getTime());
+    })
+  },
+
+  createTimeTable: function() {
+    var duration = document.getElementById("duration-picker");
+    var input = document.createElement('input');
+    input.setAttribute('id', 'duration');
+    input.setAttribute('name', 'duration');
+    duration.appendChild(input)
+    for (var i = 0; i < arguments.length; i++) {
+      var id = arguments[i].id;
+      var value = arguments[i].initValue;
+      var minValue = arguments[i].minValue;
+      var maxValue = arguments[i].maxValue;
+      var totalSeconds = arguments[i].totalSeconds;
+      var zeroes = arguments[i].zeroes;
+      var after = arguments[i].after;
+      var unitModel = new TimeUnit(id, value, minValue, maxValue, totalSeconds, zeroes);
+      var unitView = view.createTimeUnit(id, value);
+      this.units.push(unitModel);
+      this.attachClicksToArrows(unitModel, unitView);
+      this.attachScrollToUnit(unitModel, unitView);
+      duration.appendChild(unitView);
+      view.updateTimeUnitValue(id, value, zeroes);
+      view.createSeparator(id, value, after);
+    }
   }
 }
 
@@ -97,10 +141,10 @@ var model = {
 var controller = {
   start: function() {
     model.createTimeTable(
-      ['days', 0, 0, 300, 86400],
-      ['hours', 0, 0, 23, 3600],
-      ['minutes', 0, 0, 59, 60],
-      ['seconds', 0, 0, 59, 1]
+      {id: 'days', initValue: 0, minValue: 0, maxValue: undefined, totalSeconds: 86400, zeroes: false, after: ' '},
+      {id: 'hours', initValue: 0, minValue: 0, maxValue: 23, totalSeconds: 3600, zeroes: true, after: ':'},
+      {id: 'minutes', initValue: 0, minValue: 0, maxValue: 59, totalSeconds: 60, zeroes: true, after: ':'},
+      {id: 'seconds', initValue: 0, minValue: 0, maxValue: 59, totalSeconds: 1, zeroes: true, after: ''}
     );
   }
 }

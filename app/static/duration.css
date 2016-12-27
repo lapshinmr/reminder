@@ -1,43 +1,59 @@
-
-div#duration {
-  box-shadow: 0 0 10px rgb(100, 100, 100);
-}
-
-div#duration > div {
-  display: inline-block;
-}
-
-
-div#duration div.value {
+div#duration-picker div {
   display: inline-block;
   vertical-align: middle;
 }
 
-
-div#duration div.arrows {
-  display: inline-block;
-  vertical-align: middle;
+div#duration-picker div#days {
+  margin-right: 10px;
+  min-width: 50px;
 }
 
+div#duration-picker p.separator {
+  position: relative;
+  top: -2px;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 190%;
+}
 
-div#duration p {
+div#duration-picker p {
+  color: rgb(100, 100, 100);
+  text-align: center;
   margin: 0;
-  padding: 0;
-
 }
 
-
-div#duration p.count {
-  text-align: center;
-  font-size: 120%;
+div#duration-picker p.count {
+  font-size: 190%;
+  font-family: monospace;
 }
 
-div#duration p.description {
-  text-align: center;
+div#duration-picker p.arrow {
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: 180%;
+  position: relative;
+}
+
+div#duration-picker p.arrow.down {
+  top: -4px;
+}
+
+div#duration-picker p.arrow.up {
+  bottom: -2px;
+}
+
+div#duration-picker p.arrow.up:after {
+  content: "\f106";
+}
+
+div#duration-picker p.arrow.down:after {
+  content: "\f107";
+}
+
+div#duration-picker p.description {
+  font-family: monospace;
   font-size: 80%;
-  color: rgb(150, 150, 150);
 }
 
-div#duration i {
-  display: block;
+div#duration-picker input#duration {
+  display: none;
 }
