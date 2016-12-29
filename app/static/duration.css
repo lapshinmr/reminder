@@ -27,10 +27,22 @@ div#duration-picker p.count {
   font-family: monospace;
 }
 
+div#duration-picker input.count {
+  background-color: transparent;
+  width: 30px;
+  border: none;
+  outline: none;
+  margin: 0px;
+  padding: 0px;
+  font-size: 190%;
+  font-family: monospace;
+}
+
 div#duration-picker p.arrow {
   font: normal normal normal 14px/1 FontAwesome;
   font-size: 180%;
   position: relative;
+  cursor: pointer;
 }
 
 div#duration-picker p.arrow.down {
