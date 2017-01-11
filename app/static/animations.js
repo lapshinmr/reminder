@@ -32,7 +32,3 @@ function animateProgressBars() {
     }
 }
 
-
-window.onload = function() {
-    animateProgressBars();
-}

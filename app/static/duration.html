@@ -1,11 +1,18 @@
 <!doctype html>
 <html>
   <head>
-    <link href="duration.css" type="text/css" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <link href="duration.less" type="text/css" rel="stylesheet/less" />
     <link href="font-awesome-4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="duration.js"></script>
+    <script src="less.js"></script>
+    <script>
+    window.onload = function() {
+      durationPicker.show()
+    }
+    </script>
   </head>
   <body style="height: 1400px">
     <div id="duration-picker"></div>

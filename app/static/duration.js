@@ -96,12 +96,13 @@ var model = {
   attachScrollToUnit: function(unitModel, unitView) {
     var up = $(unitView).find('.arrow.up');
     var down = $(unitView).find('.arrow.down');
-    $(unitView).on('mousewheel DOMMouseScroll', function(event) {
+    $(unitView).on('wheel mousewheel', function(event) {
       event.preventDefault();
-      if (event.originalEvent.wheelDelta < 0) {
+      var delta = event.originalEvent.deltaY;
+      if (delta > 0) {
         unitModel.decrease();
         view.animateArrow(down);
-      } else if (event.originalEvent.wheelDelta > 0) {
+      } else if (delta < 0) {
         unitModel.increase();
         view.animateArrow(up);
       };
@@ -110,52 +111,40 @@ var model = {
   },
 
   switchFromParToInput: function(id) {
-    var element = $('#' + id).find('.count');
-    var new_element = $('<input>', {
+    var p_element = $('#' + id).find('.count');
+    var input_element = $('<input>', {
         type: 'text',
-        class: $(element).attr('class'),
-        value: $(element).text()
+        class: $(p_element).attr('class'),
+        value: $(p_element).text()
       }
     );
-    element.replaceWith($(new_element));
-    var value = new_element.val();
+    p_element.replaceWith($(input_element));
+    var value = input_element.val();
     var value_length = value.length;
-    new_element.focus();
-    new_element[0].setSelectionRange(value_length, value_length);
-    $(new_element).focusout(
-      function() {
-        if (isNaN($(new_element).val())) {
-          $(new_element).val(value);
-        };
-        model.switchFromInputToPar(id);
-      }
-    );
-    $(new_element).keypress(
-      function(e) {
-        if (e.which == 13) {
-          if (isNaN($(new_element).val())) {
-            $(new_element).val(value);
+    input_element.focus();
+    input_element[0].setSelectionRange(value_length, value_length);
+    $(input_element).on('wheel mousewheel focusout keypress',
+      function(event) {
+        var type = event.originalEvent.type;
+        var is_wheel = ('wheel' == type || 'mousewheel' == type);
+        var is_focusout = ('blur' == type);
+        var is_enter = (type == 'keypress' && event.originalEvent.keyCode == 13);
+        if (is_wheel || is_focusout || is_enter) {
+          if (isNaN($(input_element).val())) {
+            $(input_element).val(value);
           };
           model.switchFromInputToPar(id);
-        }
-      }
-    );
-    $(new_element).on('mousewheel DOMMouseScroll',
-      function(event) {
-        if (isNaN($(new_element).val())) {
-          $(new_element).val(value);
         };
-        model.switchFromInputToPar(id);
       }
     );
   },
 
   switchFromInputToPar: function(id) {
-    var element = $('#' + id).find('.count');
-    var new_element = $('<p>', {
-      class: $(element).attr('class'),
+    var input_element = $('#' + id).find('.count');
+    var p_element = $('<p>', {
+      class: $(input_element).attr('class'),
     });
-    var value = element.val();
+    var value = input_element.val();
     for (var i = 0; i < this.units.length; i++) {
       var unit = this.units[i];
       if (unit.id == id) {
@@ -165,9 +154,9 @@ var model = {
         this.units[i].value = value;
       }
     };
-    $(new_element).text(value);
-    element.replaceWith($(new_element));
-    $(new_element).click(
+    $(p_element).text(value);
+    input_element.replaceWith($(p_element));
+    $(p_element).click(
       function() {
         model.switchFromParToInput(id);
       }
@@ -176,7 +165,8 @@ var model = {
 
   attachClickToCount: function(id) {
       $('#' + id).find('.count').click(
-        function(){
+        function(event){
+          console.log(event)
           model.switchFromParToInput(id)
         }
       );
@@ -211,18 +201,13 @@ var model = {
 
 
 //controller
-var controller = {
-  start: function() {
+var durationPicker = {
+  show: function() {
     model.createTimeTable(
-      {id: 'days', initValue: 0, minValue: 0, maxValue: undefined, totalSeconds: 86400, zeroes: false, after: ' '},
+      {id: 'days', initValue: 0, minValue: 0, maxValue: 999, totalSeconds: 86400, zeroes: false, after: ' '},
       {id: 'hours', initValue: 0, minValue: 0, maxValue: 23, totalSeconds: 3600, zeroes: true, after: ':'},
       {id: 'minutes', initValue: 0, minValue: 0, maxValue: 59, totalSeconds: 60, zeroes: true, after: ':'},
       {id: 'seconds', initValue: 0, minValue: 0, maxValue: 59, totalSeconds: 1, zeroes: true, after: ''}
     );
   }
-}
-
-
-window.onload = function() {
-  controller.start()
 }

@@ -10,7 +10,6 @@ from .reminder_tools import TimeUnitsRanges
 def index():
     if 'add_task_submit' in request.form:
         task_name = request.form['task_name']
-        print(request.form)
         time_loop = int(request.form['duration'])
         task = Task.query.filter_by(name=task_name).first()
         if not task:

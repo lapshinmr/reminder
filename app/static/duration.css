@@ -2,70 +2,60 @@ div#duration-picker div {
   display: inline-block;
   vertical-align: middle;
 }
-
 div#duration-picker div#days {
   margin-right: 10px;
   min-width: 50px;
 }
-
+div#duration-picker p {
+  color: #646464;
+}
 div#duration-picker p.separator {
+  margin: 0px;
   position: relative;
   top: -2px;
   display: inline-block;
   vertical-align: middle;
   font-size: 190%;
 }
-
-div#duration-picker p {
-  color: rgb(100, 100, 100);
-  text-align: center;
-  margin: 0;
-}
-
 div#duration-picker p.count {
+  width: 40px;
+  margin: 0px;
+  padding: 0px;
   font-size: 190%;
   font-family: monospace;
+  text-align: center;
 }
-
+div#duration-picker input#duration {
+  display: none;
+}
 div#duration-picker input.count {
   background-color: transparent;
-  width: 30px;
+  width: 40px;
   border: none;
   outline: none;
   margin: 0px;
   padding: 0px;
   font-size: 190%;
   font-family: monospace;
+  text-align: center;
 }
-
 div#duration-picker p.arrow {
+  margin: 0;
+  text-align: center;
   font: normal normal normal 14px/1 FontAwesome;
   font-size: 180%;
   position: relative;
   cursor: pointer;
 }
-
-div#duration-picker p.arrow.down {
-  top: -4px;
-}
-
 div#duration-picker p.arrow.up {
   bottom: -2px;
 }
-
 div#duration-picker p.arrow.up:after {
   content: "\f106";
 }
-
+div#duration-picker p.arrow.down {
+  top: -4px;
+}
 div#duration-picker p.arrow.down:after {
   content: "\f107";
-}
-
-div#duration-picker p.description {
-  font-family: monospace;
-  font-size: 80%;
-}
-
-div#duration-picker input#duration {
-  display: none;
 }
