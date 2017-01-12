@@ -8,7 +8,7 @@ var view = {
     unit.innerHTML = (
       '\
       <p class="arrow up"></p> \
-      <p class="count"></p> \
+      <p class="count" contenteditable="true"></p> \
       <p class="arrow down"></p> \
       '
     );
@@ -16,6 +16,7 @@ var view = {
   },
 
   updateTimeUnitValue: function(id, value, zeroes) {
+    value = Number(value);
     if (zeroes && value < 10) {
       value = "0" + value;
     }
@@ -110,67 +111,30 @@ var model = {
     })
   },
 
-  switchFromParToInput: function(id) {
-    var p_element = $('#' + id).find('.count');
-    var input_element = $('<input>', {
-        type: 'text',
-        class: $(p_element).attr('class'),
-        value: $(p_element).text()
+  attachHandlerToCount: function(unitModel, unitView) {
+    var element = $(unitView).find('.count');
+    $(element).keypress(function(e) {
+      if (e.which == 13) {
+        $(element).blur();
       }
-    );
-    p_element.replaceWith($(input_element));
-    var value = input_element.val();
-    var value_length = value.length;
-    input_element.focus();
-    input_element[0].setSelectionRange(value_length, value_length);
-    $(input_element).on('wheel mousewheel focusout keypress',
-      function(event) {
-        var type = event.originalEvent.type;
-        var is_wheel = ('wheel' == type || 'mousewheel' == type);
-        var is_focusout = ('blur' == type);
-        var is_enter = (type == 'keypress' && event.originalEvent.keyCode == 13);
-        if (is_wheel || is_focusout || is_enter) {
-          if (isNaN($(input_element).val())) {
-            $(input_element).val(value);
-          };
-          model.switchFromInputToPar(id);
-        };
-      }
-    );
-  },
-
-  switchFromInputToPar: function(id) {
-    var input_element = $('#' + id).find('.count');
-    var p_element = $('<p>', {
-      class: $(input_element).attr('class'),
+      return e.which != 13;
     });
-    var value = input_element.val();
-    for (var i = 0; i < this.units.length; i++) {
-      var unit = this.units[i];
-      if (unit.id == id) {
-        if (value > unit.maxValue) {
-          var value = unit.maxValue;
-        }
-        this.units[i].value = value;
+    $(element).on('focusout',
+      function(event) {
+        var cur_value = $(element).text();
+        if (!isNaN(cur_value)) {
+          var maxValue = unitModel.maxValue
+          if (cur_value > maxValue) {
+            var cur_value = maxValue;
+          }
+          unitModel.value = cur_value;
+        };
+        view.updateTimeUnitValue(
+          unitModel.id, unitModel.value, unitModel.zeroes);
       }
-    };
-    $(p_element).text(value);
-    input_element.replaceWith($(p_element));
-    $(p_element).click(
-      function() {
-        model.switchFromParToInput(id);
-      }
-    )
+    );
   },
 
-  attachClickToCount: function(id) {
-      $('#' + id).find('.count').click(
-        function(event){
-          console.log(event)
-          model.switchFromParToInput(id)
-        }
-      );
-  },
 
   createTimeTable: function() {
     var duration = document.getElementById("duration-picker");
@@ -192,7 +156,7 @@ var model = {
       this.attachClicksToArrows(unitModel, unitView);
       this.attachScrollToUnit(unitModel, unitView);
       duration.appendChild(unitView);
-      this.attachClickToCount(id);
+      this.attachHandlerToCount(unitModel, unitView);
       view.updateTimeUnitValue(id, value, zeroes);
       view.createSeparator(id, value, after);
     }
