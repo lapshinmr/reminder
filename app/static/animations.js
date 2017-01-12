@@ -8,10 +8,8 @@ function animateProgressBar(task) {
     var interval_id = setInterval(
         function() {
             if (width <= 0) {
-                console.log('delete interval');
                 clearInterval(interval_id);
             } else {
-                console.log(interval_id);
                 width -= width_step;
                 task.setAttribute("style", "width: " + width + "%");
             }
@@ -31,4 +29,3 @@ function animateProgressBars() {
         }
     }
 }
-

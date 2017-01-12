@@ -131,6 +131,7 @@ var model = {
         };
         view.updateTimeUnitValue(
           unitModel.id, unitModel.value, unitModel.zeroes);
+      $('#duration').val(model.getTime());
       }
     );
   },
