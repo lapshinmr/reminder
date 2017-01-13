@@ -5,21 +5,21 @@
             {% if left_percents < 0 %}
                 {% set left_percents = 0 %}
             {% endif %}
-            <div class="task well well-sm">
+            <div id="{{ task.id }}" class="task well well-sm">
                 <div class="complete">
-                    <a href="{{ url_for('reminder.complete', task_name=task.name) }}">
+                    <a href="{{ url_for('reminder.complete', task_id=task.id) }}">
                         <i class="fa fa-check-circle" aria-hidden="true"></i>
                     </a>
                 </div>
                 <div class="name-and-progress">
-                    <p class="task_name">{{ task.name }}</p>
+                    <p class="task_name" contenteditable="true">{{ task.name }}</p>
                     <div class="progress">
-                        <div id="{{ task.id }}" class="progress-bar" style="width: {{ left_percents }}%"
+                        <div class="progress-bar" style="width: {{ left_percents }}%"
                         data-left-time="{{ task.count_left_time() }}"></div>
                     </div>
                 </div>
                 <div class="add-info">
-                    <a class="task_close_link" href="{{ url_for('reminder.close', task_name=task.name) }}">
+                    <a class="task_close_link" href="{{ url_for('reminder.close', task_id=task.id) }}">
                         <i class="fa fa-times" aria-hidden="true"></i>
                     </a>
                     <br />
@@ -47,13 +47,13 @@
                 <ul class="dropdown-menu">
                     {% if task.is_close() %}
                         <li>
-                            <a href="{{ url_for('reminder.restore', task_name=task.name) }}">
+                            <a href="{{ url_for('reminder.restore', task_id=task.id) }}">
                                 <i class="fa fa-undo" aria-hidden="true"></i>restore
                             </a>
                         </li>
                     {% endif %}
                     <li>
-                        <a href="{{ url_for('reminder.remove', task_name=task.name, time_complete=time_complete) }}">
+                        <a href="{{ url_for('reminder.remove', task_id=task.id, time_complete=time_complete) }}">
                             <i class="fa fa-times" aria-hidden="true"></i>close
                         </a>
                     </li>
