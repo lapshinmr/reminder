@@ -1,0 +1,35 @@
+{% macro show_tasks_area(tasks) %}
+    {% for task in tasks %}
+        {% if task.is_active() %}
+            {% set left_percents = task.count_left_time() / task.time_loop * 100 %}
+        {% if left_percents < 0 %}
+            {% set left_percents = 0 %}
+        {% endif %}
+        <div id="{{ task.id }}" class="task well well-sm">
+            <div class="complete">
+                <a href="{{ url_for('reminder.complete', task_id=task.id) }}">
+                    <i class="fa fa-check-circle" aria-hidden="true"></i>
+                </a>
+            </div>
+            <div class="name-and-progress">
+                <p class="task-name" contenteditable="true">{{ task.name }}</p>
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ left_percents }}%"
+                         data-left-time="{{ task.count_left_time() }}"></div>
+                </div>
+            </div>
+            <div class="add-info">
+                <button class="task-close">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+                <br />
+                <a data-toggle="tooltip" title="{{ task.show_loop_time() }}">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{{ show_tasks_area(tasks) }}

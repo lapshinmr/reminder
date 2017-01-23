@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% from "reminder/schedule.html" import create_schedule %}
-{% from "reminder/schedule.html" import show_history %}
+{% from "reminder/tasks_area.html" import show_tasks_area %}
+{% from "reminder/history_area.html" import show_history %}
 
 {% block title %}Reminder{% endblock %}
 
@@ -22,7 +22,7 @@
     </div>
     <div id="right_side" class="col-md-9">
         <section id="tasks_area">
-            {{ create_schedule(tasks) }}
+            {{ show_tasks_area(tasks) }}
         </section>
     </div>
 </div>

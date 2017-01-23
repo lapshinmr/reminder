@@ -15,7 +15,7 @@
     <script src="{{ url_for('static', filename='less.js') }}" type="text/javascript"></script>
     <script src="{{ url_for('static', filename='bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='duration.js') }}"></script>
-    <script src="{{ url_for('static', filename='task.js') }}"></script>
+    <script src="{{ url_for('static', filename='tasks_area.js') }}"></script>
 
     <title>{% block title %}{% endblock %}</title>
 </head>
@@ -68,8 +68,9 @@
         window.onload = function() {
             durationPicker.show();
             addNewTask();
-            editTasks();
-            animateProgressBars();
+            addTasksEdition();
+            addProgressBarsAnimation();
+            addTasksClosing();
         }
     </script>
     <script>

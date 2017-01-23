@@ -6,7 +6,7 @@ import datetime
 from .reminder_tools import TimeUnitsRanges
 
 
-@reminder.route('/reminder', methods=['GET', 'POST'])
+@reminder.route('/reminder')
 def index():
     tasks = Task.query.all()
     tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
@@ -18,19 +18,17 @@ def index():
 
 @reminder.route('/reminder/add_task', methods=['POST'])
 def add():
-    print(request.form)
     task_name = request.form['task-name']
     time_loop = int(request.form['duration'])
+    print(time_loop)
     new_task = Task(name=task_name, time_loop=time_loop)
     db.session.add(new_task)
     db.session.commit()
     tasks = Task.query.all()
-    return jsonify({
-        'tasks': render_template('reminder/tasks_area.html', tasks=tasks)
-    })
+    return jsonify(tasks_area_html=render_template('reminder/tasks_area.html', tasks=tasks))
 
 
-@reminder.route('/reminder/<task_id>/edit', methods=['GET', 'POST'])
+@reminder.route('/reminder/<task_id>/edit', methods=['POST'])
 def edit(task_id):
     task = Task.query.filter_by(id=task_id).first()
     new_task_name = request.form.get('new_task_name')
@@ -52,16 +50,16 @@ def complete(task_id):
     return redirect(url_for('reminder.index'))
 
 
-@reminder.route('/reminder/<task_id>/close')
+@reminder.route('/reminder/<task_id>/close', methods=['POST'])
 def close(task_id):
-    task = Task.query.filter_by(name=task_id).first()
+    task = Task.query.filter_by(id=task_id).first()
     if task:
         times = Time.query.filter_by(task=task).all()
         if not any(times):
             db.session.delete(task)
         task.close()
         db.session.commit()
-    return redirect(url_for('reminder.index'))
+    return jsonify()
 
 
 @reminder.route('/reminder/<task_id>/<time_complete>/remove')

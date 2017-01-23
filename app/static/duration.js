@@ -123,9 +123,12 @@ var model = {
       function(event) {
         var cur_value = $(element).text();
         if (!isNaN(cur_value)) {
-          var maxValue = unitModel.maxValue
+          var maxValue = unitModel.maxValue;
+          var minValue = unitModel.minValue;
           if (cur_value > maxValue) {
             var cur_value = maxValue;
+          } else if (cur_value < minValue) {
+            var cur_value = minValue;
           }
           unitModel.value = cur_value;
         };
@@ -160,6 +163,7 @@ var model = {
       this.attachHandlerToCount(unitModel, unitView);
       view.updateTimeUnitValue(id, value, zeroes);
       view.createSeparator(id, value, after);
+      $('#duration').val(model.getTime());
     }
   }
 }
