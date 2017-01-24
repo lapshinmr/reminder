@@ -1,0 +1,75 @@
+div#duration-picker {
+
+  div {
+    display: inline-block;
+    vertical-align: middle;
+    width: 50px;
+
+    &#days {
+      margin-right: 10px;
+      width: 75px;
+    }
+  }
+
+  p {
+    color: rgb(100, 100, 100);
+    margin: 0px;
+    padding: 0px;
+
+    &.count {
+      text-align: center;
+      font-size: 250%;
+      font-family: monospace;
+    }
+
+    &.arrow {
+      text-align: center;
+      font: normal normal normal 14px/1 FontAwesome;
+      font-size: 200%;
+      position: relative;
+      cursor: pointer;
+
+      &.up {
+        bottom: 0px;
+        &:after {
+          content: "\f106";
+        }
+      }
+
+      &.down {
+        top: -2px;
+        &:after {
+          content: "\f107";
+        }
+      }
+    }
+
+    &.separator {
+      position: relative;
+      top: -4px;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 200%;
+    }
+  }
+
+  input {
+
+    &#duration {
+      display: none;
+    }
+
+    &.count {
+      width: inherit;
+      margin: 0px;
+      padding: 0px;
+      background-color: transparent;
+      border: none;
+      outline: none;
+      font-size: 250%;
+      font-family: monospace;
+      text-align: center;
+    }
+  }
+
+}

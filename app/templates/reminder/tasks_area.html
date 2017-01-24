@@ -7,9 +7,9 @@
         {% endif %}
         <div id="{{ task.id }}" class="task well well-sm">
             <div class="complete">
-                <a href="{{ url_for('reminder.complete', task_id=task.id) }}">
+                <button class="task-complete">
                     <i class="fa fa-check-circle" aria-hidden="true"></i>
-                </a>
+                </button>
             </div>
             <div class="name-and-progress">
                 <p class="task-name" contenteditable="true">{{ task.name }}</p>

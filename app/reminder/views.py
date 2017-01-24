@@ -38,7 +38,7 @@ def edit(task_id):
     return jsonify()
 
 
-@reminder.route('/reminder/<task_id>/complete')
+@reminder.route('/reminder/<task_id>/complete', methods=['POST'])
 def complete(task_id):
     task = Task.query.filter_by(id=task_id).first()
     time_complete = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -47,7 +47,12 @@ def complete(task_id):
         time.time_complete = time_complete
         task.time_last = time_complete
         db.session.commit()
-    return redirect(url_for('reminder.index'))
+    tasks = Task.query.all()
+    tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
+    return jsonify(
+        tasks_area_html=render_template('reminder/tasks_area.html', tasks=tasks),
+        history_area_html=render_template('reminder/history_area.html', tasks_times=tasks_times)
+    )
 
 
 @reminder.route('/reminder/<task_id>/close', methods=['POST'])
