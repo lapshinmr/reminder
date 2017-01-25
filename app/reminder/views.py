@@ -20,12 +20,11 @@ def index():
 def add():
     task_name = request.form['task-name']
     time_loop = int(request.form['duration'])
-    print(time_loop)
     new_task = Task(name=task_name, time_loop=time_loop)
     db.session.add(new_task)
     db.session.commit()
-    tasks = Task.query.all()
-    return jsonify(tasks_area_html=render_template('reminder/tasks_area.html', tasks=tasks))
+    task = Task.query.filter_by(time_init=new_task.time_init).filter_by(name=new_task.name).first()
+    return jsonify(task_item_html=render_template('reminder/task_item.html', task=task), task_id=task.id)
 
 
 @reminder.route('/reminder/<task_id>/edit', methods=['POST'])
@@ -47,11 +46,10 @@ def complete(task_id):
         time.time_complete = time_complete
         task.time_last = time_complete
         db.session.commit()
-    tasks = Task.query.all()
-    tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
+    task = Task.query.filter_by(id=task_id).first()
     return jsonify(
-        tasks_area_html=render_template('reminder/tasks_area.html', tasks=tasks),
-        history_area_html=render_template('reminder/history_area.html', tasks_times=tasks_times)
+        task_item_html=render_template('reminder/task_item.html', task=task),
+        history_item_html=render_template('reminder/history_item.html', task=task)
     )
 
 
@@ -64,12 +62,15 @@ def close(task_id):
             db.session.delete(task)
         task.close()
         db.session.commit()
-    return jsonify()
+    tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
+    return jsonify(
+        history_area_html=render_template('reminder/history_area.html', tasks_times=tasks_times)
+    )
 
 
-@reminder.route('/reminder/<task_id>/<time_complete>/remove')
+@reminder.route('/reminder/<task_id>/<time_complete>/remove', methods=['POST'])
 def remove(task_id, time_complete):
-    task = Task.query.filter_by(name=task_id).first()
+    task = Task.query.filter_by(id=task_id).first()
     if task:
         time = Time.query.filter_by(task=task).filter_by(time_complete=time_complete).first()
         if time:
@@ -78,14 +79,19 @@ def remove(task_id, time_complete):
         if task.is_close() and not any(times):
             db.session.delete(task)
         db.session.commit()
-    return redirect(url_for('reminder.index'))
+    return jsonify()
 
 
-@reminder.route('/reminder/<task_id>/restore')
+@reminder.route('/reminder/<task_id>/restore', methods=['POST'])
 def restore(task_id):
-    task = Task.query.filter_by(name=task_id).first()
+    task = Task.query.filter_by(id=task_id).first()
     if task:
         task.time_close = None
         db.session.commit()
-    return redirect(url_for('reminder.index'))
+    tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
+    return jsonify(
+        task_item_html=render_template('reminder/task_item.html', task=task),
+        task_id=task.id,
+        history_area_html=render_template('reminder/history_area.html', tasks_times=tasks_times)
+    )
 

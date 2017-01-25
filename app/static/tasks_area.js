@@ -1,65 +1,47 @@
 
-
-// ANIMATE TASK BAR
-function animateProgressBar(task) {
-    var width = task.style.width.replace("%", "");
-    var width_step = 0.5;
-    var leftTime = task.getAttribute("data-left-time");
-    var updateTime = leftTime / (width / width_step) * 1000;
-    var interval_id = setInterval(
-        function() {
-            if (width <= 0) {
-                clearInterval(interval_id);
-            } else {
-                width -= width_step;
-                task.setAttribute("style", "width: " + width + "%");
-            }
-        },
-        updateTime
-    )
-}
-
-
-function addProgressBarsAnimation() {
-    var tasks = document.getElementsByClassName("progress-bar");
-    for (var i = 0; i < tasks.length; i++) {
-        var task = tasks[i];
-        var leftBarWidth = task.style.width.replace("%", "");
-        if (leftBarWidth > 0) {
-            animateProgressBar(task);
-        }
-    }
+function attachJsToTask(id) {
+    animateProgressBar(id);
+    editTaskName(id);
 }
 
 
 // ADD TASK
 function addNewTask() {
-  $('#add-task-button').click(
-    function() {
-      var duration = $('#duration').val();
-      var taskName = $('#task-name').val();
-      if (duration == 0) {
-        alert('Please choose duration more then ZERO')
-      } else {
-        $.post('/reminder/add_task', {'duration': duration, 'task-name': taskName}).done(
-          function(tasksAreaHtml) {
-            $('#tasks_area').html(tasksAreaHtml['tasks_area_html']);
-            addProgressBarsAnimation();
-            addFuncToTasks(editTaskName);
-            addFuncToTasks(closeTask);
-            addFuncToTasks(completeTask);
-          }
-        )
+  var duration = $('#duration').val();
+  var taskName = $('#task-name').val();
+  if (duration == 0) {
+    alert('Please choose duration more then ZERO')
+  } else {
+    $.post('/reminder/add_task', {'duration': duration, 'task-name': taskName}).done(
+      function(response) {
+        $('#tasks_area').prepend(response['task_item_html']);
+        attachJsToTask(response['task_id']);
       }
-    }
-  )
+    )
+  }
 }
 
 
-function addFuncToTasks(func) {
-  var tasks = document.getElementsByClassName("task");
-  for (var i = 0; i < tasks.length; i++) {
-    func(tasks[i].id);
+// ANIMATE TASK BAR
+function animateProgressBar(id) {
+  var progressBar = $('#' + id).find('.progress-bar');
+  var width = $(progressBar).attr('style')
+  width = width.split(' ')[1].replace("%", "");
+  if (width > 0) {
+    var width_step = 0.5;
+    var leftTime = $(progressBar).attr("data-left-time");
+    var updateTime = leftTime / (width / width_step) * 1000;
+    var interval_id = setInterval(
+      function() {
+        if (width <= 0) {
+          clearInterval(interval_id);
+        } else {
+          width -= width_step;
+          $(progressBar).css("width", width + "%");
+        }
+      },
+      updateTime
+    )
   }
 }
 
@@ -85,44 +67,58 @@ function editTaskName(id) {
 
 // CLOSE TASK
 function closeTask(id) {
-  var element = $('#' + id).find('.task-close');
-  $(element).click(
-    function() {
-      var url = "/reminder/" + id + "/close";
-      $.post(url);
-      $('#' + id).remove();
-    }
-  )
+  var url = "/reminder/" + id + "/close";
+  $.post(url).done(function(response) {
+    $('#' + id).remove();
+    $('#history_section').html(response['history_area_html']);
+  });
 }
 
 
 // COMPLETE TASK
 function completeTask(id) {
-  var element = $('#' + id).find('.task-complete');
-  $(element).click(
-    function() {
-      var url = "/reminder/" + id + "/complete";
-      $.post(url).done(
-        function(htmls) {
-          $('#history_section').html(htmls['history_area_html']);
-          $('#tasks_area').html(htmls['tasks_area_html']);
-          addProgressBarsAnimation();
-          addFuncToTasks(editTaskName);
-          addFuncToTasks(closeTask);
-          addFuncToTasks(completeTask);
-        }
-      )
+  var url = "/reminder/" + id + "/complete";
+  $.post(url).done(
+    function(response) {
+      $('#history_section').prepend($(response['history_item_html']));
+      $('#' + id).replaceWith($(response['task_item_html']));
+      attachJsToTask(id);
     }
   )
 }
 
 
-function initTasksFunctions() {
-  addNewTask();
-  addProgressBarsAnimation();
-  addFuncToTasks(editTaskName);
-  addFuncToTasks(closeTask);
-  addFuncToTasks(completeTask);
+// REMOVE HISTORY ITEM
+function removeHistoryItem(close_button, id, time_complete) {
+  var history_item = $(close_button).parents('div.history-row').get(0);
+  $(history_item).remove()
+  $.post('/reminder/' + id + '/' + time_complete + '/remove')
+}
+
+
+// RESTORE TASK
+function restoreTask(id) {
+  $.post('/reminder/' + id + '/restore').done(
+     function(response) {
+       $('#tasks_area').prepend(response['task_item_html']);
+       attachJsToTask(response['task_id']);
+       $('#history_section').html(response['history_area_html']);
+     }
+  )
+}
+
+
+function attachJsToTasksWithClass(func) {
+  var tasks = document.getElementsByClassName("task");
+  for (var i = 0; i < tasks.length; i++) {
+    func(tasks[i].id);
+  }
+}
+
+
+function initTasksJs() {
+  attachJsToTasksWithClass(animateProgressBar);
+  attachJsToTasksWithClass(editTaskName);
 }
 
 

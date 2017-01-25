@@ -6,9 +6,9 @@
         {% endif %}
         <div id="{{ task.id }}" class="task well well-sm">
             <div class="complete">
-                <button class="task-complete">
+                <a onclick="completeTask('{{ task.id }}')">
                     <i class="fa fa-check-circle" aria-hidden="true"></i>
-                </button>
+                </a>
             </div>
             <div class="name-and-progress">
                 <p class="task-name" contenteditable="true">{{ task.name }}</p>
@@ -18,9 +18,9 @@
                 </div>
             </div>
             <div class="add-info">
-                <button class="task-close">
+                <a class="task-close" onclick="closeTask('{{ task.id }}')">
                     <i class="fa fa-times" aria-hidden="true"></i>
-                </button>
+                </a>
                 <br />
                 <a data-toggle="tooltip" title="{{ task.show_loop_time() }}">
                     <i class="fa fa-refresh" aria-hidden="true"></i>
@@ -31,19 +31,12 @@
 {% endmacro %}
 
 
-{% macro create_tasks_area(tasks) %}
-    {% for task in tasks %}
-        {{ create_task_item(task) }}
-    {% endfor %}
-{% endmacro %}
-
-
-{% macro create_history_item(task) %}
+{% macro create_history_item(task, time_complete) %}
 <div class="history-row well well-sm">
     {% if task.is_active() %}
-    <span class="marker active"><i class="fa fa-circle" aria-hidden="true"></i></span>
+        <span class="marker active"><i class="fa fa-circle" aria-hidden="true"></i></span>
     {% else %}
-    <span class="marker"></span>
+        <span class="marker"></span>
     {% endif %}
     <p class="task-name-text">{{ task.name }}</p>
     <span class="dropdown">
@@ -51,14 +44,14 @@
         <ul class="dropdown-menu">
             {% if task.is_close() %}
                 <li>
-                    <a href="{{ url_for('reminder.restore', task_id=task.id) }}">
-                        <i class="fa fa-undo" aria-hidden="true"></i>restore
+                    <a onclick="restoreTask('{{ task.id }}')">
+                        <i class="fa fa-undo" aria-hidden="true"></i> restore
                     </a>
                 </li>
             {% endif %}
                 <li>
-                    <a href="{{ url_for('reminder.remove', task_id=task.id, time_complete=time_complete) }}">
-                        <i class="fa fa-times" aria-hidden="true"></i>close
+                    <a onclick="removeHistoryItem(this, '{{ task.id }}', '{{ time_complete }}')">
+                        <i class="fa fa-times" aria-hidden="true"></i> close
                     </a>
                 </li>
         </ul>
@@ -67,9 +60,16 @@
 {% endmacro %}
 
 
+{% macro create_tasks_area(tasks) %}
+    {% for task in tasks %}
+        {{ create_task_item(task) }}
+    {% endfor %}
+{% endmacro %}
+
+
 {% macro create_history_area(tasks_times) %}
     {% for task, time_complete in tasks_times|reverse %}
-        {{ create_history_item(task) }}
+        {{ create_history_item(task, time_complete) }}
     {% endfor %}
 {% endmacro %}
 
