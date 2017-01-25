@@ -20,7 +20,7 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    <nav class="nav navbar-default navbar-fixed-top">
+    <nav class="nav navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -30,12 +30,9 @@
                 </button>
                 <a class="navbar-brand" href="{{ url_for('reminder.index') }}"><span class="glyphicon glyphicon-globe"></span></a>
             </div>
-            <div>
-                Reminder
-            </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
+            <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
-                  <li class="act"><a href="{{ url_for('reminder.index') }}">Home</a></li>
+                  <li class="act"><a href="{{ url_for('reminder.index') }}">Reminder</a></li>
                 </ul>
             </div>
         </div>

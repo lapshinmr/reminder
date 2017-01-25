@@ -8,20 +8,29 @@
 @lite_gray: #a9b0aa;
 
 body {
-    height: 1500px;
-    padding: 50px;
+    padding: 0px;
     margin: 0px;
 }
 
 /* nav
 ------------------------------------------------------------------------------*/
+nav.nav {
+    background-color: @temp_color;
+    box-shadow: 0px 2px 10px @lite_gray;
+
+    a {
+        color: white;
+    }
+}
 
 
 /* content
 ------------------------------------------------------------------------------*/
 div.content {
-    margin-top: 10px;
+    margin-top: 60px;
     margin-bottom: 10px;
+    min-height: 850px;
+    box-shadow: 0px 0px 10px @lite_gray;
 
     &.temp_color {
         background-color: @temp_color;
@@ -49,6 +58,14 @@ section#add_task_section {
 
 }
 
+/* Left side
+------------------------------------------------------------------------------*/
+
+#left_side {
+    h3 {
+        text-align: center;
+    }
+}
 
 /* History section
 ------------------------------------------------------------------------------*/
@@ -56,9 +73,6 @@ section#add_task_section {
 section#history_section {
     width: 100%;
 
-    h3 {
-        text-align: center;
-    }
 
     div.history-row {
         text-align: center;
