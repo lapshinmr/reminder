@@ -5,7 +5,7 @@ from .reminder_tools import *
 class Task(db.Model):
     __tablename__ = 'tasks'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
+    name = db.Column(db.Text())
     time_loop = db.Column(db.Float)
     time_init = db.Column(db.String(64))
     time_last = db.Column(db.String(64))

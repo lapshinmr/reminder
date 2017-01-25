@@ -5,12 +5,24 @@ function attachJsToTask(id) {
 }
 
 
+function generateWarning(message) {
+  var warning_markup = (
+    `<div class="alert alert-warning alert-dismissable fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+        <strong>Warning!</strong> ${message}
+    </div>`
+  );
+  $('#message-box').html( warning_markup )
+}
+
+
 // ADD TASK
 function addNewTask() {
   var duration = $('#duration').val();
   var taskName = $('#task-name').val();
   if (duration == 0) {
-    alert('Please choose duration more then ZERO')
+    //alert('Please choose duration more then ZERO')
+    generateWarning('Please choose duration more then ZERO')
   } else {
     $.post('/add_task', {'duration': duration, 'task-name': taskName}).done(
       function(response) {

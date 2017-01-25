@@ -1,12 +1,12 @@
 from app import db
 from . import reminder
 from .models import Task, Time
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, flash, redirect, url_for
 import datetime
 from .reminder_tools import TimeUnitsRanges
 
 
-@reminder.route('/')
+@reminder.route('/', methods=['GET', 'POST'])
 def index():
     tasks = Task.query.all()
     tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
@@ -16,7 +16,7 @@ def index():
     )
 
 
-@reminder.route('/add_task', methods=['POST'])
+@reminder.route('/add_task', methods=['GET', 'POST'])
 def add():
     task_name = request.form['task-name']
     time_loop = int(request.form['duration'])

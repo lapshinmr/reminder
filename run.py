@@ -7,6 +7,7 @@ from flask_migrate import Migrate, MigrateCommand
 
 
 app = create_app('developing')
+app.config['SECRET_KEY'] = 'hard to guess string'
 manager = Manager(app)
 migrate = Migrate(app, db)
 
