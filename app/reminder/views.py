@@ -1,12 +1,12 @@
 from app import db
 from . import reminder
 from .models import Task, Time
-from flask import render_template, redirect, url_for, request, jsonify
+from flask import render_template, request, jsonify
 import datetime
 from .reminder_tools import TimeUnitsRanges
 
 
-@reminder.route('/reminder')
+@reminder.route('/')
 def index():
     tasks = Task.query.all()
     tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
@@ -16,7 +16,7 @@ def index():
     )
 
 
-@reminder.route('/reminder/add_task', methods=['POST'])
+@reminder.route('/add_task', methods=['POST'])
 def add():
     task_name = request.form['task-name']
     time_loop = int(request.form['duration'])
@@ -27,7 +27,7 @@ def add():
     return jsonify(task_item_html=render_template('reminder/task_item.html', task=task), task_id=task.id)
 
 
-@reminder.route('/reminder/<task_id>/edit', methods=['POST'])
+@reminder.route('/<task_id>/edit', methods=['POST'])
 def edit(task_id):
     task = Task.query.filter_by(id=task_id).first()
     new_task_name = request.form.get('new_task_name')
@@ -37,7 +37,7 @@ def edit(task_id):
     return jsonify()
 
 
-@reminder.route('/reminder/<task_id>/complete', methods=['POST'])
+@reminder.route('/<task_id>/complete', methods=['POST'])
 def complete(task_id):
     task = Task.query.filter_by(id=task_id).first()
     time_complete = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -53,7 +53,7 @@ def complete(task_id):
     )
 
 
-@reminder.route('/reminder/<task_id>/close', methods=['POST'])
+@reminder.route('/<task_id>/close', methods=['POST'])
 def close(task_id):
     task = Task.query.filter_by(id=task_id).first()
     if task:
@@ -68,7 +68,7 @@ def close(task_id):
     )
 
 
-@reminder.route('/reminder/<task_id>/<time_complete>/remove', methods=['POST'])
+@reminder.route('/<task_id>/<time_complete>/remove', methods=['POST'])
 def remove(task_id, time_complete):
     task = Task.query.filter_by(id=task_id).first()
     if task:
@@ -82,7 +82,7 @@ def remove(task_id, time_complete):
     return jsonify()
 
 
-@reminder.route('/reminder/<task_id>/restore', methods=['POST'])
+@reminder.route('/<task_id>/restore', methods=['POST'])
 def restore(task_id):
     task = Task.query.filter_by(id=task_id).first()
     if task:

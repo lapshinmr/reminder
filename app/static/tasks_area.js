@@ -12,7 +12,7 @@ function addNewTask() {
   if (duration == 0) {
     alert('Please choose duration more then ZERO')
   } else {
-    $.post('/reminder/add_task', {'duration': duration, 'task-name': taskName}).done(
+    $.post('/add_task', {'duration': duration, 'task-name': taskName}).done(
       function(response) {
         $('#tasks_area').prepend(response['task_item_html']);
         attachJsToTask(response['task_id']);
@@ -57,7 +57,7 @@ function editTaskName(id) {
   });
   $(element).on('focusout',
     function(event) {
-      var url = "/reminder/" + id + "/edit";
+      var url = "/" + id + "/edit";
       var cur_value = $(element).text();
       $.post(url, {'new_task_name': cur_value});
     }
@@ -67,7 +67,7 @@ function editTaskName(id) {
 
 // CLOSE TASK
 function closeTask(id) {
-  var url = "/reminder/" + id + "/close";
+  var url = "/" + id + "/close";
   $.post(url).done(function(response) {
     $('#' + id).remove();
     $('#history_section').html(response['history_area_html']);
@@ -77,7 +77,7 @@ function closeTask(id) {
 
 // COMPLETE TASK
 function completeTask(id) {
-  var url = "/reminder/" + id + "/complete";
+  var url = "/" + id + "/complete";
   $.post(url).done(
     function(response) {
       $('#history_section').prepend($(response['history_item_html']));
@@ -92,13 +92,13 @@ function completeTask(id) {
 function removeHistoryItem(close_button, id, time_complete) {
   var history_item = $(close_button).parents('div.history-row').get(0);
   $(history_item).remove()
-  $.post('/reminder/' + id + '/' + time_complete + '/remove')
+  $.post('/' + id + '/' + time_complete + '/remove')
 }
 
 
 // RESTORE TASK
 function restoreTask(id) {
-  $.post('/reminder/' + id + '/restore').done(
+  $.post('/' + id + '/restore').done(
      function(response) {
        $('#tasks_area').prepend(response['task_item_html']);
        attachJsToTask(response['task_id']);

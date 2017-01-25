@@ -13,13 +13,7 @@ def create_app(config_name):
 
     db.init_app(app)
 
-    from .main import main
-    app.register_blueprint(main)
-
     from .reminder import reminder
     app.register_blueprint(reminder)
-
-    from .earnings import earnings
-    app.register_blueprint(earnings)
 
     return app
