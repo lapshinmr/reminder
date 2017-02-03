@@ -2,6 +2,7 @@
 function attachJsToTask(id) {
     animateProgressBar(id);
     editTaskName(id);
+    dragTask(id);
 }
 
 
@@ -31,6 +32,51 @@ function addNewTask() {
       }
     )
   }
+}
+
+
+
+function dragTask(id) {
+  var startIndex, changeIndex, uiHeight;
+  $('ul#tasks_area').sortable(
+    {
+      handle: ".draggable-area",
+      opacity: 0.35,
+      placeholder: 'marker',
+      start: function(e, ui) {
+          startIndex = ui.placeholder.index();
+          uiHeight = ui.item.outerHeight(true);
+          ui.item.nextAll('li.task:not(.marker)').css({
+              transform: `translateY(${uiHeight}px)`
+          });
+      },
+      change: function(e, ui) {
+          changeIndex = ui.placeholder.index();
+          if (startIndex > changeIndex) {
+              var slice = $('ul#tasks_area li.task').slice(changeIndex, $('ul#tasks_area li.task').length);
+              slice.not('.ui-sortable-helper').each(function() {
+                  $(this).css({
+                      transform: `translateY(${uiHeight}px)`
+                  });
+              });
+          } else if (startIndex < changeIndex) {
+              var slice = $('ul#tasks_area li.task').slice(startIndex, changeIndex);
+              slice.not('.ui-sortable-helper').each(function() {
+                  $(this).css({
+                      transform: 'translateY(0px)'
+                  });
+              });
+          }
+          startIndex = changeIndex
+      },
+      stop: function(e, ui) {
+          $('ul#tasks_area li.task').css({
+              transform: 'translateY(0px)'
+          })
+      }
+    }
+  );
+  //$( "ul#tasks_area" ).disableSelection();
 }
 
 
@@ -131,6 +177,7 @@ function attachJsToTasksWithClass(func) {
 function initTasksJs() {
   attachJsToTasksWithClass(animateProgressBar);
   attachJsToTasksWithClass(editTaskName);
+  attachJsToTasksWithClass(dragTask);
 }
 
 

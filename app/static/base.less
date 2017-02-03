@@ -134,16 +134,37 @@ section#history_section {
 
 /* Tasks area section
 ------------------------------------------------------------------------------*/
-section#tasks_area {
+ul#tasks_area {
     width: 100%;
 
-    div.task {
+    .marker {
+      height: 0;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    li.task {
         border-radius: 30px;
-        margin-top: 10px;
-        margin-bottom: 10px;
+        margin-top: 0px;
+        margin-bottom: 0px;
         padding-left: 0px;
         padding-right: 0px;
         font-size: 0px;
+        transition: transform .2s;
+
+        div.draggable-area {
+            display: inline-block;
+            width: 2%;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 20px;
+            cursor: pointer;
+            color: @lite_gray;
+        }
 
         div.complete {
             display: inline-block;
@@ -167,7 +188,7 @@ section#tasks_area {
 
         div.name-and-progress {
             display: inline-block;
-            width: 87%;
+            width: 85%;
             text-align: center;
             vertical-align: middle;
             font-size: 18px;

@@ -4,7 +4,10 @@
         {% if left_percents < 0 %}
             {% set left_percents = 0 %}
         {% endif %}
-        <div id="{{ task.id }}" class="task well well-sm">
+        <li id="{{ task.id }}" class="task well well-sm">
+            <div class="draggable-area">
+                <i class="fa fa-arrows" aria-hidden="true"></i>
+            </div>
             <div class="complete">
                 <a onclick="completeTask('{{ task.id }}')">
                     <i class="fa fa-check-circle" aria-hidden="true"></i>
@@ -26,7 +29,7 @@
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
-        </div>
+        </li>
         {% endif %}
 {% endmacro %}
 
