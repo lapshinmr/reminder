@@ -2,7 +2,7 @@
 function attachJsToTask(id) {
     animateProgressBar(id);
     editTaskName(id);
-    dragTask(id);
+    dragTask();
 }
 
 
@@ -35,17 +35,18 @@ function addNewTask() {
 }
 
 
-
-function dragTask(id) {
-  var startIndex, changeIndex, uiHeight;
+// SORT TASK
+function dragTask() {
+  var taskId, startIndex, changeIndex, currentIndex, uiHeight;
   $('ul#tasks_area').sortable(
     {
       handle: ".draggable-area",
-      opacity: 0.35,
+      opacity: 0.75,
       placeholder: 'marker',
       start: function(e, ui) {
           startIndex = ui.placeholder.index();
           uiHeight = ui.item.outerHeight(true);
+          taskId = ui.item[0].id;
           ui.item.nextAll('li.task:not(.marker)').css({
               transform: `translateY(${uiHeight}px)`
           });
@@ -59,6 +60,7 @@ function dragTask(id) {
                       transform: `translateY(${uiHeight}px)`
                   });
               });
+              changeIndex += 1
           } else if (startIndex < changeIndex) {
               var slice = $('ul#tasks_area li.task').slice(startIndex, changeIndex);
               slice.not('.ui-sortable-helper').each(function() {
@@ -67,16 +69,16 @@ function dragTask(id) {
                   });
               });
           }
-          startIndex = changeIndex
+          currentIndex = changeIndex
       },
       stop: function(e, ui) {
           $('ul#tasks_area li.task').css({
               transform: 'translateY(0px)'
-          })
+          });
+          $.post('/change_order_idx', {'task_id': taskId, 'order_idx': currentIndex});
       }
     }
   );
-  //$( "ul#tasks_area" ).disableSelection();
 }
 
 
@@ -115,9 +117,8 @@ function editTaskName(id) {
   });
   $(element).on('focusout',
     function(event) {
-      var url = "/" + id + "/edit";
       var cur_value = $(element).text();
-      $.post(url, {'new_task_name': cur_value});
+      $.post('/edit', {'new_task_name': cur_value, 'task_id': id});
     }
   );
 }
@@ -125,8 +126,7 @@ function editTaskName(id) {
 
 // CLOSE TASK
 function closeTask(id) {
-  var url = "/" + id + "/close";
-  $.post(url).done(function(response) {
+  $.post('/close', {'task_id': id}).done(function(response) {
     $('#' + id).remove();
     $('#history_section').html(response['history_area_html']);
   });
@@ -135,8 +135,7 @@ function closeTask(id) {
 
 // COMPLETE TASK
 function completeTask(id) {
-  var url = "/" + id + "/complete";
-  $.post(url).done(
+  $.post("/complete", {'task_id': id}).done(
     function(response) {
       $('#history_section').prepend($(response['history_item_html']));
       $('#' + id).replaceWith($(response['task_item_html']));
@@ -150,13 +149,13 @@ function completeTask(id) {
 function removeHistoryItem(close_button, id, time_complete) {
   var history_item = $(close_button).parents('div.history-row').get(0);
   $(history_item).remove()
-  $.post('/' + id + '/' + time_complete + '/remove')
+  $.post('/remove', {'task_id': id, 'time_complete': time_complete})
 }
 
 
 // RESTORE TASK
 function restoreTask(id) {
-  $.post('/' + id + '/restore').done(
+  $.post('/restore', {'task_id': id}).done(
      function(response) {
        $('#tasks_area').prepend(response['task_item_html']);
        attachJsToTask(response['task_id']);

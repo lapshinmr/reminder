@@ -8,7 +8,9 @@ from .reminder_tools import TimeUnitsRanges
 
 @reminder.route('/', methods=['GET', 'POST'])
 def index():
-    tasks = Task.query.all()
+    # tasks section
+    tasks = Task.query.order_by(Task.order_idx)
+    # history section
     tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
     return render_template(
         'reminder/index.html', tasks=tasks, tasks_times=tasks_times,
@@ -20,15 +22,18 @@ def index():
 def add():
     task_name = request.form['task-name']
     time_loop = int(request.form['duration'])
-    new_task = Task(name=task_name, time_loop=time_loop)
+    tasks_total = len(Task.query.all())
+    new_task_idx = tasks_total
+    new_task = Task(name=task_name, time_loop=time_loop, order_idx=new_task_idx)
     db.session.add(new_task)
     db.session.commit()
     task = Task.query.filter_by(time_init=new_task.time_init).filter_by(name=new_task.name).first()
     return jsonify(task_item_html=render_template('reminder/task_item.html', task=task), task_id=task.id)
 
 
-@reminder.route('/<task_id>/edit', methods=['POST'])
-def edit(task_id):
+@reminder.route('/edit', methods=['POST'])
+def edit():
+    task_id = request.form.get('task_id')
     task = Task.query.filter_by(id=task_id).first()
     new_task_name = request.form.get('new_task_name')
     if task.name != new_task_name:
@@ -37,8 +42,9 @@ def edit(task_id):
     return jsonify()
 
 
-@reminder.route('/<task_id>/complete', methods=['POST'])
-def complete(task_id):
+@reminder.route('/complete', methods=['POST'])
+def complete():
+    task_id = request.form.get('task_id')
     task = Task.query.filter_by(id=task_id).first()
     time_complete = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     if task:
@@ -53,8 +59,9 @@ def complete(task_id):
     )
 
 
-@reminder.route('/<task_id>/close', methods=['POST'])
-def close(task_id):
+@reminder.route('/close', methods=['POST'])
+def close():
+    task_id = request.form.get('task_id')
     task = Task.query.filter_by(id=task_id).first()
     if task:
         times = Time.query.filter_by(task=task).all()
@@ -68,8 +75,10 @@ def close(task_id):
     )
 
 
-@reminder.route('/<task_id>/<time_complete>/remove', methods=['POST'])
-def remove(task_id, time_complete):
+@reminder.route('/remove', methods=['POST'])
+def remove():
+    task_id = request.form.get('task_id')
+    time_complete = request.form.get('time_complete')
     task = Task.query.filter_by(id=task_id).first()
     if task:
         time = Time.query.filter_by(task=task).filter_by(time_complete=time_complete).first()
@@ -82,8 +91,9 @@ def remove(task_id, time_complete):
     return jsonify()
 
 
-@reminder.route('/<task_id>/restore', methods=['POST'])
-def restore(task_id):
+@reminder.route('/restore', methods=['POST'])
+def restore():
+    task_id = request.form.get('task_id')
     task = Task.query.filter_by(id=task_id).first()
     if task:
         task.time_close = None
@@ -94,4 +104,18 @@ def restore(task_id):
         task_id=task.id,
         history_area_html=render_template('reminder/history_area.html', tasks_times=tasks_times)
     )
+
+
+@reminder.route('/change_order_idx', methods=['POST'])
+def change_order_idx():
+    task_id = request.form.get('task_id')
+    new_order_idx = int(request.form.get('order_idx')) - 1
+    task = Task.query.filter_by(id=task_id).first()
+    tasks = Task.query.order_by(Task.order_idx).all()
+    old_order_idx = task.order_idx
+    tasks.insert(new_order_idx, tasks.pop(old_order_idx))
+    for idx, task in enumerate(tasks):
+        task.update_order_idx(idx)
+    db.session.commit()
+    return jsonify()
 

@@ -10,20 +10,25 @@ class Task(db.Model):
     time_init = db.Column(db.String(64))
     time_last = db.Column(db.String(64))
     time_close = db.Column(db.String(64))
+    order_idx = db.Column(db.Integer)
     times = db.relationship('Time', backref='task')
     time_format = "%Y-%m-%d %H:%M:%S"
 
-    def __init__(self, name, time_loop):
+    def __init__(self, name, time_loop, order_idx):
         self.name = name
-        self.update(time_loop)
+        self.update_time_loop(time_loop)
+        self.order_idx = order_idx
 
     def __repr__(self):
         return '<Task %r>' % self.name
 
-    def update(self, time_loop):
+    def update_time_loop(self, time_loop):
         self.time_loop = time_loop
         self.time_init = datetime.datetime.now().strftime(self.time_format)
         self.time_last = self.time_init
+
+    def update_order_idx(self, order_idx):
+        self.order_idx = order_idx
 
     def count_left_time(self):
         duration_time = datetime.datetime.now() - datetime.datetime.strptime(self.time_last, self.time_format)
@@ -50,6 +55,9 @@ class Task(db.Model):
 
     def is_close(self):
         return self.time_close
+
+    def is_complete(self):
+        pass
 
 
 class Time(db.Model):
