@@ -1,7 +1,7 @@
 from app import db
 from . import reminder
 from .models import Task, Time
-from flask import render_template, request, jsonify, flash, redirect, url_for
+from flask import render_template, request, jsonify
 import datetime
 from .reminder_tools import TimeUnitsRanges
 
@@ -22,8 +22,10 @@ def index():
 def add():
     task_name = request.form['task-name']
     time_loop = int(request.form['duration'])
-    tasks_total = len(Task.query.all())
-    new_task_idx = tasks_total
+    new_task_idx = 0
+    tasks = Task.query.order_by(Task.order_idx).all()
+    for idx, task in enumerate(tasks, start=1):
+        task.update_order_idx(idx)
     new_task = Task(name=task_name, time_loop=time_loop, order_idx=new_task_idx)
     db.session.add(new_task)
     db.session.commit()
@@ -118,4 +120,27 @@ def change_order_idx():
         task.update_order_idx(idx)
     db.session.commit()
     return jsonify()
+
+
+@reminder.route('/make_order', methods=['POST'])
+def make_order():
+    order_type = request.form.get('order_type')
+    old_order = [task.id for task in Task.query.order_by(Task.order_idx).all()]
+    print(old_order)
+    if order_type == 'by_name':
+        tasks = Task.query.order_by(Task.name).all()
+    elif order_type == 'by_time_init':
+        tasks = Task.query.order_by(Task.time_init).all()
+    elif order_type == 'by_time_loop':
+        tasks = Task.query.order_by(Task.time_loop).all()
+    else:
+        tasks = Task.query.order_by(Task.order_idx).all()
+    for idx, task in enumerate(tasks, start=0):
+        task.update_order_idx(idx)
+    db.session.commit()
+    new_order = [task.id for task in tasks]
+    print(new_order)
+    ids_couples = [list(couple) for couple in zip(old_order, new_order) if couple[0] != couple[1]]
+    print(ids_couples)
+    return jsonify({'ids_couples': ids_couples})
 

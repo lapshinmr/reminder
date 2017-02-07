@@ -165,6 +165,64 @@ function restoreTask(id) {
 }
 
 
+// ANIMATE TASKS SORTING
+function makeReplaceFunction(li1, li2, li1offset, li2offset, clone_to_replace, clone_to_move) {
+  return function() {
+    clone_to_replace.insertAfter(li2);
+    clone_to_replace.css({'visibility': 'hidden'});
+    li1.hide();
+    clone_to_move.appendTo('ul#tasks_area');
+    clone_to_move.css({
+      'position': 'absolute',
+      'top': li1offset.top,
+      //'left': li1offset.left,
+      'z-index': 1000,
+      'width': 'inherit'
+    });
+    clone_to_move.animate(
+      {
+        'top': li2offset.top,
+        //'left': li2offset.left
+      },
+      'slow',
+      function(){
+        clone_to_move.remove();
+        clone_to_replace.removeAttr('style');
+        li1.remove();
+      }
+    );
+  }
+}
+
+function animateTaskSorting(ids){
+  var replaceFunctions = []
+  for (var i = 0; i < ids.length; i++) {
+    var $li1 = $('li#' + ids[i][0]);
+    var $li2 = $('li#' + ids[i][1]);
+    var li1offset = $li1.offset();
+    var li2offset = $li2.offset();
+    var $clone_to_replace = $li1.clone();
+    var $clone_to_move = $li1.clone();
+    replaceFunctions.push(makeReplaceFunction($li1, $li2, li1offset, li2offset, $clone_to_replace, $clone_to_move));
+  }
+  for (var i = 0; i < replaceFunctions.length; i++) {
+    replaceFunctions[i]();
+  }
+}
+
+
+// MAKE ORDER
+function makeOrder(order_option) {
+  var value = $(order_option).attr('value')
+  $.post('/make_order', {'order_type': value}).done(
+    function(response) {
+      console.log(response['ids_couples']);
+      animateTaskSorting(response['ids_couples']);
+    }
+  )
+}
+
+
 function attachJsToTasksWithClass(func) {
   var tasks = document.getElementsByClassName("task");
   for (var i = 0; i < tasks.length; i++) {
