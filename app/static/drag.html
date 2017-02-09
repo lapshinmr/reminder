@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Draggable - Handles</title>
+  <style>
+    ul {
+      width: 300px;
+    }
+    li {
+      text-align: center;
+      background: lightblue;
+      list-style: none;
+      padding: 12px 6px;
+      z-index: 1;
+      margin: 5px 20px;
+      overflow: hidden;
+      transition: transform .2s;
+    }
+    .marker {
+      height: 0;
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+  <ul>
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+      <li>5</li>
+      <li>6</li>
+  </ul>
+  <script>
+    var startIndex, changeIndex, uiHeight;
+
+    $('ul').sortable({
+        placeholder: 'marker',
+        start: function(e, ui) {
+            startIndex = ui.placeholder.index();
+            uiHeight = ui.item.outerHeight(true);
+            ui.item.nextAll('li:not(.marker)').css({
+                transform: `translateY(${uiHeight}px)`
+            });
+        },
+        change: function(e, ui) {
+            changeIndex = ui.placeholder.index();
+            if (startIndex > changeIndex) {
+                var slice = $('ul li').slice(changeIndex, $('ul li').length);
+                slice.not('.ui-sortable-helper').each(function() {
+                    $(this).css({
+                        transform: `translateY(${uiHeight}px)`
+                    });
+                });
+            } else if (startIndex < changeIndex) {
+                var slice = $('ul li').slice(startIndex, changeIndex);
+                slice.not('.ui-sortable-helper').each(function() {
+                    $(this).css({
+                        transform: `translateY(0px)`
+                    });
+                });
+            }
+            startIndex = changeIndex
+        },
+        stop: function(e, ui) {
+            $('.ui-sortable-handle').css({
+                transform: 'translateY(0px)'
+            })
+        }
+    });
+  </script>
+</body>
+</html>

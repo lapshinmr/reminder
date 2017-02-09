@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>QUnit Example</title>
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
+  <script src="duration.js"></script>
+  <script>
+    QUnit.test( "TimeUnit tests", function( assert ) {
+      var tu = new TimeUnit(0, 0, 2);
+      tu.increase();
+      assert.equal( tu.value, 1, "First increase (1 from 2)" );
+      tu.increase();
+      assert.equal( tu.value, 2, "Second increase (2 from 2)" );
+      tu.increase();
+      assert.equal( tu.value, 2, "Max value reached (2 from 2)" );
+      tu.decrease();
+      assert.equal( tu.value, 1, "Max value reached (1 from 2)" );
+      tu.decrease();
+      assert.equal( tu.value, 0, "Max value reached (0 from 2)" );
+      tu.decrease();
+      assert.equal( tu.value, 0, "Min value reached (0 from 2)" );
+    });
+  </script>
+</body>
+</html>

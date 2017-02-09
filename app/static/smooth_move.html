@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style rel="stylesheet" type="text/css">
+    #left {
+      display: inline-block;
+      width: 39%;
+    }
+    #right {
+      display: inline-block;
+      width: 60%;
+    }
+    #right li {
+      position: relative;
+      background-color: red;
+    }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        function moveAnimate(old_order, new_order){
+          animations = []
+          var lis = $('ul li');
+          var old_heights = [];
+          for (var i = 0; i < lis.length; i++) {
+            old_heights.push(lis.eq(i).outerHeight(true));
+          }
+          var new_heights = [];
+          for (var i = 0; i < old_heights.length; i++) {
+            new_heights.push(old_heights[old_order.indexOf(new_order[i])])
+          }
+          for (var i = 0; i < old_order.length; i++) {
+            var id = old_order[i];
+            var $li = $('li#' + id);
+            var $li_clone = $li.clone();
+            $li_clone.insertAfter($li);
+            $li.insertAfter($('li#' + old_order[new_order.indexOf(id)]));
+            $li.hide();
+            var heights1 = old_heights.slice(0, old_order.indexOf(id));
+            var heights2 = new_heights.slice(0, new_order.indexOf(id));
+            h1 = 0;
+            for (var j = 0; j < heights1.length; j++) {
+              h1 += heights1[j]
+            }
+            h2 = 0;
+            for (var j = 0; j < heights2.length; j++) {
+              h2 += heights2[j]
+            }
+            var delta = h2 - h1;
+            var animation = function(li, li_clone, delta) {
+              return function() {
+                li_clone.animate({top: delta}, 'slow',
+                  function() {
+                    li_clone.remove();
+                    li.show();
+                    //li.removeAttr('style')
+                  }
+                )
+              }
+            }
+            animations.push(animation($li, $li_clone, delta))
+          }
+          for (var i = 0; i < animations.length; i++) {
+            animations[i]();
+          }
+        }
+    </script>
+
+</head>
+<body>
+
+<div id="left">
+
+</div>
+<div id="right">
+  <ul>
+      <li id="26">4</li>
+      <li id="27">3</li>
+      <li id="28">2<br />tree<br />lines</li>
+      <li id="29">1</li>
+      <li id="25">5<br />two lines</li>
+  </ul>
+</div>
+
+<script>
+  moveAnimate(
+    ['26', '27', '28', '29', '25'],
+    //['29', '28', '27', '26', '25']
+    ['25', '28', '27', '26', '29']
+  );
+</script>
+
+</body>
+</html>

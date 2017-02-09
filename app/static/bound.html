@@ -1,0 +1,22 @@
+<head>
+    <script language="javascript" type="text/javascript">
+    ClickCounter = function(buttonId) {
+      this.clickCount = 0;
+      var that = this;
+      document.getElementById(buttonId).onclick = function(){ that.buttonClicked() };
+    }
+
+    ClickCounter.prototype = {
+      buttonClicked: function() {
+          this.clickCount++;
+          alert('the button was clicked ' + this.clickCount + ' times');
+      }
+    }
+    </script>
+</head>
+<body>
+    <input type="button" id="btn1" value="Click me" />
+    <script language="javascript" type="text/javascript">
+        var btn1counter = new ClickCounter('btn1');
+    </script>
+</body>
