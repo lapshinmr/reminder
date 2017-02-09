@@ -126,7 +126,6 @@ def change_order_idx():
 def make_order():
     order_type = request.form.get('order_type')
     old_order = [task.id for task in Task.query.order_by(Task.order_idx).all()]
-    print(old_order)
     if order_type == 'by_name':
         tasks = Task.query.order_by(Task.name).all()
     elif order_type == 'by_time_init':
@@ -139,8 +138,7 @@ def make_order():
         task.update_order_idx(idx)
     db.session.commit()
     new_order = [task.id for task in tasks]
+    print(old_order)
     print(new_order)
-    ids_couples = [list(couple) for couple in zip(old_order, new_order) if couple[0] != couple[1]]
-    print(ids_couples)
-    return jsonify({'ids_couples': ids_couples})
+    return jsonify({'old_order': old_order, 'new_order': new_order})
 

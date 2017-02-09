@@ -1,11 +1,5 @@
 
-function attachJsToTask(id) {
-    animateProgressBar(id);
-    editTaskName(id);
-    dragTask();
-}
-
-
+// WARNING MESSAGE
 function generateWarning(message) {
   var warning_markup = (
     `<div class="alert alert-warning alert-dismissable fade in">
@@ -22,7 +16,6 @@ function addNewTask() {
   var duration = $('#duration').val();
   var taskName = $('#task-name').val();
   if (duration == 0) {
-    //alert('Please choose duration more then ZERO')
     generateWarning('Please choose duration more then ZERO')
   } else {
     $.post('/add_task', {'duration': duration, 'task-name': taskName}).done(
@@ -35,61 +28,15 @@ function addNewTask() {
 }
 
 
-// SORT TASK
-function dragTask() {
-  var taskId, startIndex, changeIndex, currentIndex, uiHeight;
-  $('ul#tasks_area').sortable(
-    {
-      handle: ".draggable-area",
-      opacity: 0.75,
-      placeholder: 'marker',
-      start: function(e, ui) {
-          startIndex = ui.placeholder.index();
-          uiHeight = ui.item.outerHeight(true);
-          taskId = ui.item[0].id;
-          ui.item.nextAll('li.task:not(.marker)').css({
-              transform: `translateY(${uiHeight}px)`
-          });
-      },
-      change: function(e, ui) {
-          changeIndex = ui.placeholder.index();
-          if (startIndex > changeIndex) {
-              var slice = $('ul#tasks_area li.task').slice(changeIndex, $('ul#tasks_area li.task').length);
-              slice.not('.ui-sortable-helper').each(function() {
-                  $(this).css({
-                      transform: `translateY(${uiHeight}px)`
-                  });
-              });
-              changeIndex += 1
-          } else if (startIndex < changeIndex) {
-              var slice = $('ul#tasks_area li.task').slice(startIndex, changeIndex);
-              slice.not('.ui-sortable-helper').each(function() {
-                  $(this).css({
-                      transform: 'translateY(0px)'
-                  });
-              });
-          }
-          currentIndex = changeIndex
-      },
-      stop: function(e, ui) {
-          $('ul#tasks_area li.task').css({
-              transform: 'translateY(0px)'
-          });
-          $.post('/change_order_idx', {'task_id': taskId, 'order_idx': currentIndex});
-      }
-    }
-  );
-}
-
 
 // ANIMATE TASK BAR
 function animateProgressBar(id) {
-  var progressBar = $('#' + id).find('.progress-bar');
-  var width = $(progressBar).attr('style')
+  var $progressBar = $('#' + id).find('.progress-bar');
+  var width = $progressBar.attr('style')
   width = width.split(' ')[1].replace("%", "");
   if (width > 0) {
     var width_step = 0.5;
-    var leftTime = $(progressBar).attr("data-left-time");
+    var leftTime = $progressBar.attr("data-left-time");
     var updateTime = leftTime / (width / width_step) * 1000;
     var interval_id = setInterval(
       function() {
@@ -97,7 +44,7 @@ function animateProgressBar(id) {
           clearInterval(interval_id);
         } else {
           width -= width_step;
-          $(progressBar).css("width", width + "%");
+          $progressBar.css("width", width + "%");
         }
       },
       updateTime
@@ -165,37 +112,98 @@ function restoreTask(id) {
 }
 
 
-// ANIMATE TASKS SORTING
-function makeReplaceFunction(li1, li2, li1offset, li2offset, clone_to_replace) {
-  return function() {
-    clone_to_replace.hide()
-    clone_to_replace.insertAfter(li2);
-    li1.animate(
-      {
-        top: li2offset.top - li1offset.top
+// SORT TASK
+function dragTask() {
+  var taskId, startIndex, changeIndex, currentIndex, uiHeight;
+  $('ul#tasks_area').sortable(
+    {
+      handle: ".draggable-area",
+      opacity: 0.75,
+      placeholder: 'marker',
+      start: function(e, ui) {
+          startIndex = ui.placeholder.index();
+          uiHeight = ui.item.outerHeight(true);
+          taskId = ui.item[0].id;
+          ui.item.nextAll('li.task:not(.marker)').css({
+              transform: `translateY(${uiHeight}px)`
+          });
       },
-      'slow',
-      function(){
-        clone_to_replace.show();
-        clone_to_replace.removeAttr('style');
-        li1.remove();
+      change: function(e, ui) {
+          changeIndex = ui.placeholder.index();
+          if (startIndex > changeIndex) {
+              var slice = $('ul#tasks_area li.task').slice(changeIndex, $('ul#tasks_area li.task').length);
+              slice.not('.ui-sortable-helper').each(function() {
+                  $(this).css({
+                      transform: `translateY(${uiHeight}px)`
+                  });
+              });
+              changeIndex += 1
+          } else if (startIndex < changeIndex) {
+              var slice = $('ul#tasks_area li.task').slice(startIndex, changeIndex);
+              slice.not('.ui-sortable-helper').each(function() {
+                  $(this).css({
+                      transform: 'translateY(0px)'
+                  });
+              });
+          }
+          currentIndex = changeIndex
+      },
+      stop: function(e, ui) {
+          $('ul#tasks_area li.task').css({
+              transform: 'translateY(0px)'
+          });
+          $.post('/change_order_idx', {'task_id': taskId, 'order_idx': currentIndex});
       }
-    )
-  }
+    }
+  );
 }
 
-function animateTaskSorting(ids){
-  var replaceFunctions = []
-  for (var i = 0; i < ids.length; i++) {
-    var $li1 = $('li#' + ids[i][0]);
-    var $li2 = $('li#' + ids[i][1]);
-    var li1offset = $li1.position();
-    var li2offset = $li2.position();
-    var $clone_to_replace = $li1.clone();
-    replaceFunctions.push(makeReplaceFunction($li1, $li2, li1offset, li2offset, $clone_to_replace));
+
+// ANIMATE TASKS SORTING
+function animateTasksSorting(old_order, new_order){
+  animations = []
+  var lis = $('ul#tasks_area li');
+  var old_heights = [];
+  for (var i = 0; i < lis.length; i++) {
+    old_heights.push(lis.eq(i).outerHeight(true));
   }
-  for (var i = 0; i < replaceFunctions.length; i++) {
-    replaceFunctions[i]();
+  var new_heights = [];
+  for (var i = 0; i < old_heights.length; i++) {
+    new_heights.push(old_heights[old_order.indexOf(new_order[i])])
+  }
+  for (var i = 0; i < old_order.length; i++) {
+    var id = old_order[i];
+    var $li = $('li#' + id);
+    var $li_clone = $li.clone();
+    $li_clone.insertAfter($li);
+    $li.insertAfter($('li#' + old_order[new_order.indexOf(id)]));
+    $li.hide();
+    var heights1 = old_heights.slice(0, old_order.indexOf(id));
+    var heights2 = new_heights.slice(0, new_order.indexOf(id));
+    h1 = 0;
+    for (var j = 0; j < heights1.length; j++) {
+      h1 += heights1[j]
+    }
+    h2 = 0;
+    for (var j = 0; j < heights2.length; j++) {
+      h2 += heights2[j]
+    }
+    var delta = h2 - h1;
+    var animation = function(li, li_clone, delta) {
+      return function() {
+        li_clone.animate({top: delta}, 'slow',
+          function() {
+            li_clone.remove();
+            li.show();
+            //li.removeAttr('style')
+          }
+        )
+      }
+    }
+    animations.push(animation($li, $li_clone, delta))
+  }
+  for (var i = 0; i < animations.length; i++) {
+    animations[i]();
   }
 }
 
@@ -205,10 +213,16 @@ function makeOrder(order_option) {
   var value = $(order_option).attr('value')
   $.post('/make_order', {'order_type': value}).done(
     function(response) {
-      console.log(response['ids_couples']);
-      animateTaskSorting(response['ids_couples']);
+      animateTasksSorting(response['old_order'], response['new_order']);
     }
   )
+}
+
+
+function attachJsToTask(id) {
+    animateProgressBar(id);
+    editTaskName(id);
+    dragTask();
 }
 
 
