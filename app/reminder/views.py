@@ -26,15 +26,14 @@ def add():
     task_name = request.form['task-name']
     time_loop = int(request.form['duration'])
     new_task_idx = 0
-    tasks = Task.query.order_by(Task.order_idx).all()
+    tasks = Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()
     for idx, task in enumerate(tasks, start=1):
         task.update_order_idx(idx)
-    print(current_user.id)
     user_id = current_user.id
     new_task = Task(name=task_name, time_loop=time_loop, user_id=user_id, order_idx=new_task_idx)
     db.session.add(new_task)
     db.session.commit()
-    task = Task.query.filter_by(time_init=new_task.time_init).filter_by(name=new_task.name).first()
+    task = Task.query.filter_by(user_id=current_user.id).filter_by(time_init=new_task.time_init).filter_by(name=new_task.name).first()
     return jsonify(task_item_html=render_template('reminder/task_item.html', task=task), task_id=task.id)
 
 
@@ -130,15 +129,15 @@ def change_order_idx():
 @reminder.route('/make_order', methods=['POST'])
 def make_order():
     order_type = request.form.get('order_type')
-    old_order = [task.id for task in Task.query.order_by(Task.order_idx).all()]
+    old_order = [task.id for task in Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()]
     if order_type == 'by_name':
-        tasks = Task.query.order_by(Task.name).all()
+        tasks = Task.query.order_by(Task.name).filter_by(user_id=current_user.id).all()
     elif order_type == 'by_time_init':
-        tasks = Task.query.order_by(Task.time_init).all()
+        tasks = Task.query.order_by(Task.time_init).filter_by(user_id=current_user.id).all()
     elif order_type == 'by_time_loop':
-        tasks = Task.query.order_by(Task.time_loop).all()
+        tasks = Task.query.order_by(Task.time_loop).filter_by(user_id=current_user.id).all()
     else:
-        tasks = Task.query.order_by(Task.order_idx).all()
+        tasks = Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()
     for idx, task in enumerate(tasks, start=0):
         task.update_order_idx(idx)
     db.session.commit()

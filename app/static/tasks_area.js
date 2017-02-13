@@ -195,7 +195,6 @@ function animateTasksSorting(old_order, new_order){
           function() {
             li_clone.remove();
             li.show();
-            //li.removeAttr('style')
           }
         )
       }
@@ -210,7 +209,7 @@ function animateTasksSorting(old_order, new_order){
 
 // MAKE ORDER
 function makeOrder(order_option) {
-  var value = $(order_option).attr('value')
+  var value = $(order_option).attr('data-value');
   $.post('/make_order', {'order_type': value}).done(
     function(response) {
       animateTasksSorting(response['old_order'], response['new_order']);

@@ -19,12 +19,20 @@
         </section>
     </div>
     <div id="right_side" class="col-md-9">
-        <select id="order_type" name="order_type">
-            <option value="custom" onclick="makeOrder(this)">custom</option>
-            <option value="by_name" onclick="makeOrder(this)">name</option>
-            <option value="by_time_loop" onclick="makeOrder(this)">loop time</option>
-            <option value="by_time_init" onclick="makeOrder(this)">init time</option>
-        </select>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="dropdown pull-right">
+              <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Sort by
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li role="presentation"><a role="menuitem" onclick="makeOrder(this)" data-value="custom">custom</a></li>
+                <li role="presentation"><a role="menuitem" onclick="makeOrder(this)" data-value="by_name">name</a></li>
+                <li role="presentation"><a role="menuitem" onclick="makeOrder(this)" data-value="by_time_loop">loop time</a></li>
+                <li role="presentation"><a role="menuitem" onclick="makeOrder(this)" data-value="by_time_init">init time</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <ul id="tasks_area">
             {{ create_tasks_area(tasks) }}
         </ul>
