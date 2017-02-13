@@ -1,5 +1,5 @@
 from app import db
-from .reminder_tools import *
+from app.reminder.reminder_tools import *
 
 
 class Task(db.Model):
@@ -68,3 +68,5 @@ class Time(db.Model):
 
     def __repr__(self):
         return '<Time %r for task %r>' % (self.time_complete, self.task_id)
+
+

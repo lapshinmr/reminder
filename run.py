@@ -2,6 +2,7 @@
 
 from app import db, create_app
 from app.reminder.models import Time, Task
+from app.auth.models import User, Role
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
@@ -13,7 +14,7 @@ migrate = Migrate(app, db)
 
 
 def make_shell_context():
-    return dict(app=app, db=db, Task=Task, Time=Time)
+    return dict(app=app, db=db, Task=Task, Time=Time, User=User, Role=Role)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 

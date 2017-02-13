@@ -1,9 +1,9 @@
+import datetime
 from app import db
 from . import reminder
-from .models import Task, Time
+from app.reminder.models import Task, Time
 from flask import render_template, request, jsonify
-import datetime
-from .reminder_tools import TimeUnitsRanges
+from app.reminder.reminder_tools import TimeUnitsRanges
 
 
 @reminder.route('/', methods=['GET', 'POST'])
