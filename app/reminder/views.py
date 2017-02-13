@@ -3,13 +3,16 @@ from app import db
 from . import reminder
 from app.reminder.models import Task, Time
 from flask import render_template, request, jsonify
+from flask_login import current_user
 from app.reminder.reminder_tools import TimeUnitsRanges
 
 
 @reminder.route('/', methods=['GET', 'POST'])
 def index():
+    if current_user.is_anonymous:
+        return render_template('auth/index.html')
     # tasks section
-    tasks = Task.query.order_by(Task.order_idx)
+    tasks = Task.query.filter_by(user_id=current_user.id).order_by(Task.order_idx)
     # history section
     tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
     return render_template(
@@ -26,7 +29,9 @@ def add():
     tasks = Task.query.order_by(Task.order_idx).all()
     for idx, task in enumerate(tasks, start=1):
         task.update_order_idx(idx)
-    new_task = Task(name=task_name, time_loop=time_loop, order_idx=new_task_idx)
+    print(current_user.id)
+    user_id = current_user.id
+    new_task = Task(name=task_name, time_loop=time_loop, user_id=user_id, order_idx=new_task_idx)
     db.session.add(new_task)
     db.session.commit()
     task = Task.query.filter_by(time_init=new_task.time_init).filter_by(name=new_task.name).first()

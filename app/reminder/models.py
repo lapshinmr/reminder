@@ -12,11 +12,13 @@ class Task(db.Model):
     time_close = db.Column(db.String(64))
     order_idx = db.Column(db.Integer)
     times = db.relationship('Time', backref='task')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     time_format = "%Y-%m-%d %H:%M:%S"
 
-    def __init__(self, name, time_loop, order_idx):
+    def __init__(self, name, time_loop, user_id, order_idx):
         self.name = name
         self.update_time_loop(time_loop)
+        self.user_id = user_id
         self.order_idx = order_idx
 
     def __repr__(self):
