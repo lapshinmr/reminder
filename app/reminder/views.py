@@ -115,9 +115,10 @@ def restore():
 @reminder.route('/change_order_idx', methods=['POST'])
 def change_order_idx():
     task_id = request.form.get('task_id')
-    new_order_idx = int(request.form.get('order_idx')) - 1
+    python_offset = 1
+    new_order_idx = int(request.form.get('order_idx')) - python_offset
     task = Task.query.filter_by(id=task_id).first()
-    tasks = Task.query.order_by(Task.order_idx).all()
+    tasks = Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()
     old_order_idx = task.order_idx
     tasks.insert(new_order_idx, tasks.pop(old_order_idx))
     for idx, task in enumerate(tasks):
