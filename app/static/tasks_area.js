@@ -160,59 +160,73 @@ function dragTask() {
 
 
 // ANIMATE TASKS SORTING
-function animateTasksSorting(old_order, new_order){
-  animations = []
-  var lis = $('ul#tasks_area li');
-  var old_heights = [];
-  for (var i = 0; i < lis.length; i++) {
-    old_heights.push(lis.eq(i).outerHeight(true));
-  }
-  var new_heights = [];
-  for (var i = 0; i < old_heights.length; i++) {
-    new_heights.push(old_heights[old_order.indexOf(new_order[i])])
-  }
-  for (var i = 0; i < old_order.length; i++) {
-    var id = old_order[i];
-    var $li = $('li#' + id);
-    var $li_clone = $li.clone();
-    $li_clone.insertAfter($li);
-    $li.insertAfter($('li#' + old_order[new_order.indexOf(id)]));
-    $li.hide();
-    var heights1 = old_heights.slice(0, old_order.indexOf(id));
-    var heights2 = new_heights.slice(0, new_order.indexOf(id));
-    h1 = 0;
-    for (var j = 0; j < heights1.length; j++) {
-      h1 += heights1[j]
-    }
-    h2 = 0;
-    for (var j = 0; j < heights2.length; j++) {
-      h2 += heights2[j]
-    }
-    var delta = h2 - h1;
-    var animation = function(li, li_clone, delta) {
-      return function() {
-        li_clone.animate({top: delta}, 'slow',
-          function() {
-            li_clone.remove();
-            li.show();
-          }
-        )
-      }
-    }
-    animations.push(animation($li, $li_clone, delta))
-  }
-  for (var i = 0; i < animations.length; i++) {
-    animations[i]();
-  }
-}
+function AnimateTasksSorting(old_order, new_order) {
+  this.old_order = old_order;
+  this.new_order = new_order;
+  this.lis = $('ul#tasks_area li');
+  this.animations = [];
+  this.old_heights = [];
+  this.new_heights = [];
 
+  this.sum = function(list) {
+    var s = 0;
+    for (var i = 0; i < list.length; i++) {
+      s += list[i]
+    }
+    return s
+  }
+
+  this.calc_heights = function() {
+    for (var i = 0; i < this.lis.length; i++) {
+      this.old_heights.push(this.lis.eq(i).outerHeight(true));
+    }
+    for (var i = 0; i < this.old_heights.length; i++) {
+      this.new_heights.push(this.old_heights[this.old_order.indexOf(this.new_order[i])])
+    }
+  }
+
+  this.animation = function(id, li, li_clone, delta) {
+    return function() {
+      li_clone.animate({top: delta}, 'slow',
+        function() {
+          li_clone.remove();
+          li.attr('id', id).removeAttr('style').show();
+        }
+      )
+    }
+  }
+
+  this.create_animations = function() {
+    for (var i = 0; i < this.old_order.length; i++) {
+      var id = this.old_order[i];
+      var old_idx = this.old_order.indexOf(id);
+      var new_idx = this.new_order.indexOf(id);
+      var $li = $('li#' + id);
+      var $li_clone = $li.clone();
+      $li_clone.insertAfter($li);
+      $li.removeAttr('id').insertAfter($('li#' + this.old_order[new_idx])).hide();
+      var delta = this.sum(this.new_heights.slice(0, new_idx)) - this.sum(this.old_heights.slice(0, old_idx));
+      this.animations.push(this.animation(id, $li, $li_clone, delta))
+    }
+  }
+
+  this.activate_animations = function() {
+    for (var i = 0; i < this.animations.length; i++) {
+      this.animations[i]();
+    }
+  }
+
+  this.calc_heights();
+  this.create_animations();
+  this.activate_animations();
+}
 
 // MAKE ORDER
 function makeOrder(order_option) {
   var value = $(order_option).attr('data-value');
   $.post('/make_order', {'order_type': value}).done(
     function(response) {
-      animateTasksSorting(response['old_order'], response['new_order']);
+      new AnimateTasksSorting(response['old_order'], response['new_order']);
     }
   )
 }

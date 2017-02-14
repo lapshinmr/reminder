@@ -143,5 +143,7 @@ def make_order():
         task.update_order_idx(idx)
     db.session.commit()
     new_order = [task.id for task in tasks]
+    print('old order', old_order)
+    print('new order', new_order)
     return jsonify({'old_order': old_order, 'new_order': new_order})
 
