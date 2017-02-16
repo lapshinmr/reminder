@@ -11,6 +11,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     times = db.relationship('Task', backref='user')
+    tabs = db.relationship('Tab', backref='user')
 
     @property
     def password(self):

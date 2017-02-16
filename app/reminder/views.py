@@ -1,7 +1,7 @@
 import datetime
 from app import db
 from . import reminder
-from app.reminder.models import Task, Time
+from app.reminder.models import Task, Time, Tab
 from flask import render_template, request, jsonify
 from flask_login import current_user
 from app.reminder.reminder_tools import TimeUnitsRanges
@@ -11,12 +11,18 @@ from app.reminder.reminder_tools import TimeUnitsRanges
 def index():
     if current_user.is_anonymous:
         return render_template('auth/index.html')
-    # tasks section
-    tasks = Task.query.filter_by(user_id=current_user.id).order_by(Task.order_idx)
-    # history section
-    tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
+    tabs = Tab.query.filter_by(user_id=current_user.id)
+    tabs_tasks = []
+    for tab in tabs:
+        tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab.id).order_by(Task.order_idx).all()
+        tabs_tasks.append([tab, tasks])
+    #tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
+    print(tabs)
     return render_template(
-        'reminder/index.html', tasks=tasks, tasks_times=tasks_times,
+        'reminder/index.html',
+        tabs=tabs,
+        tabs_tasks=tabs_tasks,
+    #    tasks_times=tasks_times,
         time_units_ranges=TimeUnitsRanges().gen_all()
     )
 
@@ -25,12 +31,13 @@ def index():
 def add():
     task_name = request.form['task-name']
     time_loop = int(request.form['duration'])
+    tab_id = request.form['tab-id']
     new_task_idx = 0
     tasks = Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()
     for idx, task in enumerate(tasks, start=1):
         task.update_order_idx(idx)
     user_id = current_user.id
-    new_task = Task(name=task_name, time_loop=time_loop, user_id=user_id, order_idx=new_task_idx)
+    new_task = Task(name=task_name, time_loop=time_loop, user_id=user_id, order_idx=new_task_idx, tab_id=tab_id)
     db.session.add(new_task)
     db.session.commit()
     task = Task.query.filter_by(user_id=current_user.id).filter_by(time_init=new_task.time_init).filter_by(name=new_task.name).first()
@@ -143,7 +150,32 @@ def make_order():
         task.update_order_idx(idx)
     db.session.commit()
     new_order = [task.id for task in tasks]
-    print('old order', old_order)
-    print('new order', new_order)
     return jsonify({'old_order': old_order, 'new_order': new_order})
+
+
+@reminder.route('/add_new_tab', methods=['POST'])
+def add_new_tab():
+    new_tab_name = request.form.get('new_tab_name')
+    if new_tab_name:
+        new_tab = Tab(name=new_tab_name, user_id=current_user.id, active=True)
+        tabs = Tab.query.filter_by(user_id=current_user.id).all()
+        for tab in tabs:
+            tab.deactivate()
+        db.session.add(new_tab)
+        db.session.commit()
+    active_tab = Tab.query.filter_by(user_id=current_user.id).filter_by(active=True).first()
+    return jsonify({'tab_id': active_tab.id})
+
+
+@reminder.route('/switch_tab', methods=['POST'])
+def switch_tab():
+    current_tab_id = int(request.form.get('current_tab_id'))
+    tabs = Tab.query.filter_by(user_id=current_user.id).all()
+    for tab in tabs:
+        if tab.id != current_tab_id and tab.is_active():
+            tab.deactivate()
+        elif tab.id == current_tab_id:
+            tab.activate()
+    db.session.commit()
+    return jsonify()
 

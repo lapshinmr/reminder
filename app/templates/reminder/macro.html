@@ -4,6 +4,7 @@
         {% if left_percents < 0 %}
             {% set left_percents = 0 %}
         {% endif %}
+
         <li id="{{ task.id }}" class="task well well-sm">
             <div class="draggable-area">
                 <i class="fa fa-arrows" aria-hidden="true"></i>
@@ -63,10 +64,22 @@
 {% endmacro %}
 
 
-{% macro create_tasks_area(tasks) %}
-    {% for task in tasks %}
-        {{ create_task_item(task) }}
-    {% endfor %}
+{% macro create_tasks_area(tabs_tasks) %}
+    <div class="tab-content">
+        {% for tab, tasks in tabs_tasks %}
+            {% if tab.is_active() %}
+            <div id="tab{{ tab.id }}" class="tab-pane fade in active">
+            {% else %}
+            <div id="tab{{ tab.id }}" class="tab-pane fade">
+            {% endif %}
+                <ul class="tasks_area">
+                    {% for task in tasks %}
+                        {{ create_task_item(task) }}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
 {% endmacro %}
 
 

@@ -18,9 +18,9 @@ function addNewTask() {
   if (duration == 0) {
     generateWarning('Please choose duration more then ZERO')
   } else {
-    $.post('/add_task', {'duration': duration, 'task-name': taskName}).done(
+    $.post('/add_task', {'duration': duration, 'task-name': taskName, 'tab-id': CURRENT_TAB}).done(
       function(response) {
-        $('#tasks_area').prepend(response['task_item_html']);
+        $('#tab' + CURRENT_TAB + ' ul.tasks_area').prepend(response['task_item_html']);
         attachJsToTask(response['task_id']);
       }
     )
@@ -112,7 +112,7 @@ function restoreTask(id) {
 }
 
 
-// SORT TASK
+// TASK SORTING
 function dragTask() {
   var taskId, startIndex, changeIndex, currentIndex, uiHeight;
   $('ul#tasks_area').sortable(
@@ -159,7 +159,6 @@ function dragTask() {
 }
 
 
-// ANIMATE TASKS SORTING
 function AnimateTasksSorting(old_order, new_order) {
   this.old_order = old_order;
   this.new_order = new_order;
@@ -221,7 +220,6 @@ function AnimateTasksSorting(old_order, new_order) {
   this.activate_animations();
 }
 
-// MAKE ORDER
 function makeOrder(order_option) {
   var value = $(order_option).attr('data-value');
   $.post('/make_order', {'order_type': value}).done(
@@ -232,6 +230,35 @@ function makeOrder(order_option) {
 }
 
 
+// TABS
+function addNewTab() {
+  var newTabName = $('#new-tab-name').val();
+  $.post('/add_new_tab', {'new_tab_name': newTabName}).done(
+    function(response) {
+      var tabId = response['tab_id']
+      var tabs = $('ul.nav.nav-tabs li')
+      for (var i = 0; i < tabs.length; i++) {
+        tabs.eq(i).removeClass('active')
+      }
+      var new_tab = $('<li><a data-toggle="tab" href="#tab' + tabId + '" onclick="switchTab(this)">' + newTabName + '</a></li>' )
+      var new_tab_div = $('<div id="tab' + tabId + '" class="tab-pane fade"><ul class="tasks_area"></ul></div>')
+      console.log($('ul.nav.nav-tabs li.add-button'))
+      $(new_tab).insertBefore($('ul.nav.nav-tabs li.add-button'));
+      $(new_tab_div).insertAfter($('div.tab-content > div'));
+      $('ul.nav.nav-tabs li a:last').trigger('click')
+    }
+  );
+}
+
+
+function switchTab(target) {
+    var id = $(target).attr('href').replace('#tab', '');
+    CURRENT_TAB = id;
+    $.post('/switch_tab', {'current_tab_id': CURRENT_TAB})
+}
+
+
+// CONTROLLER
 function attachJsToTask(id) {
     animateProgressBar(id);
     editTaskName(id);

@@ -12,8 +12,10 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="{{ url_for('static', filename='less.js') }}" type="text/javascript"></script>
     <script src="{{ url_for('static', filename='bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='less.js') }}" type="text/javascript"></script>
+
+    <script src="{{ url_for('static', filename='constants.js') }}"></script>
     <script src="{{ url_for('static', filename='duration.js') }}"></script>
     <script src="{{ url_for('static', filename='tasks_area.js') }}"></script>
 
@@ -63,6 +65,13 @@
         {% endif %}
     </div>
 
+    <script>
+        {% for tab in tabs %}
+            {% if tab.is_active() %}
+                CURRENT_TAB = {{ tab.id }}
+            {% endif %}
+        {% endfor %}
+    </script>
     <script>
         window.onload = function() {
             durationPicker.show();

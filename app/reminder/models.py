@@ -11,15 +11,17 @@ class Task(db.Model):
     time_last = db.Column(db.String(64))
     time_close = db.Column(db.String(64))
     order_idx = db.Column(db.Integer)
-    times = db.relationship('Time', backref='task')
+    tab_id = db.Column(db.Integer, db.ForeignKey('tabs.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    times = db.relationship('Time', backref='task')
     time_format = "%Y-%m-%d %H:%M:%S"
 
-    def __init__(self, name, time_loop, user_id, order_idx):
+    def __init__(self, name, time_loop, user_id, order_idx, tab_id):
         self.name = name
         self.update_time_loop(time_loop)
         self.user_id = user_id
         self.order_idx = order_idx
+        self.tab_id = tab_id
 
     def __repr__(self):
         return '<Task %r>' % self.name
@@ -72,3 +74,22 @@ class Time(db.Model):
         return '<Time %r for task %r>' % (self.time_complete, self.task_id)
 
 
+class Tab(db.Model):
+    __tablename__ = 'tabs'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    active = db.Column(db.Boolean)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    tasks = db.relationship('Task', backref='tab')
+
+    def __repr__(self):
+        return '<Tab %r for user %r>' % (self.name, self.user_id)
+
+    def is_active(self):
+        return self.active
+
+    def activate(self):
+        self.active = True
+
+    def deactivate(self):
+        self.active = False

@@ -13,14 +13,36 @@
             <textarea id="task-name" class="form-control" placeholder="write your task here" required="required"></textarea>
             <button class="btn btn-success btn-lg btn-block transition" onclick="addNewTask()">create</button>
         </section>
+        <!--
         <h3>completed</h3>
         <section id="history_section">
             {{ create_history_area(tasks_times) }}
         </section>
+        -->
     </div>
     <div id="right_side" class="col-md-9">
-        <div class="row">
+        <div class="sort-section row">
           <div class="col-md-12">
+            <ul class="nav nav-tabs col-md-10">
+                {% for tab in tabs %}
+                    {% if tab.is_active() %}
+                        <li class="active"><a data-toggle="tab" href="#tab{{ tab.id }}" onclick="switchTab(this)">{{ tab.name }}</a></li>
+                    {% else %}
+                        <li><a data-toggle="tab" href="#tab{{ tab.id }}" onclick="switchTab(this)">{{ tab.name }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="add-button">
+                    <div class="dropdown pull-right">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">+</button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <input type="text" class="form-control" id="new-tab-name">
+                                <button type="button" class="btn btn-default" onclick="addNewTab()">add</button>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
             <div class="dropdown pull-right">
               <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Sort by
               <span class="caret"></span></button>
@@ -32,9 +54,8 @@
             </div>
           </div>
         </div>
-        <ul id="tasks_area">
-            {{ create_tasks_area(tasks) }}
-        </ul>
+        {{ create_tasks_area(tabs_tasks) }}
     </div>
 </div>
 {% endblock %}
+
