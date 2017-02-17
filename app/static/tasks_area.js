@@ -20,7 +20,7 @@ function addNewTask() {
   } else {
     $.post('/add_task', {'duration': duration, 'task-name': taskName, 'tab-id': CURRENT_TAB}).done(
       function(response) {
-        $('#tab' + CURRENT_TAB + ' ul.tasks_area').prepend(response['task_item_html']);
+        $(`#tab${CURRENT_TAB}content ul.tasks_area`).prepend(response['task_item_html']);
         attachJsToTask(response['task_id']);
       }
     )
@@ -220,6 +220,7 @@ function AnimateTasksSorting(old_order, new_order) {
   this.activate_animations();
 }
 
+
 function makeOrder(order_option) {
   var value = $(order_option).attr('data-value');
   $.post('/make_order', {'order_type': value}).done(
@@ -240,21 +241,42 @@ function addNewTab() {
       for (var i = 0; i < tabs.length; i++) {
         tabs.eq(i).removeClass('active')
       }
-      var new_tab = $('<li><a data-toggle="tab" href="#tab' + tabId + '" onclick="switchTab(this)">' + newTabName + '</a></li>' )
-      var new_tab_div = $('<div id="tab' + tabId + '" class="tab-pane fade"><ul class="tasks_area"></ul></div>')
-      console.log($('ul.nav.nav-tabs li.add-button'))
+      var new_tab = $(
+          `<li id="tab${tabId}title">
+          <a data-toggle="tab" href="#tab${tabId}content" onclick="switchTab(this)">${newTabName}</a>
+          <a class="tab-close" onclick="closeTab(this)">
+              <i class="fa fa-times" aria-hidden="true"></i>
+          </a>
+          </li>`
+        )
+      var new_tab_div = $(`<div id="tab${tabId}content" class="tab-pane fade"><ul class="tasks_area"></ul></div>`)
       $(new_tab).insertBefore($('ul.nav.nav-tabs li.add-button'));
       $(new_tab_div).insertAfter($('div.tab-content > div'));
-      $('ul.nav.nav-tabs li a:last').trigger('click')
+      $(`ul.nav.nav-tabs li#tab${tabId}title`).trigger('click')
     }
   );
 }
 
 
 function switchTab(target) {
-    var id = $(target).attr('href').replace('#tab', '');
+    var id = $(target).attr('href').replace('#tab', '').replace('content', '');
     CURRENT_TAB = id;
     $.post('/switch_tab', {'current_tab_id': CURRENT_TAB})
+}
+
+
+function closeTab(target) {
+  var tab = $(target).parents().eq(0);
+  console.log(tab);
+  var tabId = tab.attr('id').replace('tab', '').replace('title', '')
+  console.log(tabId);
+  $.post('/close_tab', {'tab_id': tabId}).done(
+    function() {
+      $('div#tab' + tabId + 'content').remove();
+      $('li#tab' + tabId + 'title').remove();
+      //switch tab
+    }
+  )
 }
 
 

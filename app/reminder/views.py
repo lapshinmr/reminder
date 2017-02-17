@@ -17,7 +17,6 @@ def index():
         tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab.id).order_by(Task.order_idx).all()
         tabs_tasks.append([tab, tasks])
     #tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
-    print(tabs)
     return render_template(
         'reminder/index.html',
         tabs=tabs,
@@ -31,7 +30,7 @@ def index():
 def add():
     task_name = request.form['task-name']
     time_loop = int(request.form['duration'])
-    tab_id = request.form['tab-id']
+    tab_id = int(request.form['tab-id'])
     new_task_idx = 0
     tasks = Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()
     for idx, task in enumerate(tasks, start=1):
@@ -179,3 +178,16 @@ def switch_tab():
     db.session.commit()
     return jsonify()
 
+
+@reminder.route('/close_tab', methods=['POST'])
+def close_tab():
+    tab_id = request.form.get('tab_id')
+    print(tab_id)
+    tab = Tab.query.filter_by(id=tab_id).first()
+    print(tab)
+    tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab_id).all()
+    for task in tasks:
+        db.session.delete(task)
+    db.session.delete(tab)
+    db.session.commit()
+    return jsonify()

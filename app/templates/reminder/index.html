@@ -26,10 +26,15 @@
             <ul class="nav nav-tabs col-md-10">
                 {% for tab in tabs %}
                     {% if tab.is_active() %}
-                        <li class="active"><a data-toggle="tab" href="#tab{{ tab.id }}" onclick="switchTab(this)">{{ tab.name }}</a></li>
+                        <li id="tab{{ tab.id }}title" class="active">
                     {% else %}
-                        <li><a data-toggle="tab" href="#tab{{ tab.id }}" onclick="switchTab(this)">{{ tab.name }}</a></li>
+                        <li id="tab{{ tab.id }}title">
                     {% endif %}
+                            <a data-toggle="tab" href="#tab{{ tab.id }}content" onclick="switchTab(this)">{{ tab.name }}</a>
+                            <a class="tab-close" onclick="closeTab(this)">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </a>
+                        </li>
                 {% endfor %}
                 <li class="add-button">
                     <div class="dropdown pull-right">

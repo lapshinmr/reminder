@@ -68,9 +68,9 @@
     <div class="tab-content">
         {% for tab, tasks in tabs_tasks %}
             {% if tab.is_active() %}
-            <div id="tab{{ tab.id }}" class="tab-pane fade in active">
+            <div id="tab{{ tab.id }}content" class="tab-pane fade in active">
             {% else %}
-            <div id="tab{{ tab.id }}" class="tab-pane fade">
+            <div id="tab{{ tab.id }}content" class="tab-pane fade">
             {% endif %}
                 <ul class="tasks_area">
                     {% for task in tasks %}
