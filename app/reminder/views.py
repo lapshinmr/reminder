@@ -2,9 +2,18 @@ import datetime
 from app import db
 from . import reminder
 from app.reminder.models import Task, Time, Tab
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, get_template_attribute
 from flask_login import current_user
 from app.reminder.reminder_tools import TimeUnitsRanges
+
+
+USER_ID = None
+
+
+@reminder.before_request
+def before_first_request():
+    global USER_ID
+    USER_ID = current_user.id
 
 
 @reminder.route('/', methods=['GET', 'POST'])
@@ -14,7 +23,7 @@ def index():
     tabs = Tab.query.filter_by(user_id=current_user.id)
     tabs_tasks = []
     for tab in tabs:
-        tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab.id).order_by(Task.order_idx).all()
+        tasks = Task.query.filter_by(user_id=USER_ID).filter_by(tab_id=tab.id).order_by(Task.order_idx).all()
         tabs_tasks.append([tab, tasks])
     #tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
     return render_template(
@@ -28,19 +37,19 @@ def index():
 
 @reminder.route('/add_task', methods=['GET', 'POST'])
 def add():
-    task_name = request.form['task-name']
+    task_name = request.form['task_name']
     time_loop = int(request.form['duration'])
-    tab_id = int(request.form['tab-id'])
+    tab_id = int(request.form['tab_id'])
     new_task_idx = 0
-    tasks = Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()
+    tasks = Task.query.filter_by(user_id=USER_ID).filter_by(tab_id=tab_id).filter_by(time_close=None).order_by(Task.order_idx).all()
     for idx, task in enumerate(tasks, start=1):
         task.update_order_idx(idx)
-    user_id = current_user.id
-    new_task = Task(name=task_name, time_loop=time_loop, user_id=user_id, order_idx=new_task_idx, tab_id=tab_id)
+    new_task = Task(name=task_name, time_loop=time_loop, user_id=USER_ID, order_idx=new_task_idx, tab_id=tab_id)
     db.session.add(new_task)
     db.session.commit()
-    task = Task.query.filter_by(user_id=current_user.id).filter_by(time_init=new_task.time_init).filter_by(name=new_task.name).first()
-    return jsonify(task_item_html=render_template('reminder/task_item.html', task=task), task_id=task.id)
+    return jsonify(
+        task_item_html=get_template_attribute('reminder/macroses.html', 'create_task_item')(new_task),
+        task_id=new_task.id)
 
 
 @reminder.route('/edit', methods=['POST'])
@@ -66,8 +75,8 @@ def complete():
         db.session.commit()
     task = Task.query.filter_by(id=task_id).first()
     return jsonify(
-        task_item_html=render_template('reminder/task_item.html', task=task),
-        history_item_html=render_template('reminder/history_item.html', task=task)
+        task_item_html=get_template_attribute('reminder/macroses.html', 'create_task_item')(task),
+        history_item_html=get_template_attribute('reminder/macroses.html', 'create_history_item')(task)
     )
 
 
@@ -83,7 +92,7 @@ def close():
         db.session.commit()
     tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
     return jsonify(
-        history_area_html=render_template('reminder/history_area.html', tasks_times=tasks_times)
+        history_area_html=get_template_attribute('reminder/macroses.html', 'create_history_area')(tasks_times)
     )
 
 
@@ -112,19 +121,20 @@ def restore():
         db.session.commit()
     tasks_times = [(Task.query.filter_by(id=time.task_id).first(), time.time_complete) for time in Time.query.all()]
     return jsonify(
-        task_item_html=render_template('reminder/task_item.html', task=task),
+        task_item_html=get_template_attribute('reminder/macroses.html', 'create_task_item')(task),
         task_id=task.id,
-        history_area_html=render_template('reminder/history_area.html', tasks_times=tasks_times)
+        history_area_html=get_template_attribute('reminder/macroses.html', 'create_history_area')(tasks_times)
     )
 
 
 @reminder.route('/change_order_idx', methods=['POST'])
 def change_order_idx():
+    tab_id = request.form.get('tab_id')
     task_id = request.form.get('task_id')
     python_offset = 1
     new_order_idx = int(request.form.get('order_idx')) - python_offset
     task = Task.query.filter_by(id=task_id).first()
-    tasks = Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()
+    tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab_id).order_by(Task.order_idx).all()
     old_order_idx = task.order_idx
     tasks.insert(new_order_idx, tasks.pop(old_order_idx))
     for idx, task in enumerate(tasks):
@@ -136,19 +146,23 @@ def change_order_idx():
 @reminder.route('/make_order', methods=['POST'])
 def make_order():
     order_type = request.form.get('order_type')
-    old_order = [task.id for task in Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()]
+    tab_id = request.form.get('tab_id')
+    tasks = Task.query.filter_by(user_id=USER_ID).filter_by(tab_id=tab_id).filter_by(time_close=None)
+    old_order = [task.id for task in tasks.order_by(Task.order_idx).all()]
     if order_type == 'by_name':
-        tasks = Task.query.order_by(Task.name).filter_by(user_id=current_user.id).all()
+        tasks_ordered = tasks.order_by(Task.name).all()
     elif order_type == 'by_time_init':
-        tasks = Task.query.order_by(Task.time_init).filter_by(user_id=current_user.id).all()
+        tasks_ordered = tasks.order_by(Task.time_init).all()
     elif order_type == 'by_time_loop':
-        tasks = Task.query.order_by(Task.time_loop).filter_by(user_id=current_user.id).all()
+        tasks_ordered = tasks.order_by(Task.time_loop).all()
     else:
-        tasks = Task.query.order_by(Task.order_idx).filter_by(user_id=current_user.id).all()
-    for idx, task in enumerate(tasks, start=0):
+        tasks_ordered = tasks.order_by(Task.order_idx).all()
+    for idx, task in enumerate(tasks_ordered, start=0):
         task.update_order_idx(idx)
     db.session.commit()
-    new_order = [task.id for task in tasks]
+    new_order = [task.id for task in tasks_ordered]
+    print(old_order)
+    print(new_order)
     return jsonify({'old_order': old_order, 'new_order': new_order})
 
 
@@ -182,9 +196,7 @@ def switch_tab():
 @reminder.route('/close_tab', methods=['POST'])
 def close_tab():
     tab_id = request.form.get('tab_id')
-    print(tab_id)
     tab = Tab.query.filter_by(id=tab_id).first()
-    print(tab)
     tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab_id).all()
     for task in tasks:
         db.session.delete(task)

@@ -18,7 +18,7 @@ function addNewTask() {
   if (duration == 0) {
     generateWarning('Please choose duration more then ZERO')
   } else {
-    $.post('/add_task', {'duration': duration, 'task-name': taskName, 'tab-id': CURRENT_TAB}).done(
+    $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
       function(response) {
         $(`#tab${CURRENT_TAB}content ul.tasks_area`).prepend(response['task_item_html']);
         attachJsToTask(response['task_id']);
@@ -113,9 +113,9 @@ function restoreTask(id) {
 
 
 // TASK SORTING
-function dragTask() {
+function dragTask(tab_content) {
   var taskId, startIndex, changeIndex, currentIndex, uiHeight;
-  $('ul#tasks_area').sortable(
+  tab_content.sortable(
     {
       handle: ".draggable-area",
       opacity: 0.75,
@@ -131,7 +131,7 @@ function dragTask() {
       change: function(e, ui) {
           changeIndex = ui.placeholder.index();
           if (startIndex > changeIndex) {
-              var slice = $('ul#tasks_area li.task').slice(changeIndex, $('ul#tasks_area li.task').length);
+              var slice = $('ul.tasks_area li.task').slice(changeIndex, $('ul.tasks_area li.task').length);
               slice.not('.ui-sortable-helper').each(function() {
                   $(this).css({
                       transform: `translateY(${uiHeight}px)`
@@ -139,7 +139,7 @@ function dragTask() {
               });
               changeIndex += 1
           } else if (startIndex < changeIndex) {
-              var slice = $('ul#tasks_area li.task').slice(startIndex, changeIndex);
+              var slice = $('ul.tasks_area li.task').slice(startIndex, changeIndex);
               slice.not('.ui-sortable-helper').each(function() {
                   $(this).css({
                       transform: 'translateY(0px)'
@@ -149,20 +149,28 @@ function dragTask() {
           currentIndex = changeIndex
       },
       stop: function(e, ui) {
-          $('ul#tasks_area li.task').css({
+          $('ul.tasks_area li.task').css({
               transform: 'translateY(0px)'
           });
-          $.post('/change_order_idx', {'task_id': taskId, 'order_idx': currentIndex});
+          $.post('/change_order_idx', {'tab_id': CURRENT_TAB, 'task_id': taskId, 'order_idx': currentIndex});
       }
     }
   );
 }
 
+function dragTasks() {
+  var tab_contents = $('ul.tasks_area')
+  for (var i = 0; i < tab_contents.length; i++) {
+    dragTask(tab_contents.eq(i));
+  }
+}
 
-function AnimateTasksSorting(old_order, new_order) {
+
+function AnimateTasksSorting(tab_id, old_order, new_order) {
   this.old_order = old_order;
   this.new_order = new_order;
-  this.lis = $('ul#tasks_area li');
+  this.tab_id = tab_id;
+  this.lis = $(`div#tab${this.tab_id}content > ul.tasks_area > li`);
   this.animations = [];
   this.old_heights = [];
   this.new_heights = [];
@@ -223,9 +231,9 @@ function AnimateTasksSorting(old_order, new_order) {
 
 function makeOrder(order_option) {
   var value = $(order_option).attr('data-value');
-  $.post('/make_order', {'order_type': value}).done(
+  $.post('/make_order', {'tab_id': CURRENT_TAB, 'order_type': value}).done(
     function(response) {
-      new AnimateTasksSorting(response['old_order'], response['new_order']);
+      new AnimateTasksSorting(CURRENT_TAB, response['old_order'], response['new_order']);
     }
   )
 }
@@ -241,7 +249,7 @@ function addNewTab() {
       for (var i = 0; i < tabs.length; i++) {
         tabs.eq(i).removeClass('active')
       }
-      var new_tab = $(
+      var new_tab_title = $(
           `<li id="tab${tabId}title">
           <a data-toggle="tab" href="#tab${tabId}content" onclick="switchTab(this)">${newTabName}</a>
           <a class="tab-close" onclick="closeTab(this)">
@@ -249,10 +257,10 @@ function addNewTab() {
           </a>
           </li>`
         )
-      var new_tab_div = $(`<div id="tab${tabId}content" class="tab-pane fade"><ul class="tasks_area"></ul></div>`)
-      $(new_tab).insertBefore($('ul.nav.nav-tabs li.add-button'));
-      $(new_tab_div).insertAfter($('div.tab-content > div'));
-      $(`ul.nav.nav-tabs li#tab${tabId}title`).trigger('click')
+      var new_tab_content = $(`<div id="tab${tabId}content" class="tab-pane fade"><ul class="tasks_area"></ul></div>`)
+      $(new_tab_title).insertBefore($('ul.nav.nav-tabs li.add-button'));
+      $('div.tab-content').append(new_tab_content);
+      $(`ul.nav.nav-tabs li#tab${tabId}title > a:first`).trigger('click')
     }
   );
 }
@@ -267,9 +275,7 @@ function switchTab(target) {
 
 function closeTab(target) {
   var tab = $(target).parents().eq(0);
-  console.log(tab);
   var tabId = tab.attr('id').replace('tab', '').replace('title', '')
-  console.log(tabId);
   $.post('/close_tab', {'tab_id': tabId}).done(
     function() {
       $('div#tab' + tabId + 'content').remove();
@@ -284,7 +290,7 @@ function closeTab(target) {
 function attachJsToTask(id) {
     animateProgressBar(id);
     editTaskName(id);
-    dragTask();
+    dragTasks();
 }
 
 
@@ -299,7 +305,7 @@ function attachJsToTasksWithClass(func) {
 function initTasksJs() {
   attachJsToTasksWithClass(animateProgressBar);
   attachJsToTasksWithClass(editTaskName);
-  attachJsToTasksWithClass(dragTask);
+  attachJsToTasksWithClass(dragTasks);
 }
 
 
