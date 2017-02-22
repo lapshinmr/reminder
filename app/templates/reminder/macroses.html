@@ -4,11 +4,11 @@
 <div class="tab-content">
     {% for tab, tasks in tabs_tasks %}
         {% if tab.is_active() %}
-            <div id="tab{{ tab.id }}content" class="tab-pane fade in active">
+            <div id="tab{{ tab.id }}" class="tab-pane fade in active">
         {% else %}
-            <div id="tab{{ tab.id }}content" class="tab-pane fade">
+            <div id="tab{{ tab.id }}" class="tab-pane fade">
         {% endif %}
-                <ul class="tasks_area">
+                <ul class="tasks_area connectedSortable">
                     {% for task in tasks %}
                         {{ create_task_item(task) }}
                     {% endfor %}
@@ -52,40 +52,4 @@
             </div>
         </li>
     {% endif %}
-{% endmacro %}
-
-
-{% macro create_history_item(task, time_complete) %}
-<div class="history-row well well-sm">
-    {% if task.is_active() %}
-        <span class="marker active"><i class="fa fa-circle" aria-hidden="true"></i></span>
-    {% else %}
-        <span class="marker"></span>
-    {% endif %}
-    <p class="task-name-text">{{ task.name }}</p>
-        <span class="dropdown">
-            <a class="dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
-            <ul class="dropdown-menu">
-                {% if task.is_close() %}
-                    <li>
-                        <a onclick="restoreTask('{{ task.id }}')">
-                            <i class="fa fa-undo" aria-hidden="true"></i> restore
-                        </a>
-                    </li>
-                {% endif %}
-                    <li>
-                        <a onclick="removeHistoryItem(this, '{{ task.id }}', '{{ time_complete }}')">
-                            <i class="fa fa-times" aria-hidden="true"></i> close
-                        </a>
-                    </li>
-            </ul>
-        </span>
-</div>
-{% endmacro %}
-
-
-{% macro create_history_area(tasks_times) %}
-    {% for task, time_complete in tasks_times|reverse %}
-        {{ create_history_item(task, time_complete) }}
-    {% endfor %}
 {% endmacro %}

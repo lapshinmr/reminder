@@ -73,10 +73,7 @@ function editTaskName(id) {
 
 // CLOSE TASK
 function closeTask(id) {
-  $.post('/close', {'task_id': id}).done(function(response) {
-    $('#' + id).remove();
-    $('#history_section').html(response['history_area_html']);
-  });
+  $.post('/close', {'task_id': id}).done(function(response) { $('#' + id).remove(); });
 }
 
 
@@ -84,30 +81,9 @@ function closeTask(id) {
 function completeTask(id) {
   $.post("/complete", {'task_id': id}).done(
     function(response) {
-      $('#history_section').prepend($(response['history_item_html']));
       $('#' + id).replaceWith($(response['task_item_html']));
       attachJsToTask(id);
     }
-  )
-}
-
-
-// REMOVE HISTORY ITEM
-function removeHistoryItem(close_button, id, time_complete) {
-  var history_item = $(close_button).parents('div.history-row').get(0);
-  $(history_item).remove()
-  $.post('/remove', {'task_id': id, 'time_complete': time_complete})
-}
-
-
-// RESTORE TASK
-function restoreTask(id) {
-  $.post('/restore', {'task_id': id}).done(
-     function(response) {
-       $('#tasks_area').prepend(response['task_item_html']);
-       attachJsToTask(response['task_id']);
-       $('#history_section').html(response['history_area_html']);
-     }
   )
 }
 
@@ -118,15 +94,19 @@ function dragTask(tab_content) {
   tab_content.sortable(
     {
       handle: ".draggable-area",
-      opacity: 0.75,
+      opacity: 0.5,
       placeholder: 'marker',
+      connectWith: ".connectedSortable",
       start: function(e, ui) {
           startIndex = ui.placeholder.index();
+          LAST_DROPPABLE_TAB = ui.placeholder.parents().eq(1).attr('id').replace('tab', '')
           uiHeight = ui.item.outerHeight(true);
           taskId = ui.item[0].id;
           ui.item.nextAll('li.task:not(.marker)').css({
               transform: `translateY(${uiHeight}px)`
           });
+          currentIndex = startIndex;
+          console.log('start', currentIndex)
       },
       change: function(e, ui) {
           changeIndex = ui.placeholder.index();
@@ -147,16 +127,18 @@ function dragTask(tab_content) {
               });
           }
           currentIndex = changeIndex
+          console.log('change', currentIndex)
       },
       stop: function(e, ui) {
           $('ul.tasks_area li.task').css({
               transform: 'translateY(0px)'
           });
-          $.post('/change_order_idx', {'tab_id': CURRENT_TAB, 'task_id': taskId, 'order_idx': currentIndex});
+          $.post('/change_order_idx', {'tab_id': LAST_DROPPABLE_TAB, 'task_id': taskId, 'order_idx': currentIndex});
       }
     }
-  );
+  ).disableSelection();
 }
+
 
 function dragTasks() {
   var tab_contents = $('ul.tasks_area')
@@ -170,7 +152,7 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
   this.old_order = old_order;
   this.new_order = new_order;
   this.tab_id = tab_id;
-  this.lis = $(`div#tab${this.tab_id}content > ul.tasks_area > li`);
+  this.lis = $(`div#tab${this.tab_id} > ul.tasks_area > li`);
   this.animations = [];
   this.old_heights = [];
   this.new_heights = [];
@@ -250,14 +232,14 @@ function addNewTab() {
         tabs.eq(i).removeClass('active')
       }
       var new_tab_title = $(
-          `<li id="tab${tabId}title">
-          <a data-toggle="tab" href="#tab${tabId}content" onclick="switchTab(this)">${newTabName}</a>
+          `<li>
+          <a data-toggle="tab" href="#tab${tabId}" onclick="switchTab(this)">${newTabName}</a>
           <a class="tab-close" onclick="closeTab(this)">
               <i class="fa fa-times" aria-hidden="true"></i>
           </a>
           </li>`
         )
-      var new_tab_content = $(`<div id="tab${tabId}content" class="tab-pane fade"><ul class="tasks_area"></ul></div>`)
+      var new_tab_content = $(`<div id="tab${tabId}" class="tab-pane fade"><ul class="tasks_area"></ul></div>`)
       $(new_tab_title).insertBefore($('ul.nav.nav-tabs li.add-button'));
       $('div.tab-content').append(new_tab_content);
       $(`ul.nav.nav-tabs li#tab${tabId}title > a:first`).trigger('click')
@@ -278,11 +260,25 @@ function closeTab(target) {
   var tabId = tab.attr('id').replace('tab', '').replace('title', '')
   $.post('/close_tab', {'tab_id': tabId}).done(
     function() {
-      $('div#tab' + tabId + 'content').remove();
-      $('li#tab' + tabId + 'title').remove();
-      //switch tab
+      $('div#tab' + tabId).remove();
+      $('li#tab' + tabId).remove();
     }
   )
+}
+
+
+function moveTaskToTab() {
+  $("ul.nav.nav-tabs li").droppable({
+    accept: ".connectedSortable li",
+    hoverClass: 'ui-state-active',
+    tolerance: 'pointer',
+    drop: function (event, ui) {
+       var tabHref = $(this).children('a').attr('href');
+       var tabId = tabHref.replace('#tab', '');
+       LAST_DROPPABLE_TAB = tabId;
+       $(tabHref).find('.connectedSortable').prepend($(`li.ui-sortable-placeholder.marker`));
+    }
+  });
 }
 
 
@@ -306,6 +302,7 @@ function initTasksJs() {
   attachJsToTasksWithClass(animateProgressBar);
   attachJsToTasksWithClass(editTaskName);
   attachJsToTasksWithClass(dragTasks);
+  moveTaskToTab();
 }
 
 

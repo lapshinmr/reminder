@@ -12,12 +12,6 @@
             <textarea id="task-name" class="form-control" placeholder="write your task here" required="required"></textarea>
             <button class="btn btn-success btn-lg btn-block transition" onclick="addNewTask()">create</button>
         </section>
-        <!--
-        <h3>completed</h3>
-        <section id="history_section">
-            {{ create_history_area(tasks_times) }}
-        </section>
-        -->
     </div>
     <div id="right_side" class="col-md-9">
         <div class="sort-section row">
@@ -25,11 +19,11 @@
             <ul class="nav nav-tabs col-md-10">
                 {% for tab in tabs %}
                     {% if tab.is_active() %}
-                        <li id="tab{{ tab.id }}title" class="active">
+                        <li class="active">
                     {% else %}
-                        <li id="tab{{ tab.id }}title">
+                        <li>
                     {% endif %}
-                            <a data-toggle="tab" href="#tab{{ tab.id }}content" onclick="switchTab(this)">{{ tab.name }}</a>
+                            <a data-toggle="tab" href="#tab{{ tab.id }}" onclick="switchTab(this)">{{ tab.name }}</a>
                             <a class="tab-close" onclick="closeTab(this)">
                                 <i class="fa fa-times" aria-hidden="true"></i>
                             </a>

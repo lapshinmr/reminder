@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>jQuery UI Draggable - Handles</title>
+  <title>MY TABS</title>
   <style>
-    ul {
+    ul.connectedSortable {
       width: 300px;
     }
-    li {
+    div.tab-content li {
       text-align: center;
       background: lightblue;
       list-style: none;
@@ -23,57 +23,94 @@
       padding: 0;
       margin: 0;
     }
+    .change-background {
+      background-color: green
+    }
   </style>
 
+  <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.4/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.3/bootstrap.min.js"></script>
 </head>
 <body>
-  <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">tab1</a></li>
+    <li><a href="#tab2" data-toggle="tab">tab2</a></li>
   </ul>
+  <div class="tab-content">
+    <div id="tab1" class="tab-pane fade in active">
+      <ul class="connectedSortable">
+          <li id="1">l1</li>
+          <li id="2">l2</li>
+          <li id="3">l3</li>
+          <li id="4">l4</li>
+          <li id="5">l5</li>
+      </ul>
+    </div>
+    <div id="tab2" class="tab-pane">
+      <ul class="connectedSortable">
+          <li id="6">r1</li>
+          <li id="7">r2</li>
+          <li id="8">r3</li>
+          <li id="9">r4</li>
+          <li id="10">r5</li>
+      </ul>
+    </div>
+  </div>
   <script>
-    var startIndex, changeIndex, uiHeight;
-
-    $('ul').sortable({
-        placeholder: 'marker',
-        start: function(e, ui) {
-            startIndex = ui.placeholder.index();
-            uiHeight = ui.item.outerHeight(true);
-            ui.item.nextAll('li:not(.marker)').css({
-                transform: `translateY(${uiHeight}px)`
-            });
-        },
-        change: function(e, ui) {
-            changeIndex = ui.placeholder.index();
-            if (startIndex > changeIndex) {
-                var slice = $('ul li').slice(changeIndex, $('ul li').length);
-                slice.not('.ui-sortable-helper').each(function() {
-                    $(this).css({
-                        transform: `translateY(${uiHeight}px)`
-                    });
-                });
-            } else if (startIndex < changeIndex) {
-                var slice = $('ul li').slice(startIndex, changeIndex);
-                slice.not('.ui-sortable-helper').each(function() {
-                    $(this).css({
-                        transform: `translateY(0px)`
-                    });
-                });
-            }
-            startIndex = changeIndex
-        },
-        stop: function(e, ui) {
-            $('.ui-sortable-handle').css({
-                transform: 'translateY(0px)'
-            })
-        }
+    $("ul.nav.nav-tabs li").droppable({
+      accept: ".connectedSortable li",
+      hoverClass: 'ui-state-hover',
+      drop: function (event, ui) {
+         var tab_href = $(this).children('a').attr('href');
+         $(tab_href).find('.connectedSortable').prepend($(`li.ui-sortable-placeholder.marker`));
+      }
     });
+
+    $('ul.connectedSortable').sortable({
+        placeholder: 'marker',
+        connectWith: ".connectedSortable",
+    }).disableSelection();
+
+    //var startIndex, changeIndex, uiHeight;
+//
+    //$('ul.connectedSortable').sortable({
+    //    placeholder: 'marker',
+    //    connectWith: ".connectedSortable",
+    //    start: function(e, ui) {
+    //        startIndex = ui.placeholder.index();
+    //        uiHeight = ui.item.outerHeight(true);
+    //        ui.item.nextAll('li:not(.marker)').css({
+    //            transform: `translateY(${uiHeight}px)`
+    //        });
+    //    },
+    //    change: function(e, ui) {
+    //        changeIndex = ui.placeholder.index();
+    //        if (startIndex > changeIndex) {
+    //            var slice = $('ul li').slice(changeIndex, $('ul li').length);
+    //            slice.not('.ui-sortable-helper').each(function() {
+    //                $(this).css({
+    //                    transform: `translateY(${uiHeight}px)`
+    //                });
+    //            });
+    //        } else if (startIndex < changeIndex) {
+    //            var slice = $('ul li').slice(startIndex, changeIndex);
+    //            slice.not('.ui-sortable-helper').each(function() {
+    //                $(this).css({
+    //                    transform: `translateY(0px)`
+    //                });
+    //            });
+    //        }
+    //        startIndex = changeIndex
+    //    },
+    //    stop: function(e, ui) {
+    //        $('.ui-sortable-handle').css({
+    //            transform: 'translateY(0px)'
+    //        })
+    //    }
+    //});
   </script>
 </body>
 </html>
