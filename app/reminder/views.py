@@ -21,7 +21,7 @@ def before_first_request():
 def index():
     if current_user.is_anonymous:
         return render_template('auth/index.html')
-    tabs = Tab.query.filter_by(user_id=current_user.id)
+    tabs = Tab.query.filter_by(user_id=current_user.id).order_by(Tab.order_idx)
     tabs_tasks = []
     for tab in tabs:
         tasks = Task.query.filter_by(user_id=USER_ID).filter_by(tab_id=tab.id).order_by(Task.order_idx).all()
@@ -91,23 +91,35 @@ def close():
     return jsonify()
 
 
-@reminder.route('/change_order_idx', methods=['POST'])
-def change_order_idx():
-    new_tab_id = request.form.get('tab_id')
+@reminder.route('/change_task_idx', methods=['POST'])
+def change_task_idx():
+    new_tab_id = int(request.form.get('tab_id'))
     task_id = request.form.get('task_id')
     new_idx = int(request.form.get('order_idx')) - 1  # 1 is a python_offset
-    assert isinstance(new_idx, int), 'Check input order_idx'
-    print(new_tab_id, task_id, new_idx)
     tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=new_tab_id).order_by(Task.order_idx).all()
     task = Task.query.filter_by(id=task_id).first()
     old_tab_id = task.tab_id
     if old_tab_id != new_tab_id:
         task.tab_id = new_tab_id
     else:
-        tasks.pop(task.order_idx)
+        tasks.remove(task)
     tasks.insert(new_idx, task)
     for idx, task in enumerate(tasks):
         task.update_order_idx(idx)
+    db.session.commit()
+    return jsonify()
+
+
+@reminder.route('/change_tab_order_idx', methods=['POST'])
+def change_tab_order_idx():
+    tab_id = request.form.get('tab_id')
+    new_tab_order_idx = int(request.form.get('new_tab_order_idx')) - 1
+    tabs = Tab.query.filter_by(user_id=USER_ID).order_by(Tab.order_idx).all()
+    tab = Tab.query.filter_by(id=tab_id).first()
+    tabs.remove(tab)
+    tabs.insert(new_tab_order_idx, tab)
+    for idx, tab in enumerate(tabs):
+        tab.update_order_idx(idx)
     db.session.commit()
     return jsonify()
 
@@ -130,8 +142,6 @@ def make_order():
         task.update_order_idx(idx)
     db.session.commit()
     new_order = [task.id for task in tasks_ordered]
-    print(old_order)
-    print(new_order)
     return jsonify({'old_order': old_order, 'new_order': new_order})
 
 
@@ -143,6 +153,7 @@ def add_new_tab():
         tabs = Tab.query.filter_by(user_id=current_user.id).all()
         for tab in tabs:
             tab.deactivate()
+        new_tab.update_order_idx(len(tabs))
         db.session.add(new_tab)
         db.session.commit()
     active_tab = Tab.query.filter_by(user_id=current_user.id).filter_by(active=True).first()
@@ -170,6 +181,9 @@ def close_tab():
     for task in tasks:
         db.session.delete(task)
     db.session.delete(tab)
+    tabs = Tab.query.filter_by(user_id=USER_ID).order_by(Tab.order_idx).all()
+    for idx, tab in enumerate(tabs, start=0):
+        tab.update_order_idx(idx)
     db.session.commit()
     return jsonify()
 

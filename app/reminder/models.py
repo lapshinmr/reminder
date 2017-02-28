@@ -80,6 +80,7 @@ class Tab(db.Model):
     name = db.Column(db.String(64))
     active = db.Column(db.Boolean)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    order_idx = db.Column(db.Integer)
     tasks = db.relationship('Task', backref='tab')
 
     def __repr__(self):
@@ -93,3 +94,6 @@ class Tab(db.Model):
 
     def deactivate(self):
         self.active = False
+
+    def update_order_idx(self, order_idx):
+        self.order_idx = order_idx

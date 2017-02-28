@@ -24,7 +24,7 @@
                         <li>
                     {% endif %}
                             <a data-toggle="tab" href="#tab{{ tab.id }}" onclick="switchTab(this)">{{ tab.name }}</a>
-                            <a class="tab-close" onclick="closeTab(this)">
+                            <a class="tab-close" data-toggle="modal" data-target="#close-tab-confirmation">
                                 <i class="fa fa-times" aria-hidden="true"></i>
                             </a>
                         </li>

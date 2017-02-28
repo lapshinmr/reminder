@@ -20,7 +20,7 @@ function addNewTask() {
   } else {
     $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
       function(response) {
-        $(`#tab${CURRENT_TAB}content ul.tasks_area`).prepend(response['task_item_html']);
+        $(`#tab${CURRENT_TAB} ul.tasks_area`).prepend(response['task_item_html']);
         attachJsToTask(response['task_id']);
       }
     )
@@ -90,50 +90,34 @@ function completeTask(id) {
 
 // TASK SORTING
 function dragTask(tab_content) {
-  var taskId, startIndex, changeIndex, currentIndex, uiHeight;
+  var taskId, startIndex, changeIndex, currentIndex, marker, dragged;
   tab_content.sortable(
     {
       handle: ".draggable-area",
-      opacity: 0.5,
+      //opacity: 0.5,
       placeholder: 'marker',
       connectWith: ".connectedSortable",
       start: function(e, ui) {
-          startIndex = ui.placeholder.index();
-          LAST_DROPPABLE_TAB = ui.placeholder.parents().eq(1).attr('id').replace('tab', '')
-          uiHeight = ui.item.outerHeight(true);
+          dragged = ui.item;
+          marker = ui.placeholder;
+          marker.height(dragged.outerHeight(true));
+          dragged.fadeTo('medium', 0.33);
+          startIndex = marker.index();
           taskId = ui.item[0].id;
-          ui.item.nextAll('li.task:not(.marker)').css({
-              transform: `translateY(${uiHeight}px)`
-          });
+          LAST_DROPPABLE_TAB = marker.parents().eq(1).attr('id').replace('tab', '')
           currentIndex = startIndex;
-          console.log('start', currentIndex)
       },
       change: function(e, ui) {
-          changeIndex = ui.placeholder.index();
+          changeIndex = marker.index();
           if (startIndex > changeIndex) {
-              var slice = $('ul.tasks_area li.task').slice(changeIndex, $('ul.tasks_area li.task').length);
-              slice.not('.ui-sortable-helper').each(function() {
-                  $(this).css({
-                      transform: `translateY(${uiHeight}px)`
-                  });
-              });
-              changeIndex += 1
+            changeIndex += 1
           } else if (startIndex < changeIndex) {
-              var slice = $('ul.tasks_area li.task').slice(startIndex, changeIndex);
-              slice.not('.ui-sortable-helper').each(function() {
-                  $(this).css({
-                      transform: 'translateY(0px)'
-                  });
-              });
           }
           currentIndex = changeIndex
-          console.log('change', currentIndex)
       },
       stop: function(e, ui) {
-          $('ul.tasks_area li.task').css({
-              transform: 'translateY(0px)'
-          });
-          $.post('/change_order_idx', {'tab_id': LAST_DROPPABLE_TAB, 'task_id': taskId, 'order_idx': currentIndex});
+          dragged.fadeTo('medium', 1);
+          $.post('/change_task_idx', {'tab_id': LAST_DROPPABLE_TAB, 'task_id': taskId, 'order_idx': currentIndex});
       }
     }
   ).disableSelection();
@@ -231,37 +215,60 @@ function addNewTab() {
       for (var i = 0; i < tabs.length; i++) {
         tabs.eq(i).removeClass('active')
       }
-      var new_tab_title = $(
-          `<li>
-          <a data-toggle="tab" href="#tab${tabId}" onclick="switchTab(this)">${newTabName}</a>
-          <a class="tab-close" onclick="closeTab(this)">
-              <i class="fa fa-times" aria-hidden="true"></i>
-          </a>
+      var $new_tab_header = $(
+          `<li class="ui-droppable ui-sortable-handle">
+              <a data-toggle="tab" href="#tab${tabId}" onclick="switchTab(this)">${newTabName}</a>
+              <a class="tab-close" data-toggle="modal" data-target="#close-tab-confirmation">
+                  <i class="fa fa-times" aria-hidden="true"></i>
+              </a>
           </li>`
         )
-      var new_tab_content = $(`<div id="tab${tabId}" class="tab-pane fade"><ul class="tasks_area"></ul></div>`)
-      $(new_tab_title).insertBefore($('ul.nav.nav-tabs li.add-button'));
-      $('div.tab-content').append(new_tab_content);
-      $(`ul.nav.nav-tabs li#tab${tabId}title > a:first`).trigger('click')
+      var $new_tab_content = $(
+        `<div id="tab${tabId}" class="tab-pane fade">
+            <ul class="tasks_area"></ul>
+        </div>`
+      )
+      var $add_tab_button = $('ul.nav.nav-tabs li.add-button');
+      $new_tab_header.insertBefore($add_tab_button);
+      $('div.tab-content').append($new_tab_content);
+      $(`ul.nav.nav-tabs a[href="#tab${tabId}"]`).trigger('click')
     }
   );
 }
 
 
 function switchTab(target) {
-    var id = $(target).attr('href').replace('#tab', '').replace('content', '');
-    CURRENT_TAB = id;
-    $.post('/switch_tab', {'current_tab_id': CURRENT_TAB})
+    if ($(target).hasClass('noclick')) {
+        $(target).removeClass('noclick');
+    } else {
+        var id = $(target).attr('href').replace('#tab', '').replace('content', '');
+        CURRENT_TAB = id;
+        $.post('/switch_tab', {'current_tab_id': CURRENT_TAB})
+    }
 }
 
 
-function closeTab(target) {
-  var tab = $(target).parents().eq(0);
-  var tabId = tab.attr('id').replace('tab', '').replace('title', '')
+function modalOn() {
+    $('#close-tab-confirmation').on('show.bs.modal', function(e) {
+        var $closeLink = $(e.relatedTarget);
+        var $modal = $(e.target);
+        var $confirm = $modal.find('div.modal-footer button.btn-default')
+        $confirm.on('click', function() {
+            closeTab($closeLink);
+            $confirm.off('click');
+        });
+    })
+}
+
+
+function closeTab(closeLink) {
+  var tab = $(closeLink).parents().eq(0);
+  var tabId = tab.children('a[href^="#tab"]').attr('href').replace('#tab', '');
   $.post('/close_tab', {'tab_id': tabId}).done(
     function() {
       $('div#tab' + tabId).remove();
-      $('li#tab' + tabId).remove();
+      tab.remove();
+      $('ul.nav.nav-tabs a[href]:not(.add-button):last').trigger('click')
     }
   )
 }
@@ -279,6 +286,40 @@ function moveTaskToTab() {
        $(tabHref).find('.connectedSortable').prepend($(`li.ui-sortable-placeholder.marker`));
     }
   });
+}
+
+
+function dragTabs() {
+    var marker, newTabOrderIdx, startIndex, tabId, a;
+    var tabs = $('ul.nav.nav-tabs');
+    tabs.sortable({
+        placeholder: 'tabs-marker',
+        opacity: 0.5,
+        items: "li:not(.add-button)",
+        start: function(e, ui) {
+            dragged = ui.item;
+            a = dragged.children('a').eq(0);
+            a.addClass('noclick');
+            tabId = dragged.children('a').eq(0).attr('href').replace('#tab', '');
+            marker = ui.placeholder;
+            marker.css({
+                backgroundColor: 'black',
+                width: '1px',
+                height: dragged.outerHeight(),
+            })
+            startIndex = marker.index()
+            newTabOrderIdx = startIndex;
+        },
+        change: function(e, ui) {
+            newTabOrderIdx = marker.index();
+            if (startIndex > newTabOrderIdx) {
+              newTabOrderIdx += 1
+            };
+        },
+        stop: function(e, ui) {
+            $.post('/change_tab_order_idx', {'tab_id': tabId, 'new_tab_order_idx': newTabOrderIdx});
+        }
+    });
 }
 
 
@@ -303,6 +344,8 @@ function initTasksJs() {
   attachJsToTasksWithClass(editTaskName);
   attachJsToTasksWithClass(dragTasks);
   moveTaskToTab();
+  dragTabs();
+  modalOn();
 }
 
 
