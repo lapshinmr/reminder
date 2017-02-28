@@ -148,20 +148,24 @@ def make_order():
 @reminder.route('/add_new_tab', methods=['POST'])
 def add_new_tab():
     new_tab_name = request.form.get('new_tab_name')
-    if new_tab_name:
-        new_tab = Tab(name=new_tab_name, user_id=current_user.id, active=True)
-        tabs = Tab.query.filter_by(user_id=current_user.id).all()
-        for tab in tabs:
-            tab.deactivate()
-        new_tab.update_order_idx(len(tabs))
-        db.session.add(new_tab)
-        db.session.commit()
-    active_tab = Tab.query.filter_by(user_id=current_user.id).filter_by(active=True).first()
-    return jsonify({'tab_id': active_tab.id})
+    new_tab = Tab(name=new_tab_name, user_id=current_user.id, active=True)
+    tabs = Tab.query.filter_by(user_id=current_user.id).all()
+    for tab in tabs:
+        tab.deactivate()
+    new_tab.update_order_idx(len(tabs))
+    db.session.add(new_tab)
+    db.session.commit()
+    tab_html = get_template_attribute('reminder/macroses.html', 'create_tabs')([new_tab])
+    tab_content_html = get_template_attribute('reminder/macroses.html', 'create_tasks_area')([[new_tab, []]])
+    return jsonify({
+        'tab_id': new_tab.id,
+        'tab': tab_html,
+        'tab_content': tab_content_html
+    })
 
 
-@reminder.route('/switch_tab', methods=['POST'])
-def switch_tab():
+@reminder.route('/activate_tab', methods=['POST'])
+def activate_tab():
     current_tab_id = int(request.form.get('current_tab_id'))
     tabs = Tab.query.filter_by(user_id=current_user.id).all()
     for tab in tabs:

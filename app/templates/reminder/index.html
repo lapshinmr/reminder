@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% from "reminder/macroses.html" import create_tasks_area, create_history_area %}
+{% from "reminder/macroses.html" import create_tasks_area, create_tabs %}
 
 {% block title %}Reminder{% endblock %}
 
@@ -17,18 +17,9 @@
         <div class="sort-section row">
           <div class="col-md-12">
             <ul class="nav nav-tabs col-md-10">
-                {% for tab in tabs %}
-                    {% if tab.is_active() %}
-                        <li class="active">
-                    {% else %}
-                        <li>
-                    {% endif %}
-                            <a data-toggle="tab" href="#tab{{ tab.id }}" onclick="switchTab(this)">{{ tab.name }}</a>
-                            <a class="tab-close" data-toggle="modal" data-target="#close-tab-confirmation">
-                                <i class="fa fa-times" aria-hidden="true"></i>
-                            </a>
-                        </li>
-                {% endfor %}
+
+                {{ create_tabs(tabs) }}
+
                 <li class="add-button">
                     <div class="dropdown pull-right">
                         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">+</button>
@@ -52,7 +43,11 @@
             </div>
           </div>
         </div>
-        {{ create_tasks_area(tabs_tasks) }}
+        <div class="tab-content">
+
+            {{ create_tasks_area(tabs_tasks) }}
+
+        </div>
     </div>
 </div>
 {% endblock %}

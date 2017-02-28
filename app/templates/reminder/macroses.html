@@ -1,7 +1,6 @@
 
 
 {% macro create_tasks_area(tabs_tasks) %}
-<div class="tab-content">
     {% for tab, tasks in tabs_tasks %}
         {% if tab.is_active() %}
             <div id="tab{{ tab.id }}" class="tab-pane fade in active">
@@ -15,7 +14,6 @@
                 </ul>
             </div>
     {% endfor %}
-</div>
 {% endmacro %}
 
 
@@ -52,4 +50,20 @@
             </div>
         </li>
     {% endif %}
+{% endmacro %}
+
+
+{% macro create_tabs(tabs) %}
+    {% for tab in tabs %}
+        {% if tab.is_active() %}
+            <li class="active">
+        {% else %}
+            <li>
+        {% endif %}
+                <a data-toggle="tab" href="#tab{{ tab.id }}" onclick="activateTab(this)">{{ tab.name }}</a>
+                <a class="tab-close" data-toggle="modal" data-target="#close-tab-confirmation">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </a>
+            </li>
+    {% endfor %}
 {% endmacro %}

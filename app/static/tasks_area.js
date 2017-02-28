@@ -94,7 +94,6 @@ function dragTask(tab_content) {
   tab_content.sortable(
     {
       handle: ".draggable-area",
-      //opacity: 0.5,
       placeholder: 'marker',
       connectWith: ".connectedSortable",
       start: function(e, ui) {
@@ -125,7 +124,7 @@ function dragTask(tab_content) {
 
 
 function dragTasks() {
-  var tab_contents = $('ul.tasks_area')
+  var tab_contents = $('div ul.tasks_area')
   for (var i = 0; i < tab_contents.length; i++) {
     dragTask(tab_contents.eq(i));
   }
@@ -208,42 +207,36 @@ function makeOrder(order_option) {
 // TABS
 function addNewTab() {
   var newTabName = $('#new-tab-name').val();
+  if (!newTabName) {
+    return
+  }
   $.post('/add_new_tab', {'new_tab_name': newTabName}).done(
     function(response) {
-      var tabId = response['tab_id']
+      var tabId = response['tab_id'];
+      var $newTab = $(response['tab']);
+      var $newTabContent = $(response['tab_content']);
       var tabs = $('ul.nav.nav-tabs li')
       for (var i = 0; i < tabs.length; i++) {
         tabs.eq(i).removeClass('active')
       }
-      var $new_tab_header = $(
-          `<li class="ui-droppable ui-sortable-handle">
-              <a data-toggle="tab" href="#tab${tabId}" onclick="switchTab(this)">${newTabName}</a>
-              <a class="tab-close" data-toggle="modal" data-target="#close-tab-confirmation">
-                  <i class="fa fa-times" aria-hidden="true"></i>
-              </a>
-          </li>`
-        )
-      var $new_tab_content = $(
-        `<div id="tab${tabId}" class="tab-pane fade">
-            <ul class="tasks_area"></ul>
-        </div>`
-      )
-      var $add_tab_button = $('ul.nav.nav-tabs li.add-button');
-      $new_tab_header.insertBefore($add_tab_button);
-      $('div.tab-content').append($new_tab_content);
+      var $addButton = $('ul.nav.nav-tabs li.add-button');
+      $newTab.insertBefore($addButton);
+      makeTabDroppable($newTab);
+      $('div.tab-content').append($newTabContent);
+      dragTask($newTabContent.children('ul.tasks_area').eq(0));
       $(`ul.nav.nav-tabs a[href="#tab${tabId}"]`).trigger('click')
     }
   );
 }
 
 
-function switchTab(target) {
+function activateTab(target) {
     if ($(target).hasClass('noclick')) {
         $(target).removeClass('noclick');
     } else {
         var id = $(target).attr('href').replace('#tab', '').replace('content', '');
         CURRENT_TAB = id;
-        $.post('/switch_tab', {'current_tab_id': CURRENT_TAB})
+        $.post('/activate_tab', {'current_tab_id': CURRENT_TAB})
     }
 }
 
@@ -274,18 +267,18 @@ function closeTab(closeLink) {
 }
 
 
-function moveTaskToTab() {
-  $("ul.nav.nav-tabs li").droppable({
-    accept: ".connectedSortable li",
-    hoverClass: 'ui-state-active',
-    tolerance: 'pointer',
-    drop: function (event, ui) {
-       var tabHref = $(this).children('a').attr('href');
-       var tabId = tabHref.replace('#tab', '');
-       LAST_DROPPABLE_TAB = tabId;
-       $(tabHref).find('.connectedSortable').prepend($(`li.ui-sortable-placeholder.marker`));
-    }
-  });
+function makeTabDroppable(tab) {
+    $(tab).droppable({
+        accept: ".connectedSortable li",
+        hoverClass: 'ui-state-active',
+        tolerance: 'pointer',
+        drop: function (event, ui) {
+             var tabHref = $(this).children('a').attr('href');
+             var tabId = tabHref.replace('#tab', '');
+             LAST_DROPPABLE_TAB = tabId;
+             $(tabHref).find('.connectedSortable').prepend($(`li.ui-sortable-placeholder.marker`));
+        }
+    });
 }
 
 
@@ -324,10 +317,17 @@ function dragTabs() {
 
 
 // CONTROLLER
+function makeTabsDroppable() {
+    var tabs = $("ul.nav.nav-tabs li");
+    for (var i = 0; i < tabs.length; i++) {
+        makeTabDroppable(tabs[i]);
+    }
+}
+
+
 function attachJsToTask(id) {
     animateProgressBar(id);
     editTaskName(id);
-    dragTasks();
 }
 
 
@@ -342,8 +342,8 @@ function attachJsToTasksWithClass(func) {
 function initTasksJs() {
   attachJsToTasksWithClass(animateProgressBar);
   attachJsToTasksWithClass(editTaskName);
-  attachJsToTasksWithClass(dragTasks);
-  moveTaskToTab();
+  makeTabsDroppable();
+  dragTasks()
   dragTabs();
   modalOn();
 }
