@@ -136,6 +136,10 @@ def make_order():
         tasks_ordered = tasks.order_by(Task.time_init).all()
     elif order_type == 'by_time_loop':
         tasks_ordered = tasks.order_by(Task.time_loop).all()
+    elif order_type == 'by_time_left':
+        tasks_times = [(task, task.count_left_time()) for task in tasks]
+        tasks_times = sorted(tasks_times, key=lambda x: x[1])
+        tasks_ordered = [task for task, time in tasks_times]
     else:
         tasks_ordered = tasks.order_by(Task.order_idx).all()
     for idx, task in enumerate(tasks_ordered, start=0):
