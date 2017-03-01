@@ -255,15 +255,18 @@ function modalOn() {
 
 
 function closeTab(closeLink) {
-  var tab = $(closeLink).parents().eq(0);
-  var tabId = tab.children('a[href^="#tab"]').attr('href').replace('#tab', '');
-  $.post('/close_tab', {'tab_id': tabId}).done(
-    function() {
-      $('div#tab' + tabId).remove();
-      tab.remove();
-      $('ul.nav.nav-tabs a[href]:not(.add-button):last').trigger('click')
-    }
-  )
+    var tab = $(closeLink).parents().eq(0);
+    var tabId = tab.children('a[href^="#tab"]').attr('href').replace('#tab', '');
+    $.post('/close_tab', {'tab_id': tabId}).done(
+        function(response) {
+            var activeTabIdx = response['active_tab_idx']
+            $('div#tab' + tabId).remove();
+            tab.remove();
+            if (activeTabIdx >= 0) {
+                $('ul.nav.nav-tabs a[href]:not(.add-button)').eq(activeTabIdx).trigger('click')
+            }
+        }
+    )
 }
 
 

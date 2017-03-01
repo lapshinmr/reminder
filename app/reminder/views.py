@@ -181,6 +181,8 @@ def activate_tab():
 def close_tab():
     tab_id = request.form.get('tab_id')
     tab = Tab.query.filter_by(id=tab_id).first()
+    tab_order_idx = tab.order_idx
+    tab_is_active = tab.is_active
     tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab_id).all()
     for task in tasks:
         db.session.delete(task)
@@ -189,7 +191,12 @@ def close_tab():
     for idx, tab in enumerate(tabs, start=0):
         tab.update_order_idx(idx)
     db.session.commit()
-    return jsonify()
+    if tab_is_active():
+        if tab_order_idx == len(tabs):
+            tab_order_idx -= 1
+    else:
+        tab_order_idx = -1
+    return jsonify({'active_tab_idx': tab_order_idx})
 
 
 @reminder.route('/change_tab', methods=['POST'])
