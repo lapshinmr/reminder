@@ -241,32 +241,70 @@ function activateTab(target) {
 }
 
 
-function modalOn() {
-    $('#close-tab-confirmation').on('show.bs.modal', function(e) {
-        var $closeLink = $(e.relatedTarget);
-        var $modal = $(e.target);
-        var $confirm = $modal.find('div.modal-footer button.btn-default')
-        $confirm.on('click', function() {
-            closeTab($closeLink);
-            $confirm.off('click');
-        });
-    })
+var Modal = function (title, text) {
+    this.template = $(`
+        <div class="modal fade" id="modal-window" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">${title}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>${text}</p>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+    this.addButton = function (text, type, func=null) {
+        var type = type || 'default'
+        var $button = $(`<button type="button" class="btn btn-${type}" data-dismiss="modal">${text}</button>`)
+        if (func != null) {
+            $button.on('click', function() { func() })
+        }
+        this.template.find('.modal-footer').append( $button )
+    };
+    this.get = function() {
+        return this.template
+    };
 }
 
 
-function closeTab(closeLink) {
-    var tab = $(closeLink).parents().eq(0);
-    var tabId = tab.children('a[href^="#tab"]').attr('href').replace('#tab', '');
+function closeTab(tabId, $tab) {
     $.post('/close_tab', {'tab_id': tabId}).done(
         function(response) {
             var activeTabIdx = response['active_tab_idx']
             $('div#tab' + tabId).remove();
-            tab.remove();
+            $tab.remove();
             if (activeTabIdx >= 0) {
                 $('ul.nav.nav-tabs a[href]:not(.add-button)').eq(activeTabIdx).trigger('click')
             }
         }
     )
+}
+
+
+function attachCloseTab(closeLink) {
+    var $tab = $(closeLink).parents().eq(0);
+    var tabId = $tab.children('a[href^="#tab"]').attr('href').replace('#tab', '');
+    var tab_content_length = $(`div.tab-content div#tab${tabId} ul li.task`).length;
+    if (tab_content_length == 0) {
+        closeTab(tabId, $tab);
+    } else {
+        var mh = new Modal(
+            'Warning',
+            'If you close this tab you will lost all your tasks'
+        );
+        mh.addButton('Yes, close', 'default', function() { closeTab(tabId, $tab) });
+        mh.addButton('no', 'primary');
+        var $modal = mh.get()
+        $('#message-box').append($modal);
+        $modal.on('hidden.bs.modal', function() { $modal.remove() })
+        $modal.modal('show');
+    }
 }
 
 
@@ -299,9 +337,8 @@ function dragTabs() {
             tabId = dragged.children('a').eq(0).attr('href').replace('#tab', '');
             marker = ui.placeholder;
             marker.css({
-                backgroundColor: 'black',
-                width: '1px',
-                height: dragged.outerHeight(),
+                width: dragged.outerWidth(true),
+                height: dragged.outerHeight()
             })
             startIndex = marker.index()
             newTabOrderIdx = startIndex;
@@ -348,7 +385,6 @@ function initTasksJs() {
   makeTabsDroppable();
   dragTasks()
   dragTabs();
-  modalOn();
 }
 
 

@@ -61,7 +61,7 @@
             <li>
         {% endif %}
                 <a data-toggle="tab" href="#tab{{ tab.id }}" onclick="activateTab(this)">{{ tab.name }}</a>
-                <a class="tab-close" data-toggle="modal" data-target="#close-tab-confirmation">
+                <a class="tab-close" onclick="attachCloseTab(this)">
                     <i class="fa fa-times" aria-hidden="true"></i>
                 </a>
             </li>
