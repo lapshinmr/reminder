@@ -1,13 +1,37 @@
 
-// WARNING MESSAGE
-function generateWarning(message) {
-  var warning_markup = (
-    `<div class="alert alert-warning alert-dismissable fade in">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-        <strong>Warning!</strong> ${message}
-    </div>`
-  );
-  $('#message-box').html( warning_markup )
+// POPUP
+var Modal = function (title, text) {
+    this.template = $(`
+        <div class="modal fade" id="modal-window" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">${title}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>${text}</p>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+    this.addButton = function (text, type, func=null) {
+        var type = type || 'default'
+        var $button = $(`<button type="button" class="btn btn-${type}" data-dismiss="modal">${text}</button>`)
+        if (func != null) {
+            $button.on('click', function() { func() })
+        }
+        this.template.find('.modal-footer').append( $button )
+    };
+    this.run = function() {
+        var $modal = $(this.template);
+        $('#message-box').append($modal);
+        $modal.on('hidden.bs.modal', function() { $modal.remove() })
+        $modal.modal('show');
+    };
 }
 
 
@@ -16,14 +40,28 @@ function addNewTask() {
   var duration = $('#duration').val();
   var taskName = $('#task-name').val();
   if (duration == 0) {
-    generateWarning('Please choose duration more then ZERO')
+      var mh = new Modal(
+          'Warning',
+          'Please choose duration more then ZERO'
+      );
+      mh.addButton('ok', 'primary');
+      mh.run()
   } else {
-    $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
-      function(response) {
-        $(`#tab${CURRENT_TAB} ul.tasks_area`).prepend(response['task_item_html']);
-        attachJsToTask(response['task_id']);
+      if ($('ul.nav.nav-tabs > li:not(.add-button)').length > 0) {
+          $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
+              function(response) {
+                $(`#tab${CURRENT_TAB} ul.tasks_area`).prepend(response['task_item_html']);
+                attachJsToTask(response['task_id']);
+              }
+          )
+      } else {
+          var mh = new Modal(
+              'Warning',
+              "You can't add task because you need have at list one tab"
+          );
+          mh.addButton('ok', 'primary');
+          mh.run()
       }
-    )
   }
 }
 
@@ -55,6 +93,7 @@ function animateProgressBar(id) {
 
 // EDIT TASK
 function editTaskName(id) {
+    console.log('add task edition')
   var element = $('#' + id).find('.task-name');
   $(element).keypress(function(e) {
     if (e.which == 13) {
@@ -119,7 +158,7 @@ function dragTask(tab_content) {
           $.post('/change_task_idx', {'tab_id': LAST_DROPPABLE_TAB, 'task_id': taskId, 'order_idx': currentIndex});
       }
     }
-  ).disableSelection();
+  );
 }
 
 
@@ -216,9 +255,6 @@ function addNewTab() {
       var $newTab = $(response['tab']);
       var $newTabContent = $(response['tab_content']);
       var tabs = $('ul.nav.nav-tabs li')
-      for (var i = 0; i < tabs.length; i++) {
-        tabs.eq(i).removeClass('active')
-      }
       var $addButton = $('ul.nav.nav-tabs li.add-button');
       $newTab.insertBefore($addButton);
       makeTabDroppable($newTab);
@@ -238,38 +274,6 @@ function activateTab(target) {
         CURRENT_TAB = id;
         $.post('/activate_tab', {'current_tab_id': CURRENT_TAB})
     }
-}
-
-
-var Modal = function (title, text) {
-    this.template = $(`
-        <div class="modal fade" id="modal-window" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">${title}</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>${text}</p>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                </div>
-            </div>
-        </div>
-    `);
-    this.addButton = function (text, type, func=null) {
-        var type = type || 'default'
-        var $button = $(`<button type="button" class="btn btn-${type}" data-dismiss="modal">${text}</button>`)
-        if (func != null) {
-            $button.on('click', function() { func() })
-        }
-        this.template.find('.modal-footer').append( $button )
-    };
-    this.get = function() {
-        return this.template
-    };
 }
 
 
@@ -300,10 +304,7 @@ function attachCloseTab(closeLink) {
         );
         mh.addButton('Yes, close', 'default', function() { closeTab(tabId, $tab) });
         mh.addButton('no', 'primary');
-        var $modal = mh.get()
-        $('#message-box').append($modal);
-        $modal.on('hidden.bs.modal', function() { $modal.remove() })
-        $modal.modal('show');
+        mh.run()
     }
 }
 

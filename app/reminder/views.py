@@ -148,10 +148,8 @@ def make_order():
 @reminder.route('/add_new_tab', methods=['POST'])
 def add_new_tab():
     new_tab_name = request.form.get('new_tab_name')
-    new_tab = Tab(name=new_tab_name, user_id=current_user.id, active=True)
+    new_tab = Tab(name=new_tab_name, user_id=current_user.id, active=False)
     tabs = Tab.query.filter_by(user_id=current_user.id).all()
-    for tab in tabs:
-        tab.deactivate()
     new_tab.update_order_idx(len(tabs))
     db.session.add(new_tab)
     db.session.commit()
