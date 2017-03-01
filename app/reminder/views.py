@@ -197,11 +197,3 @@ def close_tab():
     else:
         tab_order_idx = -1
     return jsonify({'active_tab_idx': tab_order_idx})
-
-
-@reminder.route('/change_tab', methods=['POST'])
-def change_tab():
-    task_id = request.form.get('task_id')
-    tab_id = request.form.get('tab_id')
-    print(task_id, tab_id)
-    return jsonify()
