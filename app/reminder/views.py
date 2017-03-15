@@ -23,13 +23,17 @@ def index():
         return render_template('auth/index.html')
     tabs = Tab.query.filter_by(user_id=current_user.id).order_by(Tab.order_idx)
     tabs_tasks = []
+    active_tab = 0
     for tab in tabs:
+        if tab.is_active():
+            active_tab = tab.id
         tasks = Task.query.filter_by(user_id=USER_ID).filter_by(tab_id=tab.id).order_by(Task.order_idx).all()
         tabs_tasks.append([tab, tasks])
     return render_template(
         'reminder/index.html',
         tabs=tabs,
         tabs_tasks=tabs_tasks,
+        active_tab=active_tab,
         time_units_ranges=TimeUnitsRanges().gen_all()
     )
 

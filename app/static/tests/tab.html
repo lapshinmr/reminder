@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TABS</title>
+  <style>
+  #sortable0 li, #sortable1 li, #sortable2 li {
+    margin: 0 5px 5px 5px;
+    padding: 5px;
+    font-size: 1.2em;
+    width: 120px;
+  }
+  </style>
+  <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.4/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.3/bootstrap.min.js"></script>
+</head>
+<body>
+  <div id="tabs" class="tabbable">
+    <ul id="myTab" class="nav nav-tabs">
+      <li><a href="#tabs-1" data-toggle="tab">Nunc tincidunt</a></li>
+      <li><a href="#tabs-2" data-toggle="tab">Proin dolor</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="tabs-1" class="tab-pane">
+          <ul id="sortable1" class="connectedSortable ui-helper-reset">
+            <li class="ui-state-default">Item 1</li>
+            <li class="ui-state-default">Item 2</li>
+            <li class="ui-state-default">Item 3</li>
+          </ul>
+        </div>
+        <div id="tabs-2" class="tab-pane">
+          <ul id="sortable2" class="connectedSortable ui-helper-reset">
+            <li class="ui-state-highlight">Item 1</li>
+            <li class="ui-state-highlight">Item 2</li>
+            <li class="ui-state-highlight">Item 3</li>
+          </ul>
+        </div>
+      </div>
+  </div>
+  <script>
+    $(function() {
+      $('.tab-pane > ul').sortable().disableSelection();
+      var $tabItems = $('#myTab > li');
+      $('#myTab a:last').tab('show');
+      $tabItems.droppable({
+        accept: ".connectedSortable li",
+        hoverClass: "ui-state-hover",
+        drop: function(event, ui) {
+          var
+            $item = $(this),
+            href  = $item.children('a').attr('href'),
+            $list = $(href).find('.connectedSortable');
+          $list.append($('<li />').html(ui.draggable.html()).attr('class', ui.draggable.attr('class')));
+          $list.closest('.tab-pane').addClass('active').siblings().removeClass('active');
+          $item.addClass('active').siblings().removeClass('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
