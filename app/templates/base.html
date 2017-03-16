@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="{{ ASSET_URL }}" />
     {% endassets %}
     {% if config == 'dev' %}
-        <link rel="stylesheet" type="text/less" href="{{ url_for('static', filename='main.less') }}">
+        <link rel="stylesheet" type="text/less" href="{{ url_for('static', filename='css/main.less') }}">
     {% endif %}
 
     <title>{% block title %}{% endblock %}</title>

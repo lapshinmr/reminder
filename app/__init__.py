@@ -12,13 +12,13 @@ login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
+css = ['css/bootstrap.min.css', 'css/font-awesome.min.css', 'css/jquery-ui-1.12.1.min.css']
+if os.environ.get('CONFIG') == 'prod':
+    css.append('css/main.css')
 
 bundels = {
     'main_css': Bundle(
-        'css/bootstrap.min.css',
-        'css/font-awesome.min.css',
-        'css/jquery-ui-1.12.1.min.css',
-        'css/main.css' if os.environ.get('CONFIG') == 'prod' else '',
+        *css,
         output='gen/main.css',
         filters='cssmin'
     )
