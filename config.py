@@ -9,6 +9,11 @@ class Config:
         pass
 
 
+class ProdConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'mysql://{user}:{password}@{host}/data'.format(
+        user=os.environ['USER'], password=os.environ['PASSWORD'], host='localhost')
+
+
 class DevConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'mysql://{user}:{password}@{host}/data'.format(
@@ -22,6 +27,7 @@ class TestConfig(Config):
 
 
 config = {
-    'developing': DevConfig,
-    'testing': TestConfig
+    'prod': ProdConfig,
+    'dev': DevConfig,
+    'test': TestConfig
 }

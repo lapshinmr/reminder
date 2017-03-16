@@ -5,10 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery-ui-1.12.1.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap-3.3.7/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='font-awesome-4.7.0/css/font-awesome.min.css') }}">
-    <link rel="stylesheet" type="text/less" href="{{ url_for('static', filename='main.less') }}">
+    {% assets "main_css" %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}" />
+    {% endassets %}
+    {% if config == 'dev' %}
+        <link rel="stylesheet" type="text/less" href="{{ url_for('static', filename='main.less') }}">
+    {% endif %}
 
     <title>{% block title %}{% endblock %}</title>
 </head>
@@ -73,33 +75,35 @@
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous">
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js"></script>
+    {% if config == 'dev' %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js"></script>
+    {% endif %}
     <script>
         if (typeof(jQuery) === 'undefined') {
-            document.write(`<script src="{{ url_for('static', filename='jquery-3.1.1.min.js') }}"><\/script>`);
+            document.write(`<script src="{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"><\/script>`);
         }
     </script>
     <script>
         if (typeof(jQuery.ui) === 'undefined') {
-            document.write(`<script src="{{ url_for('static', filename='jquery-ui-1.12.1.min.js') }}"><\/script>`);
+            document.write(`<script src="{{ url_for('static', filename='js/jquery-ui-1.12.1.min.js') }}"><\/script>`);
         }
     </script>
     <script>
         if (typeof($.fn.modal) === "undefined") {
-            document.write('<script src="{{ url_for('static', filename='bootstrap-3.3.7/js/bootstrap.min.js') }}"><\/script>');
+            document.write('<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"><\/script>');
         }
     </script>
 
-    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     {% if current_user.is_authenticated %}
-    <script>
-        $(document).ready(function(){
-            CURRENT_TAB = {{ active_tab }}
-            durationPicker.show();
-            initTasksJs();
-        });
-    </script>
+        <script>
+            $(document).ready(function(){
+                CURRENT_TAB = {{ active_tab }}
+                durationPicker.show();
+                initTasksJs();
+            });
+        </script>
     {% endif %}
 
 </body>
