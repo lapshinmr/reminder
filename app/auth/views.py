@@ -1,7 +1,9 @@
+import os
 from flask import request, url_for, redirect, flash, render_template
 from flask_login import login_user, login_required, logout_user
 from . import auth
 from .models import User
+from app import db
 
 
 @auth.route('/login', methods=['POST'])
@@ -23,3 +25,18 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('reminder.index'))
+
+
+@auth.route('/register', methods=['GET', 'POST'])
+def register():
+    email = request.form.get('email')
+    username = request.form.get('username')
+    password = request.form.get('password')
+    if email and username and password:
+        if not User.query.filter_by(email=email).first():
+            user = User(email=email, username=username, password=password)
+            db.session.add(user)
+            db.session.commit()
+        return redirect(url_for('reminder.index'))
+    cur_config = os.environ.get('CONFIG')
+    return render_template('auth/register.html', config=cur_config)

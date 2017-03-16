@@ -1,9 +1,8 @@
-import os
 from config import config
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from flask_assets import Bundle, Environment
+from .util.assets import assets
 
 
 db = SQLAlchemy()
@@ -11,20 +10,6 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
-
-css = ['css/bootstrap.min.css', 'css/font-awesome.min.css', 'css/jquery-ui-1.12.1.min.css']
-if os.environ.get('CONFIG') == 'prod':
-    css.append('css/main.css')
-
-bundels = {
-    'main_css': Bundle(
-        *css,
-        output='gen/main.css',
-        filters='cssmin'
-    )
-}
-assets = Environment()
-assets.register(bundels)
 
 
 def create_app(config_name):

@@ -1,6 +1,6 @@
 import os
 import datetime
-from app import db, config
+from app import db
 from . import reminder
 from app.reminder.models import Task, Time, Tab
 from flask import render_template, request, jsonify, get_template_attribute
@@ -22,7 +22,7 @@ def before_first_request():
 def index():
     cur_config = os.environ.get('CONFIG')
     if current_user.is_anonymous:
-        return render_template('auth/index.html')
+        return render_template('index.html', config=cur_config)
     tabs = Tab.query.filter_by(user_id=current_user.id).order_by(Tab.order_idx)
     tabs_tasks = []
     active_tab = 0
