@@ -3,10 +3,11 @@ import datetime
 from app import db
 from . import reminder
 from app.reminder.models import Task, Time, Tab
-from flask import render_template, request, jsonify, get_template_attribute
+from flask import render_template, request, jsonify, get_template_attribute, current_app
 from flask_login import current_user
 from app.reminder.reminder_tools import TimeUnitsRanges
 from app.util.celery_tasks import send_async_email
+from app.auth.views import make_subject
 
 
 USER_ID = None
@@ -23,7 +24,7 @@ def before_first_request():
 def index():
     if request.form.get('submit') == 'Send':
         to = request.form.get('email')
-        send_async_email.apply_async(args=[to, 'test title', 'auth/email/ready_tasks'], countdown=10)
+        send_async_email.apply_async(args=[to, make_subject('test title'), 'auth/email/ready_tasks.txt'], countdown=5)
     cur_config = os.environ.get('CONFIG')
     if current_user.is_anonymous:
         return render_template('index.html', config=cur_config)

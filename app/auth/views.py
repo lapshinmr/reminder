@@ -1,10 +1,14 @@
 import os
-from flask import request, url_for, redirect, render_template
+from flask import request, url_for, redirect, render_template, current_app
 from flask_login import login_user, login_required, logout_user, current_user
 from . import auth
 from .models import User
 from app import db
 from app.util.email_tools import send_email
+
+
+def make_subject(subject):
+    return '{} {}'.format(current_app.config['MAIL_SUBJECT_PREFIX'], subject)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -39,7 +43,12 @@ def register():
             db.session.add(user)
             db.session.commit()
             token = user.generate_confirmation_token()
-            send_email(to=user.email, subject='Confirm Your Account', template='auth/email/confirm', user=user, token=token)
+            send_email(
+                to=user.email,
+                subject=make_subject('Confirm Your Account'),
+                template='auth/email/confirm',
+                user=user, token=token
+            )
         return redirect(url_for('reminder.index'))
     cur_config = os.environ.get('CONFIG')
     return render_template('auth/register.html', config=cur_config)
