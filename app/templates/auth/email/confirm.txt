@@ -1,0 +1,13 @@
+Dear {{ user.name }},
+
+Welcome to article2pdf!
+
+To confirm your account please click on the following link:
+
+{{ url_for('auth.confirm', token=token, _external=True) }}
+
+Sincerely,
+
+The Word Booster Team
+
+Note: replies to this email address are not monitored.

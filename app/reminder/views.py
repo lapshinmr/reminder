@@ -6,6 +6,7 @@ from app.reminder.models import Task, Time, Tab
 from flask import render_template, request, jsonify, get_template_attribute
 from flask_login import current_user
 from app.reminder.reminder_tools import TimeUnitsRanges
+from app.util.celery_tasks import send_async_email
 
 
 USER_ID = None
@@ -20,6 +21,9 @@ def before_first_request():
 
 @reminder.route('/', methods=['GET', 'POST'])
 def index():
+    if request.form.get('submit') == 'Send':
+        to = request.form.get('email')
+        send_async_email.apply_async(args=[to, 'test title', 'auth/email/ready_tasks'], countdown=10)
     cur_config = os.environ.get('CONFIG')
     if current_user.is_anonymous:
         return render_template('index.html', config=cur_config)

@@ -1,8 +1,9 @@
-from config import config
+from config import config, Config
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from .util.assets import assets
+from celery import Celery
 
 
 db = SQLAlchemy()
@@ -10,6 +11,10 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
+
+
+# Initialize Celery
+celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)
 
 
 def create_app(config_name):
@@ -21,6 +26,8 @@ def create_app(config_name):
     login_manager.init_app(app)
 
     assets.init_app(app)
+
+    celery.conf.update(app.config)
 
     from .reminder import reminder
     app.register_blueprint(reminder)

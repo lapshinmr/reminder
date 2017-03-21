@@ -8,9 +8,7 @@ from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
 
-print(os.environ.get('CONFIG'))
 app = create_app(os.environ.get('CONFIG') or 'dev')
-app.config['SECRET_KEY'] = 'hard to guess string'
 manager = Manager(app)
 migrate = Migrate(app, db)
 
@@ -27,6 +25,7 @@ def test():
     import unittest
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
+
 
 if __name__ == '__main__':
     manager.run()
