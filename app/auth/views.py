@@ -4,7 +4,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from . import auth
 from .models import User
 from app import db
-from app.util.email_tools import send_email
+from app.util.celery_tasks import send_async_email
 
 
 def make_subject(subject):
@@ -43,11 +43,13 @@ def register():
             db.session.add(user)
             db.session.commit()
             token = user.generate_confirmation_token()
-            send_email(
-                to=user.email,
-                subject=make_subject('Confirm Your Account'),
-                template='auth/email/confirm',
-                user=user, token=token
+            message_text = render_template('auth/email/confirm.txt', user=user, token=token)
+            send_async_email.apply_async(
+                args=[
+                    user.email,
+                    make_subject('Confirm Your Account'),
+                    message_text
+                ]
             )
         return redirect(url_for('reminder.index'))
     cur_config = os.environ.get('CONFIG')
