@@ -18,7 +18,7 @@ def create_message(sender, to, subject, message_text, *attachment_paths):
     message['to'] = to
     message['from'] = sender
     message['subject'] = subject
-    message.attach(MIMEText(message_text))
+    message.attach(MIMEText(message_text, 'html'))
     for file_path in attachment_paths:
         if not os.path.exists(file_path):
             continue

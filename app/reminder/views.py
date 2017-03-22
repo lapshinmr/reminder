@@ -24,7 +24,7 @@ def index():
     if request.form.get('submit') == 'Send':
         to = request.form.get('email')
         subject = make_subject('test title')
-        message_text = render_template('auth/email/ready_tasks.txt')
+        message_text = render_template('email/ready_tasks.txt')
         send_async_email.apply_async(args=[to, subject, message_text])
     cur_config = os.environ.get('CONFIG')
     if current_user.is_anonymous:

@@ -15,11 +15,15 @@ class User(UserMixin, db.Model):
     tasks = db.relationship('Task', backref='user')
     tabs = db.relationship('Tab', backref='user')
     confirmed = db.Column(db.Boolean, default=False)
+    send_tasks_flag = db.Column(db.Boolean, default=True)
 
     def __init__(self, email, username, password):
         self.email = email
         self.username = username
         self.password = password
+
+    def __repr__(self):
+        return '<User %r>' % self.username
 
     @property
     def password(self):
@@ -31,9 +35,6 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-    def __repr__(self):
-        return '<User %r>' % self.username
 
     def generate_confirmation_token(self, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
@@ -50,6 +51,12 @@ class User(UserMixin, db.Model):
         self.confirmed = True
         db.session.add(self)
         return True
+
+    def activate_send_tasks_flag(self):
+        self.send_tasks_flag = True
+
+    def deactivate_send_tasks_flag(self):
+        self.send_tasks_flag = False
 
 
 class Role(db.Model):
