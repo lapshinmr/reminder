@@ -1,4 +1,9 @@
 import datetime
+from flask import current_app
+
+
+def make_subject(subject):
+    return '{} {}'.format(current_app.config['MAIL_SUBJECT_PREFIX'], subject)
 
 
 def largest_timepart(input_in_seconds):

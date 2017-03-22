@@ -2,8 +2,7 @@
 
 import os
 from app import db, create_app
-from app.reminder.models import Time, Task
-from app.auth.models import User, Role
+from app.models import Time, Task, User, Role
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 

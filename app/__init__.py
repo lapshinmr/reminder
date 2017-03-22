@@ -2,7 +2,7 @@ from config import config, Config
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from .util.assets import assets
+from .assets import assets
 from celery import Celery
 
 

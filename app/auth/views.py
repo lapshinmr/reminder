@@ -1,14 +1,11 @@
 import os
-from flask import request, url_for, redirect, render_template, current_app
+from flask import request, url_for, redirect, render_template
 from flask_login import login_user, login_required, logout_user, current_user
 from . import auth
-from .models import User
+from app.models import User
 from app import db
-from app.util.celery_tasks import send_async_email
-
-
-def make_subject(subject):
-    return '{} {}'.format(current_app.config['MAIL_SUBJECT_PREFIX'], subject)
+from app.celery_tasks import send_async_email
+from app.utils import make_subject
 
 
 @auth.route('/login', methods=['GET', 'POST'])

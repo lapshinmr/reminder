@@ -1,13 +1,12 @@
 import os
 import datetime
-from app import db
-from . import reminder
-from app.reminder.models import Task, Time, Tab
-from flask import render_template, request, jsonify, get_template_attribute, current_app
+from flask import render_template, request, jsonify, get_template_attribute
 from flask_login import current_user
-from app.reminder.reminder_tools import TimeUnitsRanges
-from app.util.celery_tasks import send_async_email
-from app.auth.views import make_subject
+from . import reminder
+from app import db
+from app.models import Task, Time, Tab
+from app.utils import TimeUnitsRanges, make_subject
+from app.celery_tasks import send_async_email
 
 
 USER_ID = None
@@ -213,3 +212,8 @@ def close_tab():
     else:
         tab_order_idx = -1
     return jsonify({'active_tab_idx': tab_order_idx})
+
+
+@reminder.route('/subscribe', methods=['GET', 'POST'])
+def subscribe():
+    pass
