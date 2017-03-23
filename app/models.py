@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     tabs = db.relationship('Tab', backref='user')
     confirmed = db.Column(db.Boolean, default=False)
     send_tasks_flag = db.Column(db.Boolean, default=True)
+    schedule = db.Column(db.String(128), default='none')
 
     def __init__(self, email, username, password):
         self.email = email
