@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     tasks = db.relationship('Task', backref='user')
     tabs = db.relationship('Tab', backref='user')
     confirmed = db.Column(db.Boolean, default=False)
-    send_tasks_flag = db.Column(db.Boolean, default=True)
+    subscribed = db.Column(db.Boolean, default=True)
     schedule = db.Column(db.String(128), default='none')
 
     def __init__(self, email, username, password):
@@ -53,11 +53,11 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         return True
 
-    def activate_send_tasks_flag(self):
-        self.send_tasks_flag = True
+    def subscribe(self):
+        self.subscribed = True
 
-    def deactivate_send_tasks_flag(self):
-        self.send_tasks_flag = False
+    def unsubscribe(self):
+        self.subscribed = False
 
 
 class Role(db.Model):

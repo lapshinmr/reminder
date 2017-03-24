@@ -19,37 +19,36 @@
 
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
+            <!-- Title -->
             <div class="navbar-header">
-                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
                 <a class="navbar-brand" href="{{ url_for('reminder.index') }}">Reminder</a>
             </div>
-            <center>
-                <div class="navbar-collapse collapse" id="navbar-main">
-                    {% if current_user.is_authenticated %}
-                        <form class="navbar-form navbar-right" action="{{ url_for('auth.logout') }}" method="POST">
-                            <button type="submit" class="btn btn-default">Sign Out</button>
-                        </form>
-                    {% else %}
-                        <form class="navbar-form navbar-right" action="{{ url_for('auth.login') }}" method="POST">
-                            <div class="form-group">
-                                <input type="email" class="form-control" name="email" placeholder="Email">
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" name="password" placeholder="Password">
-                            </div>
-                            <div class="checkbox">
-                                <label><input type="checkbox" name="remember_me">Remember me</label>
-                            </div>
-                            <button type="submit" class="btn btn-default">Sign In</button>
-                            <a href="{{ url_for('auth.register') }}" class="btn btn-success" role="button">Sign Up</a>
-                        </form>
-                    {% endif %}
-                </div>
-            </center>
+            <!-- Buttons and LogIn form -->
+            {% if current_user.is_authenticated %}
+                <form class="navbar-form navbar-right">
+                    <a href="{{ url_for('reminder.settings') }}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-cog"></span> Settings
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-log-out"></span> LogOut
+                    </a>
+                </form>
+            {% else %}
+                <form class="navbar-form navbar-right" action="{{ url_for('auth.login') }}" method="POST">
+                    <div class="form-group">
+                        <input type="email" class="form-control" name="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="Password">
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="remember_me">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-default">
+                        <span class="glyphicon glyphicon-log-in"></span> LogIn</button>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-success" role="button"> Sign Up</a>
+                </form>
+            {% endif %}
         </div>
     </nav>
 

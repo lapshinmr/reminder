@@ -1,50 +1,36 @@
 import os
 import datetime
 from flask import render_template, request, jsonify, get_template_attribute
-from flask_login import current_user
+from flask_login import current_user, login_required
 from . import reminder
 from app import db
-from app.models import Task, Time, Tab
-from app.utils import TimeUnitsRanges, make_subject
-from app.celery_tasks import send_async_email
-
-
-USER_ID = None
-
-
-@reminder.before_request
-def before_first_request():
-    global USER_ID
-    if not current_user.is_anonymous:
-        USER_ID = current_user.id
+from app.models import Task, Time, Tab, User
+from app.utils import TimeUnitsRanges
 
 
 @reminder.route('/', methods=['GET', 'POST'])
 def index():
-    if request.form.get('submit') == 'Send':
-        to = request.form.get('email')
-        subject = make_subject('test title')
-        message_text = render_template('email/ready_tasks.txt')
-        send_async_email.apply_async(args=[to, subject, message_text])
     cur_config = os.environ.get('CONFIG')
     if current_user.is_anonymous:
         return render_template('index.html', config=cur_config)
-    tabs = Tab.query.filter_by(user_id=current_user.id).order_by(Tab.order_idx)
-    tabs_tasks = []
-    active_tab = 0
-    for tab in tabs:
-        if tab.is_active():
-            active_tab = tab.id
-        tasks = Task.query.filter_by(user_id=USER_ID).filter_by(tab_id=tab.id).order_by(Task.order_idx).all()
-        tabs_tasks.append([tab, tasks])
-    return render_template(
-        'reminder/index.html',
-        config=cur_config,
-        tabs=tabs,
-        tabs_tasks=tabs_tasks,
-        active_tab=active_tab,
-        time_units_ranges=TimeUnitsRanges().gen_all()
-    )
+    else:
+        tabs = Tab.query.filter_by(user_id=current_user.id).order_by(Tab.order_idx)
+        tabs_tasks = []
+        active_tab = 0
+        for tab in tabs:
+            if tab.is_active():
+                active_tab = tab.id
+            tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab.id).order_by(Task.order_idx).all()
+            tabs_tasks.append([tab, tasks])
+        return render_template(
+            'reminder/index.html',
+            config=cur_config,
+            tabs=tabs,
+            tabs_tasks=tabs_tasks,
+            active_tab=active_tab,
+            time_units_ranges=TimeUnitsRanges().gen_all(),
+            user=current_user
+        )
 
 
 @reminder.route('/add_task', methods=['GET', 'POST'])
@@ -53,10 +39,10 @@ def add():
     time_loop = int(request.form['duration'])
     tab_id = int(request.form['tab_id'])
     new_task_idx = 0
-    tasks = Task.query.filter_by(user_id=USER_ID).filter_by(tab_id=tab_id).filter_by(time_close=None).order_by(Task.order_idx).all()
+    tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab_id).filter_by(time_close=None).order_by(Task.order_idx).all()
     for idx, task in enumerate(tasks, start=1):
         task.update_order_idx(idx)
-    new_task = Task(name=task_name, time_loop=time_loop, user_id=USER_ID, order_idx=new_task_idx, tab_id=tab_id)
+    new_task = Task(name=task_name, time_loop=time_loop, user_id=current_user.id, order_idx=new_task_idx, tab_id=tab_id)
     db.session.add(new_task)
     db.session.commit()
     return jsonify(
@@ -127,7 +113,7 @@ def change_task_idx():
 def change_tab_order_idx():
     tab_id = request.form.get('tab_id')
     new_tab_order_idx = int(request.form.get('new_tab_order_idx')) - 1
-    tabs = Tab.query.filter_by(user_id=USER_ID).order_by(Tab.order_idx).all()
+    tabs = Tab.query.filter_by(user_id=current_user.id).order_by(Tab.order_idx).all()
     tab = Tab.query.filter_by(id=tab_id).first()
     tabs.remove(tab)
     tabs.insert(new_tab_order_idx, tab)
@@ -141,7 +127,7 @@ def change_tab_order_idx():
 def make_order():
     order_type = request.form.get('order_type')
     tab_id = request.form.get('tab_id')
-    tasks = Task.query.filter_by(user_id=USER_ID).filter_by(tab_id=tab_id).filter_by(time_close=None)
+    tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab_id).filter_by(time_close=None)
     old_order = [task.id for task in tasks.order_by(Task.order_idx).all()]
     if order_type == 'by_name':
         tasks_ordered = tasks.order_by(Task.name).all()
@@ -202,7 +188,7 @@ def close_tab():
     for task in tasks:
         db.session.delete(task)
     db.session.delete(tab)
-    tabs = Tab.query.filter_by(user_id=USER_ID).order_by(Tab.order_idx).all()
+    tabs = Tab.query.filter_by(user_id=current_user.id).order_by(Tab.order_idx).all()
     for idx, tab in enumerate(tabs, start=0):
         tab.update_order_idx(idx)
     db.session.commit()
@@ -216,4 +202,16 @@ def close_tab():
 
 @reminder.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
+    print(current_user.subscribed)
+
+
+
+@reminder.route('/schedule', methods=['POST'])
+def schedule():
+    pass
+
+
+@reminder.route('/settings', methods=['POST'])
+@login_required
+def settings():
     pass
