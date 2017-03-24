@@ -200,9 +200,10 @@ def close_tab():
     return jsonify({'active_tab_idx': tab_order_idx})
 
 
-@reminder.route('/subscribe', methods=['GET', 'POST'])
+@reminder.route('/subscribe')
 def subscribe():
-    print(current_user.subscribed)
+    current_user.subscribed
+    return
 
 
 
@@ -211,7 +212,8 @@ def schedule():
     pass
 
 
-@reminder.route('/settings', methods=['POST'])
+@reminder.route('/settings')
 @login_required
 def settings():
-    pass
+    cur_config = os.environ.get('CONFIG')
+    return render_template('reminder/settings.html', user=current_user, config=cur_config)

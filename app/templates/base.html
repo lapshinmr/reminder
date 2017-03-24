@@ -26,10 +26,10 @@
             <!-- Buttons and LogIn form -->
             {% if current_user.is_authenticated %}
                 <form class="navbar-form navbar-right">
-                    <a href="{{ url_for('reminder.settings') }}" class="btn btn-default">
+                    <a href="{{ url_for('reminder.settings') }}" class="btn btn-default" role="button">
                         <span class="glyphicon glyphicon-cog"></span> Settings
                     </a>
-                    <a href="{{ url_for('auth.logout') }}" class="btn btn-default">
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-default" role="button">
                         <span class="glyphicon glyphicon-log-out"></span> LogOut
                     </a>
                 </form>
