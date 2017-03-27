@@ -4,10 +4,10 @@
 
 {% block content %}
 <div class="row">
-    <div class="logo-side col-md-2 col-md-offset-1">
-        <img src="" class="col-md-2" title="Your logo" alt="Your logo">
+    <div class="logo-side col-md-3">
+        <img src="#" class="col-md-3" title="Your logo" alt="Your logo">
     </div>
-    <div class="settings-side col-md-8 col-md-offset-1">
+    <div class="settings-side col-md-9">
 
         <h3>main information</h3>
         <br />
@@ -37,13 +37,27 @@
         <h3>notification settings</h3>
         <br />
         {% if user.subscribed %}
-            <a href="{{ url_for('reminder.subscribe') }}" class="btn btn-default" role="button">Unsubscribe</a>
+            {% set button_type = "btn-default" %}
+            {% set button_text = "Unsubscribe" %}
         {% else %}
-            <a href="{{ url_for('reminder.subscribe') }}" class="btn btn-success" role="button">Subscribe</a>
+            {% set button_type = "btn-success" %}
+            {% set button_text = "Subscribe" %}
         {% endif %}
-        {% for n in range(15) %}
-            <input type="checkbox" value="{{ n }}"><label>{{ n }}</label>
-        {% endfor %}
+            <button class="btn btn-block {{ button_type }}" onclick="subscribe(this)">{{ button_text }}</button>
+            {% for n in range(24) %}
+                {% set time = '{:0>2.2}'.format(n|string) %}
+                {% if time in schedule %}
+                    {% set checked = "checked" %}
+                {% else %}
+                    {% set checked = "" %}
+                {% endif %}
+                <div class="col-md-1">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" value="{{ '{:0>2.2}'.format(n|string) }}" {{ checked }} onclick="schedule(this)">
+                        {{ '{0:0>2.2}:00'.format(n|string) }}
+                    </label>
+                </div>
+            {% endfor %}
 
         <br />
 

@@ -548,6 +548,27 @@ function turnOnTooltips() {
 }
 
 
+// SUBSCRIBE BUTTON
+function subscribe(button) {
+    var subscribe = true;
+    $(button).toggleClass('btn-default').toggleClass('btn-success');
+    if ($(button).hasClass('btn-default')) {
+        $(button).text('Unsubscribe')
+        subscribe = false;
+    } else {
+        $(button).text('Subscribe')
+    }
+    $.post('/subscribe', {'subscribe': subscribe})
+}
+
+
+// SCHEDULE CHECKBOX
+function schedule(checkbox) {
+    var value = $(checkbox).attr('value')
+    var checked = $(checkbox).prop('checked')
+    $.post('/settings/schedule', {'value': value, 'checked': checked});
+}
+
 
 // CONTROLLER
 function makeTabsDroppable() {

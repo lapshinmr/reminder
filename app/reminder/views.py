@@ -1,6 +1,6 @@
 import os
 import datetime
-from flask import render_template, request, jsonify, get_template_attribute
+from flask import render_template, request, jsonify, get_template_attribute, redirect, url_for
 from flask_login import current_user, login_required
 from . import reminder
 from app import db
@@ -200,20 +200,32 @@ def close_tab():
     return jsonify({'active_tab_idx': tab_order_idx})
 
 
-@reminder.route('/subscribe')
-def subscribe():
-    current_user.subscribed
-    return
-
-
-
-@reminder.route('/schedule', methods=['POST'])
-def schedule():
-    pass
-
-
 @reminder.route('/settings')
 @login_required
 def settings():
     cur_config = os.environ.get('CONFIG')
-    return render_template('reminder/settings.html', user=current_user, config=cur_config)
+    notification_schedule = current_user.schedule.split(', ')
+    return render_template('reminder/settings.html', user=current_user, config=cur_config, schedule=notification_schedule)
+
+
+@reminder.route('/subscribe', methods=['POST'])
+@login_required
+def subscribe():
+    current_user.subscribe()
+    db.session.commit()
+    return jsonify()
+
+
+@reminder.route('/settings/schedule', methods=['POST'])
+@login_required
+def schedule():
+    value = request.form.get('value')
+    checked = request.form.get('checked') == 'true'
+    notification_schedule = current_user.schedule.split(', ')
+    if checked and value not in notification_schedule:
+        notification_schedule.append(value)
+    elif not checked and value in notification_schedule:
+        notification_schedule.remove(value)
+    current_user.schedule = ', '.join(sorted(notification_schedule))
+    db.session.commit()
+    return jsonify()

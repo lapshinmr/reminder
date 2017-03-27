@@ -18,11 +18,10 @@ class User(UserMixin, db.Model):
     subscribed = db.Column(db.Boolean, default=True)
     schedule = db.Column(db.String(128), default='none')
 
-    def __init__(self, email, username, password, subscribed):
+    def __init__(self, email, username, password):
         self.email = email
         self.username = username
         self.password = password
-        self.__subscribed = subscribed
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -54,13 +53,11 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         return True
 
-    @property
-    def subscribed(self):
+    def subscribe(self):
         if self.subscribed:
-            self.__subscribed = False
+            self.subscribed = False
         else:
-            self.__subscribed = True
-        return self.__subscribed
+            self.subscribed = True
 
 
 class Role(db.Model):
