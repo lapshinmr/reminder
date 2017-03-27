@@ -12,7 +12,7 @@
         <link rel="stylesheet" type="text/less" href="{{ url_for('static', filename='css/main.less') }}">
     {% endif %}
 
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}Start{% endblock %}</title>
 </head>
 <body>
     <div class="container" id="message-box"> </div>
@@ -92,15 +92,7 @@
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-    {% if current_user.is_authenticated %}
-        <script>
-            $(document).ready(function(){
-                CURRENT_TAB = {{ active_tab }}
-                //durationPicker.show();
-                initTasksJs();
-            });
-        </script>
-    {% endif %}
+    {% block scripts %}{% endblock %}
 
 </body>
 </html>

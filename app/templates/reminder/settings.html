@@ -39,25 +39,31 @@
         {% if user.subscribed %}
             {% set button_type = "btn-default" %}
             {% set button_text = "Unsubscribe" %}
+            {% set disabled = "" %}
         {% else %}
             {% set button_type = "btn-success" %}
             {% set button_text = "Subscribe" %}
+            {% set disabled = "disabled" %}
         {% endif %}
             <button class="btn btn-block {{ button_type }}" onclick="subscribe(this)">{{ button_text }}</button>
-            {% for n in range(24) %}
-                {% set time = '{:0>2.2}'.format(n|string) %}
-                {% if time in schedule %}
-                    {% set checked = "checked" %}
-                {% else %}
-                    {% set checked = "" %}
-                {% endif %}
-                <div class="col-md-1">
-                    <label class="checkbox-inline">
-                        <input type="checkbox" value="{{ '{:0>2.2}'.format(n|string) }}" {{ checked }} onclick="schedule(this)">
-                        {{ '{0:0>2.2}:00'.format(n|string) }}
-                    </label>
+            <div class="row">
+                <div class="col-md-12">
+                {% for n in range(24) %}
+                    {% set time = '{:0>2.2}'.format(n|string) %}
+                    {% if time in schedule %}
+                        {% set checked = "checked" %}
+                    {% else %}
+                        {% set checked = "" %}
+                    {% endif %}
+                    <div class="col-md-3 text-center">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" value="{{ '{:0>2.2}'.format(n|string) }}" {{ checked }} {{ disabled }} onclick="schedule(this)">
+                            {{ '{0:0>2.2}:00'.format(n|string) }}
+                        </label>
+                    </div>
+                {% endfor %}
                 </div>
-            {% endfor %}
+            </div>
 
         <br />
 

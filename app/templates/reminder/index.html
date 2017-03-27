@@ -53,3 +53,15 @@
 </div>
 {% endblock %}
 
+
+{% block scripts %}
+    {% if current_user.is_authenticated %}
+    <script>
+        $(document).ready(function(){
+            CURRENT_TAB = {{ active_tab }}
+            durationPicker.show();
+            initTasksJs();
+        });
+    </script>
+    {% endif %}
+{% endblock %}

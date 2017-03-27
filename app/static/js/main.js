@@ -551,14 +551,20 @@ function turnOnTooltips() {
 // SUBSCRIBE BUTTON
 function subscribe(button) {
     var subscribe = true;
+    var checkboxes = $(button).next('div').find('input');
     $(button).toggleClass('btn-default').toggleClass('btn-success');
     if ($(button).hasClass('btn-default')) {
         $(button).text('Unsubscribe')
         subscribe = false;
+        $(checkboxes).prop('disabled', false);
     } else {
-        $(button).text('Subscribe')
+        $(button).text('Subscribe');
+        $(checkboxes).each(function() {
+            $(this).prop('disabled', true);
+        });
     }
     $.post('/subscribe', {'subscribe': subscribe})
+    button.blur();
 }
 
 
@@ -567,6 +573,27 @@ function schedule(checkbox) {
     var value = $(checkbox).attr('value')
     var checked = $(checkbox).prop('checked')
     $.post('/settings/schedule', {'value': value, 'checked': checked});
+}
+
+
+// FORM VALIDATION
+// passwords comparing
+function comparePasswords() {
+
+}
+
+// email checking
+function checkEmailUsage() {
+    $('input#signup-email').on('blur', function() {
+        var email = $('input#signup-email').val();
+        console.log('post to server', email);
+        $.post('/check_email_usage', {'email': email}).done(
+            function(response) {
+                var email_exist = response['email_exist'];
+                console.log(email_exist);
+            }
+        )
+    })
 }
 
 
