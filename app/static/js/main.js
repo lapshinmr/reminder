@@ -594,6 +594,12 @@ function checkEmailUsage() {
                 if (emailExist) {
                     $('div#signup-email').addClass('has-error has-feedback');
                     $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-remove form-control-feedback"}));
+                    $('div#signup-email input')
+                        .popover({
+                            content: 'This email address is already being used.',
+                         })
+                        .addClass('popover-danger')
+                        .popover('show');
                 } else {
                     $('div#signup-email').addClass('has-success has-feedback');
                     $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-ok form-control-feedback"}));
@@ -605,6 +611,7 @@ function checkEmailUsage() {
     console.log('keyup')
         $('div#signup-email').removeClass('has-error has-success has-feedback');
         $('div#signup-email span').remove();
+        $('div#signup-email input').popover('hide');
     })
 }
 
