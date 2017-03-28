@@ -583,48 +583,83 @@ function comparePasswords() {
 }
 
 // email checking
-function checkEmailUsage() {
-    var emailExist;
-    $('div#signup-email input').on('blur', function() {
-        var email = $('div#signup-email input').val();
-        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (!regex.test(email)) {
-            $('div#signup-email').addClass('has-warning has-feedback');
-            $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-warning-sign form-control-feedback"}));
-            $('div#signup-email input')
-                .popover({
-                    content: 'Email address scheme is wrong.'
-                 })
-                .addClass('popover-warning')
-                .popover('show');
-            $('div#signup-email div.popover').addClass('popover-warning')
-            return
+function Email(node) {
+    var self = this;
+    self.node = node
+    self.alertExist = false;
+    self.types = {
+        success: {
+            nodeClass: 'has-success',
+            glyphicon: 'glyphicon-ok',
+            popoverClass: 'popover-success'
+        },
+        warning: {
+            nodeClass: 'has-warning',
+            glyphicon: 'glyphicon-warning-sign',
+            popoverClass: 'popover-warning'
+        },
+        danger: {
+            nodeClass: 'has-error',
+            glyphicon: 'glyphicon-remove',
+            popoverClass: 'popover-error'
         }
-        $.post('/check_email_usage', {'email': email}).done(
-            function(response) {
-                emailExist = response['email_exist'];
-                if (emailExist) {
-                    $('div#signup-email').addClass('has-error has-feedback');
-                    $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-remove form-control-feedback"}));
-                    $('div#signup-email input')
-                        .popover({
-                            content: 'This email address is already being used.'
-                         })
-                        .addClass('popover-danger')
-                        .popover('show');
-                    $('div#signup-email div.popover').addClass('popover-danger')
-                } else {
-                    $('div#signup-email').addClass('has-success has-feedback');
-                    $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-ok form-control-feedback"}));
+    }
+
+    self.validateEmail = function(email) {
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return regex.test(email)
+    }
+
+    self.alert = function(type, message='') {
+        var nodeClass = self.types[type].nodeClass,
+            glyphicon = self.types[type].glyphicon,
+            popoverClass = self.types[type].popoverClass;
+        $(self.node).addClass(nodeClass + ' has-feedback');
+        $(self.node).append($('<span>', {class: 'glyphicon ' + glyphicon + ' form-control-feedback'}));
+        if (message) {
+            $(self.node + ' input')
+                .popover({ content: message, trigger: 'hover focus' })
+                .popover('show');
+            $(self.node + ' div.popover').addClass(popoverClass)
+        }
+    }
+
+    self.removeAlert = function() {
+        $(self.node).removeClass('has-error has-success has-warning has-feedback');
+        $(self.node + ' span').remove();
+        $(self.node + ' input').popover('destroy');
+    }
+
+    self.run = function() {
+        $(self.node + ' input').on('blur', function() {
+            var email = $(self.node + ' input').val();
+            if (!self.validateEmail(email)) {
+                if (!self.alertExist) {
+                    self.alert('warning', 'Email address scheme is wrong.')
+                    self.alertExist = true;
                 }
+                return
             }
-        )
-    })
-    $('div#signup-email input').on('keyup', function() {
-        $('div#signup-email').removeClass('has-error has-success has-warning has-feedback');
-        $('div#signup-email span').remove();
-        $('div#signup-email input').popover('destroy');
-    })
+            $.post('/check_email_usage', {'email': email}).done(
+                function(response) {
+                    if (response['email_exist']) {
+                        if (!self.alertExist) {
+                            self.alert('danger', 'This email address is already being used.')
+                            self.alertExist = true;
+                        }
+                    } else {
+                        self.alert('success')
+                    }
+                }
+            )
+        })
+        $(self.node + ' input').on('keyup', function() {
+            self.removeAlert()
+            self.alertExist = false;
+        })
+    }
+
+    this.run()
 }
 
 

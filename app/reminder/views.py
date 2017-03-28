@@ -234,8 +234,6 @@ def schedule():
 @reminder.route('/check_email_usage', methods=['POST'])
 def check_email_usage():
     email = request.form.get('email')
-    print(email)
     user = User.query.filter_by(email=email).first()
     exist = True if user else False
-    print(exist)
     return jsonify({'email_exist': exist})
