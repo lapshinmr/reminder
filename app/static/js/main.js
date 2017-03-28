@@ -584,15 +584,27 @@ function comparePasswords() {
 
 // email checking
 function checkEmailUsage() {
-    $('input#signup-email').on('blur', function() {
-        var email = $('input#signup-email').val();
-        console.log('post to server', email);
+    var emailExist;
+    $('div#signup-email input').on('blur', function() {
+        var email = $('div#signup-email input').val();
+        console.log(email)
         $.post('/check_email_usage', {'email': email}).done(
             function(response) {
-                var email_exist = response['email_exist'];
-                console.log(email_exist);
+                emailExist = response['email_exist'];
+                if (emailExist) {
+                    $('div#signup-email').addClass('has-error has-feedback');
+                    $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-remove form-control-feedback"}));
+                } else {
+                    $('div#signup-email').addClass('has-success has-feedback');
+                    $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-ok form-control-feedback"}));
+                }
             }
         )
+    })
+    $('div#signup-email input').on('keyup', function() {
+    console.log('keyup')
+        $('div#signup-email').removeClass('has-error has-success has-feedback');
+        $('div#signup-email span').remove();
     })
 }
 
