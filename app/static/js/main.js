@@ -587,7 +587,19 @@ function checkEmailUsage() {
     var emailExist;
     $('div#signup-email input').on('blur', function() {
         var email = $('div#signup-email input').val();
-        console.log(email)
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (!regex.test(email)) {
+            $('div#signup-email').addClass('has-warning has-feedback');
+            $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-warning-sign form-control-feedback"}));
+            $('div#signup-email input')
+                .popover({
+                    content: 'Email address scheme is wrong.'
+                 })
+                .addClass('popover-warning')
+                .popover('show');
+            $('div#signup-email div.popover').addClass('popover-warning')
+            return
+        }
         $.post('/check_email_usage', {'email': email}).done(
             function(response) {
                 emailExist = response['email_exist'];
@@ -596,10 +608,11 @@ function checkEmailUsage() {
                     $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-remove form-control-feedback"}));
                     $('div#signup-email input')
                         .popover({
-                            content: 'This email address is already being used.',
+                            content: 'This email address is already being used.'
                          })
                         .addClass('popover-danger')
                         .popover('show');
+                    $('div#signup-email div.popover').addClass('popover-danger')
                 } else {
                     $('div#signup-email').addClass('has-success has-feedback');
                     $('div#signup-email').append($('<span>', {class: "glyphicon glyphicon-ok form-control-feedback"}));
@@ -608,10 +621,9 @@ function checkEmailUsage() {
         )
     })
     $('div#signup-email input').on('keyup', function() {
-    console.log('keyup')
-        $('div#signup-email').removeClass('has-error has-success has-feedback');
+        $('div#signup-email').removeClass('has-error has-success has-warning has-feedback');
         $('div#signup-email span').remove();
-        $('div#signup-email input').popover('hide');
+        $('div#signup-email input').popover('destroy');
     })
 }
 
