@@ -34,10 +34,8 @@
         email.run();
         username = new Name('div#signup-name');
         username.run();
-        psw1 = new PasswordMain('div#signup-password1');
-        psw1.run();
-        psw2 = new PasswordRepeat('div#signup-password2', 'div#signup-password1');
-        psw2.run();
+        passwords = new Passwords('div#signup-password1', 'div#signup-password2');
+        passwords.run();
     });
     </script>
 {% endblock %}
