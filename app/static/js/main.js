@@ -577,15 +577,9 @@ function schedule(checkbox) {
 
 
 // FORM VALIDATION
-// passwords comparing
-function comparePasswords() {
-
-}
-
-// email checking
-function Email(node) {
+function Input(node) {
     var self = this;
-    self.node = node
+    self.node = node;
     self.alertExist = false;
     self.types = {
         success: {
@@ -598,70 +592,163 @@ function Email(node) {
             glyphicon: 'glyphicon-warning-sign',
             popoverClass: 'popover-warning'
         },
-        danger: {
+        error: {
             nodeClass: 'has-error',
             glyphicon: 'glyphicon-remove',
             popoverClass: 'popover-error'
         }
     }
 
-    self.validateEmail = function(email) {
-        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        return regex.test(email)
-    }
-
     self.alert = function(type, message='') {
+        if (self.alertExist) {
+            return
+        }
         var nodeClass = self.types[type].nodeClass,
             glyphicon = self.types[type].glyphicon,
             popoverClass = self.types[type].popoverClass;
         $(self.node).addClass(nodeClass + ' has-feedback');
-        $(self.node).append($('<span>', {class: 'glyphicon ' + glyphicon + ' form-control-feedback'}));
+        $('<span>', {class: 'glyphicon ' + glyphicon + ' form-control-feedback'}).hide().appendTo($(self.node)).fadeIn(200);
         if (message) {
             $(self.node + ' input')
-                .popover({ content: message, trigger: 'hover focus' })
+                .popover({ content: message, trigger: 'focus' })
                 .popover('show');
             $(self.node + ' div.popover').addClass(popoverClass)
         }
+        self.alertExist = true
     }
 
     self.removeAlert = function() {
-        $(self.node).removeClass('has-error has-success has-warning has-feedback');
-        $(self.node + ' span').remove();
         $(self.node + ' input').popover('destroy');
+        setTimeout(function() {
+            $(self.node).removeClass('has-error has-success has-warning has-feedback');
+            $(self.node + ' span').remove();
+        }, 1000);
+        self.alertExist = false;
+    }
+}
+
+
+function Email(node) {
+    Input.call(this, node)
+    var self = this;
+
+    self.validate = function(email) {
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return regex.test(email)
     }
 
     self.run = function() {
         $(self.node + ' input').on('blur', function() {
             var email = $(self.node + ' input').val();
-            if (!self.validateEmail(email)) {
-                if (!self.alertExist) {
-                    self.alert('warning', 'Email address scheme is wrong.')
-                    self.alertExist = true;
-                }
+            if (!self.validate(email)) {
+                self.alert('warning', 'Email address scheme is wrong.')
                 return
             }
             $.post('/check_email_usage', {'email': email}).done(
                 function(response) {
                     if (response['email_exist']) {
-                        if (!self.alertExist) {
-                            self.alert('danger', 'This email address is already being used.')
-                            self.alertExist = true;
-                        }
+                        self.alert('error', 'This email address is already being used.')
                     } else {
                         self.alert('success')
                     }
                 }
             )
-        })
+        });
         $(self.node + ' input').on('keyup', function() {
             self.removeAlert()
-            self.alertExist = false;
-        })
+        });
     }
-
-    this.run()
 }
 
+
+function Name(node) {
+    Input.call(this, node);
+    var self = this;
+
+    self.validate = function(username) {
+        return username
+    }
+
+    self.run = function() {
+        $(self.node + ' input').on('blur', function() {
+            var username = $(self.node + ' input').val();
+            if (!self.validate(username)) {
+                self.alert('error', 'Name is required.')
+            } else {
+                self.alert('success')
+            }
+        });
+        $(self.node + ' input').on('keyup', function() {
+            self.removeAlert();
+        });
+    }
+}
+
+
+function PasswordMain(node) {
+    Input.call(this, node);
+    var self = this;
+
+    self.validate = function(password) {
+        var regex_numbers = /[0-9]+/;
+        var regex_letters = /[a-zA-Z]+/;
+        var length = password.length
+        if (length == 0) {
+            return [false, 'Password is required.']
+        } else if (length < 8) {
+            return [false, 'Password should contain at list 8 signs.']
+        } else if (!regex_numbers.test(password)) {
+            return [false, 'Password should contain at list one number.']
+        } else if (!regex_letters.test(password)) {
+            return [false, 'Password should contain at list one letter.']
+        } else {
+            return [true, '']
+        }
+    }
+
+    self.run = function() {
+        $(self.node + ' input').on('blur', function() {
+            var password = $(self.node + ' input').val();
+            var answer = self.validate(password);
+            var isValid = answer[0];
+            var message = answer[1];
+            if (!isValid) {
+                self.alert('error', message)
+            } else {
+                self.alert('success')
+            }
+        });
+        $(self.node + ' input').on('keyup', function() {
+            self.removeAlert();
+        });
+    }
+}
+
+
+function PasswordRepeat(node, nodeMain) {
+    Input.call(this, node);
+    var self = this;
+    self.nodeMain = nodeMain;
+
+    self.validate = function(psw, pswMain) {
+        return psw == pswMain
+    }
+
+    self.run = function() {
+        $(self.node + ' input').on('blur', function() {
+            var psw = $(self.node + ' input').val();
+            var pswMain = $(self.nodeMain + ' input').val();
+            if (!self.validate(psw, pswMain)) {
+                self.alert('error', 'Passwords are not equal.')
+            } else {
+                self.alert('success')
+            }
+        });
+        $(self.node + ' input').on('keyup', function() {
+            self.removeAlert();
+        });
+    }
+}
 
 // CONTROLLER
 function makeTabsDroppable() {

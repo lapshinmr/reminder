@@ -30,8 +30,14 @@
 {% block scripts %}
     <script>
     $(document).ready(function() {
-        new Email('div#signup-email');
-        comparePasswords();
+        email = new Email('div#signup-email');
+        email.run();
+        username = new Name('div#signup-name');
+        username.run();
+        psw1 = new PasswordMain('div#signup-password1');
+        psw1.run();
+        psw2 = new PasswordRepeat('div#signup-password2', 'div#signup-password1');
+        psw2.run();
     });
     </script>
 {% endblock %}
