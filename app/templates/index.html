@@ -4,11 +4,45 @@
 
 {% block content %}
 
-LANDING PAGE
-
-<form method="POST">
+<form method="POST" class="col-md-8">
     <p>Send test email to: <input type="text" name="email"></p>
     <input type="submit" name="submit" value="Send">
 </form>
 
+<form id="signup-form" class="col-md-4" action="{{ url_for('auth.register') }}" method="POST">
+    <div id="signup-email" class="form-group">
+        <label>Email:</label>
+        <input type="email" class="form-control" name="email" placeholder="enter your email">
+    </div>
+    <div id="signup-name" class="form-group">
+        <label>Name:</label>
+        <input type="text" class="form-control" name="username" placeholder="enter your name">
+    </div>
+    <div class="row">
+        <div id="signup-password1" class="form-group col-md-6">
+            <label>Password:</label>
+            <input type="password" class="form-control" name="password" placeholder="enter new password">
+        </div>
+        <div id="signup-password2" class="form-group col-md-6">
+            <label>Password:</label>
+            <input type="password" class="form-control" name="password2" placeholder="repeat your new password">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-block btn-success">Sing Up</button>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        email = new Email('div#signup-email');
+        email.run();
+        username = new Name('div#signup-name');
+        username.run();
+        passwords = new Passwords('div#signup-password1', 'div#signup-password2');
+        passwords.run();
+    });
+    </script>
 {% endblock %}

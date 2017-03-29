@@ -638,7 +638,9 @@ function Email(node) {
     self.run = function() {
         $(self.node + ' input').on('blur', function() {
             var email = $(self.node + ' input').val();
-            if (!self.validate(email)) {
+            if (!email) {
+                self.alert('error', 'Email address is required.')
+            } else if (!self.validate(email)) {
                 self.alert('warning', 'Email address scheme is wrong.')
                 return
             }
@@ -652,7 +654,7 @@ function Email(node) {
                 }
             )
         });
-        $(self.node + ' input').on('keyup', function() {
+        $(self.node + ' input').on('keyup change', function() {
             self.removeAlert()
         });
     }
@@ -722,6 +724,7 @@ function Passwords(node1, node2) {
             } else {
                 self.psw1.alert('success')
             }
+            self.psw2.removeAlert();
         });
         $(self.node2 + ' input').on('blur', function() {
             var psw1 = $(self.node1 + ' input').val();
