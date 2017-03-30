@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form method="POST" class="col-md-8">
+<form method="POST" class="col-md-6">
     <p>Send test email to: <input type="text" name="email"></p>
     <input type="submit" name="submit" value="Send">
 </form>
@@ -39,10 +39,10 @@
     $(document).ready(function() {
         email = new Email('div#signup-email');
         email.run();
-        username = new Name('div#signup-name');
-        username.run();
-        passwords = new Passwords('div#signup-password1', 'div#signup-password2');
-        passwords.run();
+        //username = new Name('div#signup-name');
+        //username.run();
+        //passwords = new Passwords('div#signup-password1', 'div#signup-password2');
+        //passwords.run();
     });
     </script>
 {% endblock %}

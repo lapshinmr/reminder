@@ -577,58 +577,77 @@ function schedule(checkbox) {
 
 
 // FORM VALIDATION
-function Input(node) {
+function Popover(node, popoverClass, content) {
     var self = this;
     self.node = node;
-    self.alertExist = false;
-    self.types = {
-        success: {
-            nodeClass: 'has-success',
-            glyphicon: 'glyphicon-ok',
-            popoverClass: 'popover-success'
-        },
-        warning: {
-            nodeClass: 'has-warning',
-            glyphicon: 'glyphicon-warning-sign',
-            popoverClass: 'popover-warning'
-        },
-        error: {
-            nodeClass: 'has-error',
-            glyphicon: 'glyphicon-remove',
-            popoverClass: 'popover-error'
-        }
+    self.popoverClass = popoverClass;
+    self.left = $(self.node).outerWidth(true);
+    self.top = $(self.node).outerHeight(true);
+    self.content = content;
+    self.popover = $(
+            `<div class="popover right fade in ${self.popoverClass}">
+                 <div class="arrow"></div>
+                 <div class="popover-content">${self.content}</div>
+             </div>`
+        ).hide().insertAfter($(self.node))
+    self.show = function() {
+        self.popover.css({
+            left: self.left,
+            top: self.top
+        })
+        self.popover.show();
+    }
+    self.hide = function() {
+        self.popover.hide()
+    }
+    self.remove = function() {
+        self.popover.remove()
+    }
+}
+
+
+function Notification(node) {
+    var self = this;
+    self.node = node;
+    self.icons = {
+        success: 'glyphicon-ok',
+        warning: 'glyphicon-warning-sign',
+        error: 'glyphicon-remove'
     }
 
-    self.alert = function(type, message='') {
-        if (self.alertExist) {
-            return
+    self.make = function(notificationType, message) {
+        console.log($(self.node).attr('class'))
+        if (notificationType != self.notificationType) {
+            self.removeNotification();
+            $(self.node).addClass(`has-${notificationType} has-feedback`);
+            $('<span>', {class: `glyphicon ${self.icons[notificationType]} form-control-feedback`})
+                .hide().appendTo($(self.node)).fadeIn(200);
         }
-        var nodeClass = self.types[type].nodeClass,
-            glyphicon = self.types[type].glyphicon,
-            popoverClass = self.types[type].popoverClass;
-        $(self.node).addClass(nodeClass + ' has-feedback');
-        $('<span>', {class: 'glyphicon ' + glyphicon + ' form-control-feedback'}).hide().appendTo($(self.node)).fadeIn(200);
-        if (message) {
+        if (notificationType != self.notificationType || message != self.message) {
+            self.removePopover();
             $(self.node + ' input')
-                .popover({ content: message, trigger: 'focus' })
-                .popover('show');
-            $(self.node + ' div.popover').addClass(popoverClass)
+                .popover({ content: message, trigger: 'manual'})
+                .popover('show')
+            $(self.node + ' div.popover').addClass(`popover-${notificationType}`)
         }
-        self.alertExist = true
     }
 
-    self.removeAlert = function() {
-        $(self.node + ' input').popover('destroy');
+    self.removeNotification = function() {
         $(self.node).removeClass('has-error has-success has-warning has-feedback');
         $(self.node + ' span').remove();
-        self.alertExist = false;
+    }
+
+    self.removePopover = function() {
+        $('.popover').remove();
+        //$(self.node + ' div.popover').removeClass(`popover-${self.notificationType}`)
     }
 }
 
 
 function Email(node) {
-    Input.call(this, node)
     var self = this;
+    self.node = node;
+    self.notification = new Notification(node);
 
     self.validate = function(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
@@ -638,32 +657,35 @@ function Email(node) {
     self.run = function() {
         $(self.node + ' input').on('blur', function() {
             var email = $(self.node + ' input').val();
-            if (!email) {
-                self.alert('error', 'Email address is required.')
+            var answer = self.validate(email);
+            if (email == '') {
+                self.notification.make('warning', 'Email address is required.')
             } else if (!self.validate(email)) {
-                self.alert('warning', 'Email address scheme is wrong.')
-                return
-            }
-            $.post('/check_email_usage', {'email': email}).done(
-                function(response) {
-                    if (response['email_exist']) {
-                        self.alert('error', 'This email address is already being used.')
-                    } else {
-                        self.alert('success')
+                self.notification.make('warning', 'Email address scheme is wrong.')
+            } else {
+                $.post('/check_email_usage', {'email': email}).done(
+                    function(response) {
+                        if (response['email_exist']) {
+                            self.notification.make('error', 'This email address is already being used.')
+                        } else {
+                            self.notification.make('success')
+                        }
                     }
-                }
-            )
+                )
+            }
         });
-        $(self.node + ' input').on('keyup change', function() {
-            self.removeAlert()
+        $(self.node + ' input').on('keyup', function() {
+            self.notification.removePopover();
+            self.notification.removeNotification();
         });
     }
 }
 
 
+/*
 function Name(node) {
-    Input.call(this, node);
     var self = this;
+    self.notification = new Notification(node);
 
     self.validate = function(username) {
         return username
@@ -687,6 +709,7 @@ function Name(node) {
 
 function Passwords(node1, node2) {
     var self = this;
+    self.notification = new Notification(node);
     self.node1 = node1
     self.node2 = node2
     self.psw1 = new Input(node1);
@@ -743,6 +766,7 @@ function Passwords(node1, node2) {
         });
     }
 }
+*/
 
 // CONTROLLER
 function makeTabsDroppable() {
