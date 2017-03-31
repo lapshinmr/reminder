@@ -585,33 +585,35 @@ function Notification(node) {
         warning: 'glyphicon-warning-sign',
         error: 'glyphicon-remove'
     }
+}
 
-    self.make = function(notificationType, message) {
-        var isAnotherType = $(self.node).attr('class').indexOf(notificationType) == -1
-        var isAnotherMessage = $(self.node).find('div.popover-content').text() != message
-        if (isAnotherType) {
-            self.removeNotification(true, false);
-            $(self.node).addClass(`has-${notificationType} has-feedback`);
-            $('<span>', {class: `glyphicon ${self.icons[notificationType]} form-control-feedback`})
-                .appendTo($(self.node));
-        }
-        if (isAnotherType || isAnotherMessage) {
-            self.removeNotification(false, true);
-            $(self.node + ' input')
-                .popover({ content: message, trigger: 'manual', animation: false})
-                .popover('show')
-            $(self.node + ' div.popover').addClass(`popover-${notificationType}`)
-        }
+Notification.prototype.make = function(notificationType, message) {
+    var self = this;
+    var isAnotherType = $(self.node).attr('class').indexOf(notificationType) == -1
+    var isAnotherMessage = $(self.node).find('div.popover-content').text() != message
+    if (isAnotherType) {
+        self.removeNotification(true, false);
+        $(self.node).addClass(`has-${notificationType} has-feedback`);
+        $('<span>', {class: `glyphicon ${self.icons[notificationType]} form-control-feedback`})
+            .appendTo($(self.node));
     }
+    if (isAnotherType || isAnotherMessage) {
+        self.removeNotification(false, true);
+        $(self.node + ' input')
+            .popover({ content: message, trigger: 'manual', animation: false})
+            .popover('show')
+        $(self.node + ' div.popover').addClass(`popover-${notificationType}`)
+    }
+}
 
-    self.removeNotification = function(highlight, popover) {
-        if (highlight) {
-            $(self.node).removeClass('has-error has-success has-warning has-feedback');
-            $(self.node + ' span').remove();
-        }
-        if (popover) {
-            $(self.node + ' input').popover('destroy');
-        }
+Notification.prototype.removeNotification = function(highlight, popover) {
+    var self = this;
+    if (highlight) {
+        $(self.node).removeClass('has-error has-success has-warning has-feedback');
+        $(self.node + ' span').remove();
+    }
+    if (popover) {
+        $(self.node + ' input').popover('destroy');
     }
 }
 
@@ -722,7 +724,6 @@ function Passwords(node1, node2) {
             var psw2 = $(self.node2 + ' input').val();
             var isMainInput = $(e.target).parents(self.node1).length == 1
             if (isMainInput) {
-                console.log('first')
                 var message1 = self.validate_psw1(psw1);
                 if (message1 != '') {
                     self.psw1.make('error', message1)
@@ -734,7 +735,6 @@ function Passwords(node1, node2) {
                     self.psw2.make('success')
                 }
             } else {
-                console.log('second')
                 var message2 = self.validate_psw2(psw1, psw2)
                 if (message2 != '') {
                     self.psw2.make('error', message2)
@@ -749,6 +749,41 @@ function Passwords(node1, node2) {
         });
     }
 }
+
+
+function SignUpButtonListener(node) {
+    var self = this;
+    self.node = node;
+    self.sources = [];
+
+    self.addSources = function(sources) {
+        self.sources.push.apply(self.sources, sources);
+    }
+
+    self.activate = function() {
+        $(self.node).children('button').prop('disabled', false)
+    }
+
+    self.deactivate = function() {
+        $(self.node).children('button').prop('disabled', true)
+    }
+
+    self.check = function() {
+        var all_done = true;
+        for (var i = 0, length = self.sources.length; i < length; i++) {
+            var notSuccess = $(self.sources[i]).attr('class').indexOf('success') == -1
+            if (notSuccess) {
+                all_done = false;
+            }
+        }
+        if (all_done) {
+            self.activate();
+        } else {
+            self.deactivate();
+        }
+    }
+}
+
 
 // CONTROLLER
 function makeTabsDroppable() {

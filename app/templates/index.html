@@ -28,8 +28,7 @@
             <input type="password" class="form-control" name="password2" placeholder="repeat your new password">
         </div>
     </div>
-
-    <button type="submit" class="btn btn-block btn-success">Sing Up</button>
+    <button type="submit" class="btn btn-block btn-success" disabled>Sing Up</button>
 </form>
 
 {% endblock %}
@@ -37,11 +36,23 @@
 {% block scripts %}
 <script>
     $(document).ready(function() {
-        email = new Email('div#signup-email');
+        var listener = new SignUpButtonListener('#signup-form');
+        listener.addSources([
+            '#signup-email',
+            '#signup-name',
+            '#signup-password1',
+            '#signup-password2'
+        ]);
+        var current = Notification.prototype.make;
+        Notification.prototype.make = function() {
+            current.apply(this, arguments);
+            listener.check();
+        }
+        var email = new Email('div#signup-email', listener);
         email.run();
-        username = new Name('div#signup-name');
+        var username = new Name('div#signup-name', listener);
         username.run();
-        passwords = new Passwords('div#signup-password1', 'div#signup-password2');
+        var passwords = new Passwords('div#signup-password1', 'div#signup-password2', listener);
         passwords.run();
     });
     </script>
