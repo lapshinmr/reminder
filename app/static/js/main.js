@@ -684,56 +684,68 @@ function Passwords(node1, node2) {
     self.node2 = node2
     self.psw1 = new Notification(node1);
     self.psw2 = new Notification(node2);
+    self.requiredLength = 8;
 
     self.validate_psw1 = function(psw1) {
         var regex_numbers = /[0-9]+/;
         var regex_letters = /[a-zA-Z]+/;
         var length = psw1.length
         if (length == 0) {
-            return [false, 'Password is required.']
-        } else if (length < 8) {
-            return [false, 'Password should contain at list 8 signs.']
+            return 'Password is required.'
+        } else if (length < self.requiredLength) {
+            return 'Password should contain at list 8 signs.'
         } else if (!regex_numbers.test(psw1)) {
-            return [false, 'Password should contain at list one number.']
+            return 'Password should contain at list one number.'
         } else if (!regex_letters.test(psw1)) {
-            return [false, 'Password should contain at list one letter.']
+            return 'Password should contain at list one letter.'
         } else {
-            return [true, '']
+            return ''
         }
     }
 
     self.validate_psw2 = function(psw1, psw2) {
-        return psw1 == psw2
+        if (psw1 == '') {
+            return 'Please enter first password'
+        } else if (psw2 == '') {
+            return 'Please repeat password'
+        } else if (psw1 != psw2) {
+            return 'Passwords are not equal'
+        } else {
+            return ''
+        }
     }
 
     self.run = function() {
-        $(self.node1 + ' input').on('keyup', function() {
-            var psw1 = $(self.node1 + ' input').val();
-            var answer = self.validate_psw1(psw1);
-            var isValid = answer[0];
-            var message = answer[1];
-            if (!isValid) {
-                self.psw1.make('error', message)
-            } else {
-                self.psw1.make('success')
-            }
+        $(self.node1 + ' input').add(self.node2 + ' input').on('keyup', function(e) {
             self.psw2.removeNotification(true, true);
-        });
-        $(self.node2 + ' input').on('blur', function() {
             var psw1 = $(self.node1 + ' input').val();
             var psw2 = $(self.node2 + ' input').val();
-            if (!self.validate_psw2(psw1, psw2)) {
-                self.psw2.make('error', 'Passwords are not equal.')
+            var isMainInput = $(e.target).parents(self.node1).length == 1
+            if (isMainInput) {
+                console.log('first')
+                var message1 = self.validate_psw1(psw1);
+                if (message1 != '') {
+                    self.psw1.make('error', message1)
+                } else {
+                    self.psw1.make('success')
+                }
+                var message2 = self.validate_psw2(psw1, psw2)
+                if (message2 == '' && psw2.length >= self.requiredLength) {
+                    self.psw2.make('success')
+                }
             } else {
-                self.psw2.make('success')
+                console.log('second')
+                var message2 = self.validate_psw2(psw1, psw2)
+                if (message2 != '') {
+                    self.psw2.make('error', message2)
+                } else if (psw2.length >= self.requiredLength) {
+                    self.psw2.make('success')
+                }
             }
         });
-        $(self.node1 + ' input').on('keyup', function() {
-            self.psw1.removeNotification(true, true);
-            self.psw2.removeNotification(true, true);
-        });
-        $(self.node2 + ' input').on('keyup', function() {
-            self.psw2.removeNotification(true, true);
+        $(self.node1 + ' input').add(self.node2 + ' input').on('blur', function(e) {
+            self.psw1.removeNotification(false, true);
+            self.psw2.removeNotification(false, true);
         });
     }
 }
