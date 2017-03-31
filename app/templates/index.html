@@ -39,10 +39,10 @@
     $(document).ready(function() {
         email = new Email('div#signup-email');
         email.run();
-        //username = new Name('div#signup-name');
-        //username.run();
-        //passwords = new Passwords('div#signup-password1', 'div#signup-password2');
-        //passwords.run();
+        username = new Name('div#signup-name');
+        username.run();
+        passwords = new Passwords('div#signup-password1', 'div#signup-password2');
+        passwords.run();
     });
     </script>
 {% endblock %}

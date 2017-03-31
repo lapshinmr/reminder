@@ -616,30 +616,31 @@ function Notification(node) {
     }
 
     self.make = function(notificationType, message) {
-        console.log($(self.node).attr('class'))
-        if (notificationType != self.notificationType) {
-            self.removeNotification();
+        var isAnotherType = $(self.node).attr('class').indexOf(notificationType) == -1
+        var isAnotherMessage = $(self.node).find('div.popover-content').text() != message
+        if (isAnotherType) {
+            self.removeNotification(true, false);
             $(self.node).addClass(`has-${notificationType} has-feedback`);
             $('<span>', {class: `glyphicon ${self.icons[notificationType]} form-control-feedback`})
-                .hide().appendTo($(self.node)).fadeIn(200);
+                .appendTo($(self.node));
         }
-        if (notificationType != self.notificationType || message != self.message) {
-            self.removePopover();
+        if (isAnotherType || isAnotherMessage) {
+            self.removeNotification(false, true);
             $(self.node + ' input')
-                .popover({ content: message, trigger: 'manual'})
+                .popover({ content: message, trigger: 'manual', animation: false})
                 .popover('show')
             $(self.node + ' div.popover').addClass(`popover-${notificationType}`)
         }
     }
 
-    self.removeNotification = function() {
-        $(self.node).removeClass('has-error has-success has-warning has-feedback');
-        $(self.node + ' span').remove();
-    }
-
-    self.removePopover = function() {
-        $('.popover').remove();
-        //$(self.node + ' div.popover').removeClass(`popover-${self.notificationType}`)
+    self.removeNotification = function(highlight, popover) {
+        if (highlight) {
+            $(self.node).removeClass('has-error has-success has-warning has-feedback');
+            $(self.node + ' span').remove();
+        }
+        if (popover) {
+            $(self.node + ' input').popover('destroy');
+        }
     }
 }
 
@@ -675,16 +676,15 @@ function Email(node) {
             }
         });
         $(self.node + ' input').on('keyup', function() {
-            self.notification.removePopover();
-            self.notification.removeNotification();
+            self.notification.removeNotification(true, true);
         });
     }
 }
 
 
-/*
 function Name(node) {
     var self = this;
+    self.node = node;
     self.notification = new Notification(node);
 
     self.validate = function(username) {
@@ -695,13 +695,13 @@ function Name(node) {
         $(self.node + ' input').on('blur', function() {
             var username = $(self.node + ' input').val();
             if (!self.validate(username)) {
-                self.alert('error', 'Name is required.')
+                self.notification.make('error', 'Name is required.')
             } else {
-                self.alert('success')
+                self.notification.make('success')
             }
         });
         $(self.node + ' input').on('keyup', function() {
-            self.removeAlert();
+            self.notification.removeNotification(true, true);
         });
     }
 }
@@ -709,11 +709,10 @@ function Name(node) {
 
 function Passwords(node1, node2) {
     var self = this;
-    self.notification = new Notification(node);
     self.node1 = node1
     self.node2 = node2
-    self.psw1 = new Input(node1);
-    self.psw2 = new Input(node2);
+    self.psw1 = new Notification(node1);
+    self.psw2 = new Notification(node2);
 
     self.validate_psw1 = function(psw1) {
         var regex_numbers = /[0-9]+/;
@@ -737,36 +736,36 @@ function Passwords(node1, node2) {
     }
 
     self.run = function() {
-        $(self.node1 + ' input').on('blur', function() {
+        $(self.node1 + ' input').on('keyup', function() {
             var psw1 = $(self.node1 + ' input').val();
             var answer = self.validate_psw1(psw1);
             var isValid = answer[0];
             var message = answer[1];
             if (!isValid) {
-                self.psw1.alert('error', message)
+                self.psw1.make('error', message)
             } else {
-                self.psw1.alert('success')
+                self.psw1.make('success')
             }
-            self.psw2.removeAlert();
+            self.psw2.removeNotification(true, true);
         });
         $(self.node2 + ' input').on('blur', function() {
             var psw1 = $(self.node1 + ' input').val();
             var psw2 = $(self.node2 + ' input').val();
             if (!self.validate_psw2(psw1, psw2)) {
-                self.psw2.alert('error', 'Passwords are not equal.')
+                self.psw2.make('error', 'Passwords are not equal.')
             } else {
-                self.psw2.alert('success')
+                self.psw2.make('success')
             }
         });
         $(self.node1 + ' input').on('keyup', function() {
-            self.psw1.removeAlert();
+            self.psw1.removeNotification(true, true);
+            self.psw2.removeNotification(true, true);
         });
         $(self.node2 + ' input').on('keyup', function() {
-            self.psw2.removeAlert();
+            self.psw2.removeNotification(true, true);
         });
     }
 }
-*/
 
 // CONTROLLER
 function makeTabsDroppable() {
