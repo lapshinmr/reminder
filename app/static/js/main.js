@@ -577,35 +577,6 @@ function schedule(checkbox) {
 
 
 // FORM VALIDATION
-function Popover(node, popoverClass, content) {
-    var self = this;
-    self.node = node;
-    self.popoverClass = popoverClass;
-    self.left = $(self.node).outerWidth(true);
-    self.top = $(self.node).outerHeight(true);
-    self.content = content;
-    self.popover = $(
-            `<div class="popover right fade in ${self.popoverClass}">
-                 <div class="arrow"></div>
-                 <div class="popover-content">${self.content}</div>
-             </div>`
-        ).hide().insertAfter($(self.node))
-    self.show = function() {
-        self.popover.css({
-            left: self.left,
-            top: self.top
-        })
-        self.popover.show();
-    }
-    self.hide = function() {
-        self.popover.hide()
-    }
-    self.remove = function() {
-        self.popover.remove()
-    }
-}
-
-
 function Notification(node) {
     var self = this;
     self.node = node;
