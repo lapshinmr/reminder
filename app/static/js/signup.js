@@ -1,4 +1,5 @@
-// FORM VALIDATION
+
+
 function Notification(node) {
     var self = this;
     self.node = node;

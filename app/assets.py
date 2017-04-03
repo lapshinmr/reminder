@@ -11,8 +11,9 @@ bundels = {
     'main_js': Bundle(
         'js/main.js',
         'js/signup.js',
-        output='gen/main.js',
-        filters='jsmin'
+        'js/durationpicker.js',
+        output='gen/main.js'
+        #filters='jsmin'
     ),
 
     'main_css': Bundle(
