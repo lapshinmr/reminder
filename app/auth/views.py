@@ -17,19 +17,19 @@ def login():
     user = User.query.filter_by(email=email).first()
     if user is not None and user.verify_password(password):
         login_user(user, remember_me)
-        return redirect(request.args.get('next') or url_for('reminder.index'))
+        return redirect(request.args.get('next') or url_for('main.index'))
     cur_config = os.environ.get('CONFIG')
-    return render_template('auth/login.html', config=cur_config)
+    return render_template('index.html', config=cur_config)
 
 
 @auth.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('reminder.index'))
+    return redirect(url_for('main.index'))
 
 
-@auth.route('/register', methods=['GET', 'POST'])
+@auth.route('/register', methods=['POST'])
 def register():
     email = request.form.get('email')
     username = request.form.get('username')
@@ -48,15 +48,15 @@ def register():
                     message_text
                 ]
             )
-        return redirect(url_for('reminder.index'))
+        return redirect(url_for('main.index'))
     cur_config = os.environ.get('CONFIG')
-    return render_template('auth/register.html', config=cur_config)
+    return render_template('index.html', config=cur_config)
 
 
-@auth.route('/confirm/<token>')
+@auth.route('/confirm/<token>', methods=['GET', 'POST'])
 @login_required
 def confirm(token):
     if current_user.confirmed:
-        return redirect(url_for('reminder.index'))
+        return redirect(url_for('main.index'))
     current_user.confirm(token)
-    return redirect(url_for('reminder.index'))
+    return redirect(url_for('main.index'))

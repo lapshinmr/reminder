@@ -16,7 +16,7 @@ def send_async_email(to, subject, template, *attachments):
 def send_tasks():
     users = User.query.all()
     for user in users:
-        if not user.send_tasks_flag:
+        if not user.subscribed:
             continue
         if datetime.datetime.strftime(datetime.datetime.now(), "%H") in user.schedule:
             to = user.email

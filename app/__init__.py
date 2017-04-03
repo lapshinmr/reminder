@@ -29,8 +29,8 @@ def create_app(config_name):
 
     celery.conf.update(app.config)
 
-    from .reminder import reminder
-    app.register_blueprint(reminder)
+    from .main import main
+    app.register_blueprint(main)
 
     from .auth import auth
     app.register_blueprint(auth, prefix='/auth')

@@ -2,13 +2,13 @@ import os
 import datetime
 from flask import render_template, request, jsonify, get_template_attribute, redirect, url_for
 from flask_login import current_user, login_required
-from . import reminder
+from . import main
 from app import db
 from app.models import Task, Time, Tab, User
 from app.utils import TimeUnitsRanges
 
 
-@reminder.route('/', methods=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST'])
 def index():
     cur_config = os.environ.get('CONFIG')
     if current_user.is_anonymous:
@@ -23,7 +23,7 @@ def index():
             tasks = Task.query.filter_by(user_id=current_user.id).filter_by(tab_id=tab.id).order_by(Task.order_idx).all()
             tabs_tasks.append([tab, tasks])
         return render_template(
-            'reminder/index.html',
+            'main/index.html',
             config=cur_config,
             tabs=tabs,
             tabs_tasks=tabs_tasks,
@@ -33,7 +33,7 @@ def index():
         )
 
 
-@reminder.route('/add_task', methods=['GET', 'POST'])
+@main.route('/add_task', methods=['GET', 'POST'])
 def add():
     task_name = request.form['task_name']
     time_loop = int(request.form['duration'])
@@ -46,11 +46,11 @@ def add():
     db.session.add(new_task)
     db.session.commit()
     return jsonify(
-        task_item_html=get_template_attribute('reminder/macroses.html', 'create_task_item')(new_task),
+        task_item_html=get_template_attribute('main/macroses.html', 'create_task_item')(new_task),
         task_id=new_task.id)
 
 
-@reminder.route('/edit', methods=['POST'])
+@main.route('/edit', methods=['POST'])
 def edit():
     task_id = request.form.get('task_id')
     task = Task.query.filter_by(id=task_id).first()
@@ -61,7 +61,7 @@ def edit():
     return jsonify()
 
 
-@reminder.route('/complete', methods=['POST'])
+@main.route('/complete', methods=['POST'])
 def complete():
     task_id = request.form.get('task_id')
     task = Task.query.filter_by(id=task_id).first()
@@ -73,11 +73,11 @@ def complete():
         db.session.commit()
     task = Task.query.filter_by(id=task_id).first()
     return jsonify(
-        task_item_html=get_template_attribute('reminder/macroses.html', 'create_task_item')(task)
+        task_item_html=get_template_attribute('main/macroses.html', 'create_task_item')(task)
     )
 
 
-@reminder.route('/close', methods=['POST'])
+@main.route('/close', methods=['POST'])
 def close():
     task_id = request.form.get('task_id')
     task = Task.query.filter_by(id=task_id).first()
@@ -90,7 +90,7 @@ def close():
     return jsonify()
 
 
-@reminder.route('/change_task_idx', methods=['POST'])
+@main.route('/change_task_idx', methods=['POST'])
 def change_task_idx():
     new_tab_id = int(request.form.get('tab_id'))
     task_id = request.form.get('task_id')
@@ -109,7 +109,7 @@ def change_task_idx():
     return jsonify()
 
 
-@reminder.route('/change_tab_order_idx', methods=['POST'])
+@main.route('/change_tab_order_idx', methods=['POST'])
 def change_tab_order_idx():
     tab_id = request.form.get('tab_id')
     new_tab_order_idx = int(request.form.get('new_tab_order_idx')) - 1
@@ -123,7 +123,7 @@ def change_tab_order_idx():
     return jsonify()
 
 
-@reminder.route('/make_order', methods=['POST'])
+@main.route('/make_order', methods=['POST'])
 def make_order():
     order_type = request.form.get('order_type')
     tab_id = request.form.get('tab_id')
@@ -148,7 +148,7 @@ def make_order():
     return jsonify({'old_order': old_order, 'new_order': new_order})
 
 
-@reminder.route('/add_new_tab', methods=['POST'])
+@main.route('/add_new_tab', methods=['POST'])
 def add_new_tab():
     new_tab_name = request.form.get('new_tab_name')
     new_tab = Tab(name=new_tab_name, user_id=current_user.id, active=False)
@@ -156,8 +156,8 @@ def add_new_tab():
     new_tab.update_order_idx(len(tabs))
     db.session.add(new_tab)
     db.session.commit()
-    tab_html = get_template_attribute('reminder/macroses.html', 'create_tabs')([new_tab])
-    tab_content_html = get_template_attribute('reminder/macroses.html', 'create_tasks_area')([[new_tab, []]])
+    tab_html = get_template_attribute('main/macroses.html', 'create_tabs')([new_tab])
+    tab_content_html = get_template_attribute('main/macroses.html', 'create_tasks_area')([[new_tab, []]])
     return jsonify({
         'tab_id': new_tab.id,
         'tab': tab_html,
@@ -165,7 +165,7 @@ def add_new_tab():
     })
 
 
-@reminder.route('/activate_tab', methods=['POST'])
+@main.route('/activate_tab', methods=['POST'])
 def activate_tab():
     current_tab_id = int(request.form.get('current_tab_id'))
     tabs = Tab.query.filter_by(user_id=current_user.id).all()
@@ -178,7 +178,7 @@ def activate_tab():
     return jsonify()
 
 
-@reminder.route('/close_tab', methods=['POST'])
+@main.route('/close_tab', methods=['POST'])
 def close_tab():
     tab_id = request.form.get('tab_id')
     tab = Tab.query.filter_by(id=tab_id).first()
@@ -200,15 +200,15 @@ def close_tab():
     return jsonify({'active_tab_idx': tab_order_idx})
 
 
-@reminder.route('/settings')
+@main.route('/settings')
 @login_required
 def settings():
     cur_config = os.environ.get('CONFIG')
     notification_schedule = current_user.schedule.split(', ')
-    return render_template('reminder/settings.html', user=current_user, config=cur_config, schedule=notification_schedule)
+    return render_template('main/settings.html', user=current_user, config=cur_config, schedule=notification_schedule)
 
 
-@reminder.route('/subscribe', methods=['POST'])
+@main.route('/subscribe', methods=['POST'])
 @login_required
 def subscribe():
     current_user.subscribe()
@@ -216,7 +216,7 @@ def subscribe():
     return jsonify()
 
 
-@reminder.route('/settings/schedule', methods=['POST'])
+@main.route('/settings/schedule', methods=['POST'])
 @login_required
 def schedule():
     value = request.form.get('value')
@@ -231,7 +231,7 @@ def schedule():
     return jsonify()
 
 
-@reminder.route('/check_email_usage', methods=['POST'])
+@main.route('/check_email_usage', methods=['POST'])
 def check_email_usage():
     email = request.form.get('email')
     user = User.query.filter_by(email=email).first()

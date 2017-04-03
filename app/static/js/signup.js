@@ -24,7 +24,7 @@ Notification.prototype.make = function(notificationType, message) {
         self.removeNotification(false, true);
         $(self.node + ' input')
             .popover({ content: message, trigger: 'manual', animation: false})
-            .popover('show')
+            .popover('show');
         $(self.node + ' div.popover').addClass(`popover-${notificationType}`)
     }
 }

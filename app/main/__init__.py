@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-reminder = Blueprint('reminder', __name__)
+main = Blueprint('main', __name__)
 
 from . import views

@@ -43,6 +43,7 @@
             '#signup-password1',
             '#signup-password2'
         ]);
+        // decorate "make" method by the listener
         var current = Notification.prototype.make;
         Notification.prototype.make = function() {
             current.apply(this, arguments);
