@@ -97,3 +97,5 @@ def resend_confirmation():
     )
     flash('A new confirmation email has been sent to you by email.')
     return redirect(url_for('main.index'))
+
+

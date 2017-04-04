@@ -174,6 +174,32 @@ function Passwords(node1, node2) {
 }
 
 
+function Password(node) {
+    var self = this;
+    self.node = node;
+    self.notification = new Notification(node);
+
+    self.run = function() {
+        $(self.node + ' input').on('blur', function() {
+            var password = $(self.node + ' input').val();
+            $.post('/settings/check_password', {'password': password}).done(
+                function(response) {
+                    console.log(response['password_is_right'])
+                    if (response['password_is_right']) {
+                        self.notification.make('success')
+                    } else {
+                        self.notification.make('error', 'Invalid password.')
+                    }
+                }
+            )
+        });
+        $(self.node + ' input').on('keyup', function() {
+            self.notification.removeNotification(true, true);
+        });
+    }
+}
+
+
 function SignUpButtonListener(node) {
     var self = this;
     self.node = node;

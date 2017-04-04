@@ -46,12 +46,12 @@
             current.apply(this, arguments);
             listener.check();
         }
-        var email = new Email('div#signup-email', listener);
+        var email = new Email('div#signup-email');
         email.run();
-        var username = new Name('div#signup-name', listener);
+        var username = new Name('div#signup-name');
         username.run();
-        var passwords = new Passwords('div#signup-password1', 'div#signup-password2', listener);
+        var passwords = new Passwords('div#signup-password1', 'div#signup-password2');
         passwords.run();
     });
-    </script>
+</script>
 {% endblock %}

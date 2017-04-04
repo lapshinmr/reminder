@@ -26,9 +26,11 @@
             <!-- Buttons and LogIn form -->
             {% if current_user.is_authenticated %}
                 <form class="navbar-form navbar-right">
+                    {% if current_user.confirmed %}
                     <a href="{{ url_for('main.settings') }}" class="btn btn-default" role="button">
                         <span class="glyphicon glyphicon-cog"></span> Settings
                     </a>
+                    {% endif %}
                     <a href="{{ url_for('auth.logout') }}" class="btn btn-default" role="button">
                         <span class="glyphicon glyphicon-log-out"></span> LogOut
                     </a>

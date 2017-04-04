@@ -1,6 +1,6 @@
 import os
 import datetime
-from flask import render_template, request, jsonify, get_template_attribute, redirect, url_for
+from flask import render_template, request, jsonify, get_template_attribute, redirect, url_for, flash
 from flask_login import current_user, login_required
 from . import main
 from app import db
@@ -208,7 +208,7 @@ def settings():
     return render_template('main/settings.html', user=current_user, config=cur_config, schedule=notification_schedule)
 
 
-@main.route('/subscribe', methods=['POST'])
+@main.route('/settings/subscribe', methods=['POST'])
 @login_required
 def subscribe():
     current_user.subscribe()
@@ -231,9 +231,34 @@ def schedule():
     return jsonify()
 
 
+@main.route('/settings/check_password', methods=['POST'])
+@login_required
+def check_password():
+    current_password = request.form.get('password')
+    password_is_right = False
+    if current_user.verify_password(current_password):
+        password_is_right = True
+    return jsonify({'password_is_right': password_is_right})
+
+
+@main.route('/settings/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    old_password = request.form.get('old-password')
+    new_password = request.form.get('new-password1')
+    if current_user.verify_password(old_password):
+        current_user.password = new_password
+        db.session.add(current_user)
+        flash('Your password has been updated.')
+        return redirect(url_for('main.settings'))
+    else:
+        flash('Invalid password.')
+    return render_template("main/settings.html")
+
+
 @main.route('/check_email_usage', methods=['POST'])
 def check_email_usage():
     email = request.form.get('email')
     user = User.query.filter_by(email=email).first()
-    exist = True if user else False
-    return jsonify({'email_exist': exist})
+    is_exist = True if user else False
+    return jsonify({'email_exist': is_exist})
