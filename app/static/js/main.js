@@ -3,41 +3,6 @@ var LAST_DROPPABLE_TAB = CURRENT_TAB; // last tab where element was moved
 
 
 
-// POPUP
-var Modal = function (title, text) {
-    this.template = $(`
-        <div class="modal fade" id="modal-window" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">${title}</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>${text}</p>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                </div>
-            </div>
-        </div>
-    `);
-    this.addButton = function (text, type, func=null) {
-        var type = type || 'default'
-        var $button = $(`<button type="button" class="btn btn-${type}" data-dismiss="modal">${text}</button>`)
-        if (func != null) {
-            $button.on('click', function() { func() })
-        }
-        this.template.find('.modal-footer').append( $button )
-    };
-    this.run = function() {
-        var $modal = $(this.template);
-        $('#message-box').append($modal);
-        $modal.on('hidden.bs.modal', function() { $modal.remove() })
-        $modal.modal('show');
-    };
-}
-
 
 // ADD TASK
 function addNewTask() {
@@ -365,33 +330,6 @@ function turnOnTooltips() {
   $('[data-toggle="tooltip"]').tooltip();
 }
 
-
-// SUBSCRIBE BUTTON
-function subscribe(button) {
-    var subscribe = true;
-    var checkboxes = $(button).next('div').find('input');
-    $(button).toggleClass('btn-default').toggleClass('btn-success');
-    if ($(button).hasClass('btn-default')) {
-        $(button).text('Unsubscribe')
-        subscribe = false;
-        $(checkboxes).prop('disabled', false);
-    } else {
-        $(button).text('Subscribe');
-        $(checkboxes).each(function() {
-            $(this).prop('disabled', true);
-        });
-    }
-    $.post('/subscribe', {'subscribe': subscribe})
-    button.blur();
-}
-
-
-// SCHEDULE CHECKBOX
-function schedule(checkbox) {
-    var value = $(checkbox).attr('value')
-    var checked = $(checkbox).prop('checked')
-    $.post('/settings/schedule', {'value': value, 'checked': checked});
-}
 
 
 // CONTROLLER

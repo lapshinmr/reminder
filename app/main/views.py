@@ -241,7 +241,7 @@ def check_password():
     return jsonify({'password_is_right': password_is_right})
 
 
-@main.route('/settings/change-password', methods=['GET', 'POST'])
+@main.route('/settings/change-password', methods=['POST'])
 @login_required
 def change_password():
     old_password = request.form.get('old-password')
@@ -254,6 +254,16 @@ def change_password():
     else:
         flash('Invalid password.')
     return render_template("main/settings.html")
+
+
+@main.route('/settings/new-username', methods=['POST'])
+@login_required
+def change_username():
+    username = request.form.get('new_username')
+    current_user.name = username
+    db.session.add(current_user)
+    flash('User name has been changed.')
+    return jsonify()
 
 
 @main.route('/check_email_usage', methods=['POST'])

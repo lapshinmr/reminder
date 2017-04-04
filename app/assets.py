@@ -10,8 +10,10 @@ bundels = {
 
     'main_js': Bundle(
         'js/main.js',
-        'js/signup.js',
+        'js/input-validation.js',
         'js/durationpicker.js',
+        'js/settings.js',
+        'js/popup.js',
         output='gen/main.js'
         #filters='jsmin'
     ),
