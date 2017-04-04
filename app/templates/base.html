@@ -34,23 +34,20 @@
                     </a>
                 </form>
             {% else %}
-                {% if request.args.get('next') %}
-                    <form class="navbar-form navbar-right" action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
-                {% else %}
-                    <form class="navbar-form navbar-right" action="{{ url_for('auth.login') }}" method="POST">
-                {% endif %}
-                        <div class="form-group">
-                            <input type="email" class="form-control" name="email" placeholder="Email">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" class="form-control" name="password" placeholder="Password">
-                        </div>
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="remember_me">Remember me</label>
-                        </div>
-                        <button type="submit" class="btn btn-default">
-                            <span class="glyphicon glyphicon-log-in"></span> LogIn</button>
-                    </form>
+                <form class="navbar-form navbar-right" action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
+                    <div class="form-group">
+                        <input type="email" class="form-control" name="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="Password">
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="remember_me">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-default">
+                        <span class="glyphicon glyphicon-log-in"></span> LogIn</button>
+                    <a class="btn btn-success" href="{{ url_for('auth.signup') }}" role="button">Sign Up</a>
+                </form>
             {% endif %}
         </div>
     </nav>

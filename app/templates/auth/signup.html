@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Home{% endblock %}
+
+
+{% block content %}
+
+<form id="signup-form" class="col-md-4 col-md-push-4" action="{{ url_for('auth.signup') }}" method="POST">
+    <div id="signup-email" class="form-group">
+        <label>Email:</label>
+        <input type="email" class="form-control" name="email" placeholder="enter your email">
+    </div>
+    <div id="signup-name" class="form-group">
+        <label>Name:</label>
+        <input type="text" class="form-control" name="username" placeholder="enter your name">
+    </div>
+    <div class="row">
+        <div id="signup-password1" class="form-group col-md-6">
+            <label>Password:</label>
+            <input type="password" class="form-control" name="password" placeholder="enter new password">
+        </div>
+        <div id="signup-password2" class="form-group col-md-6">
+            <label>Password:</label>
+            <input type="password" class="form-control" name="password2" placeholder="repeat your new password">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-block btn-success" disabled>Sing Up</button>
+</form>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        var listener = new SignUpButtonListener('#signup-form');
+        listener.addSources([
+            '#signup-email',
+            '#signup-name',
+            '#signup-password1',
+            '#signup-password2'
+        ]);
+        // decorate "make" method by the listener
+        var current = Notification.prototype.make;
+        Notification.prototype.make = function() {
+            current.apply(this, arguments);
+            listener.check();
+        }
+        var email = new Email('div#signup-email', listener);
+        email.run();
+        var username = new Name('div#signup-name', listener);
+        username.run();
+        var passwords = new Passwords('div#signup-password1', 'div#signup-password2', listener);
+        passwords.run();
+    });
+    </script>
+{% endblock %}

@@ -19,7 +19,7 @@ def login():
         login_user(user, remember_me)
         return redirect(request.args.get('next') or url_for('main.index'))
     cur_config = os.environ.get('CONFIG')
-    return render_template('index.html', config=cur_config)
+    return render_template('auth/login.html', config=cur_config)
 
 
 @auth.route('/logout', methods=['GET', 'POST'])
@@ -29,8 +29,8 @@ def logout():
     return redirect(url_for('main.index'))
 
 
-@auth.route('/register', methods=['POST'])
-def register():
+@auth.route('/signup', methods=['GET', 'POST'])
+def signup():
     email = request.form.get('email')
     username = request.form.get('username')
     password = request.form.get('password')
@@ -48,9 +48,9 @@ def register():
                     message_text
                 ]
             )
-        return redirect(url_for('main.index'))
+        return redirect(url_for('auth.login'))
     cur_config = os.environ.get('CONFIG')
-    return render_template('index.html', config=cur_config)
+    return render_template('auth/signup.html', config=cur_config)
 
 
 @auth.route('/confirm/<token>', methods=['GET', 'POST'])
