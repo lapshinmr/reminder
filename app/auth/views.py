@@ -21,7 +21,7 @@ def before_request():
 def unconfirmed():
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
-    return render_template('auth/unconfirmed.html')
+    return render_template('auth/unconfirmed.html', config=os.environ.get('CONFIG'))
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -80,4 +80,20 @@ def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('main.index'))
     current_user.confirm(token)
+    return redirect(url_for('main.index'))
+
+
+@auth.route('/confirm')
+@login_required
+def resend_confirmation():
+    token = current_user.generate_confirmation_token()
+    message_text = render_template('auth/email/confirm.txt', user=current_user, token=token)
+    send_async_email.apply_async(
+        args=[
+            current_user.email,
+            make_subject('Confirm Your Account'),
+            message_text
+        ]
+    )
+    flash('A new confirmation email has been sent to you by email.')
     return redirect(url_for('main.index'))
