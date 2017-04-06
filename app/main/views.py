@@ -6,6 +6,7 @@ from . import main
 from app import db
 from app.models import Task, Time, Tab, User
 from app.utils import TimeUnitsRanges
+from app.celery_tasks import send_async_email, make_subject
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -241,29 +242,49 @@ def check_password():
     return jsonify({'password_is_right': password_is_right})
 
 
+@main.route('/settings/change-email', methods=['POST'])
+@login_required
+def change_email_request():
+    if current_user.verify_password(request.form.get('password')):
+        new_email = request.form.get('email')
+        token = current_user.generate_email_change_token(new_email)
+        message_text = render_template('email/change_email.txt', user=current_user, token=token)
+        send_async_email.apply_async(
+            args=[
+                new_email,
+                make_subject('Confirm Your New Email'),
+                message_text
+            ]
+        )
+        return redirect(url_for('main.settings'))
+
+
+@main.route('/settings/change-email/<token>')
+@login_required
+def change_email(token):
+    if current_user.change_email(token):
+        print('email has been changed')
+    return redirect(url_for('main.settings'))
+
+
 @main.route('/settings/change-password', methods=['POST'])
 @login_required
 def change_password():
-    old_password = request.form.get('old-password')
-    new_password = request.form.get('new-password1')
+    old_password = request.form.get('old')
+    new_password = request.form.get('new')
     if current_user.verify_password(old_password):
         current_user.password = new_password
         db.session.add(current_user)
-        flash('Your password has been updated.')
-        return redirect(url_for('main.settings'))
-    else:
-        flash('Invalid password.')
-    return render_template("main/settings.html")
+        return jsonify({'response': True})
 
 
-@main.route('/settings/new-username', methods=['POST'])
+@main.route('/settings/change-username', methods=['POST'])
 @login_required
 def change_username():
     username = request.form.get('new_username')
-    current_user.name = username
+    current_user.username = username
     db.session.add(current_user)
-    flash('User name has been changed.')
-    return jsonify()
+    return jsonify({'response': True})
 
 
 @main.route('/check_email_usage', methods=['POST'])
@@ -272,3 +293,5 @@ def check_email_usage():
     user = User.query.filter_by(email=email).first()
     is_exist = True if user else False
     return jsonify({'email_exist': is_exist})
+
+

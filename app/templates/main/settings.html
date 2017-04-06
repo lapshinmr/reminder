@@ -4,13 +4,6 @@
 
 
 {% block content %}
-{% for message in get_flashed_messages() %}
-<div class="alert alert-warning text-center">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    {{ message }}
-</div>
-{% endfor %}
-
 <div class="row">
     <div class="logo-side col-md-3">
         <img src="#" class="col-md-3" title="Your logo" alt="Your logo">
@@ -23,21 +16,50 @@
             <div class="form-group">
                 <label class="control-label col-sm-2">Name</label>
                 <div class="col-sm-10">
-                    <input id="username" type="text" class="form-control" placeholder="Name">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-sm-2">Email</label>
-                <div class="col-sm-10">
-                    <input type="password" class="form-control" placeholder="Email">
+                    <input id="username" type="text" class="form-control" placeholder="Name" value="{{ user.username }}">
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-sm-2">Timezone</label>
                 <div class="col-sm-10">
-                    <input type="password" class="form-control" placeholder="Timezone">
+                    <input type="text" class="form-control" placeholder="Timezone">
                 </div>
             </div>
+        </form>
+
+        <h3>change email</h3>
+
+        <form id="change-email-form" class="col-md-12" action="{{ url_for('main.change_email_request') }}" method="POST">
+            <div id="change-email" class="form-group">
+                <p>Current email: {{ user.email }}</p>
+                <label>New email:</label>
+                <input type="email" class="form-control" name="email" placeholder="enter your email">
+            </div>
+            <div id="change-email-password" class="form-group">
+                <label>Password:</label>
+                <input type="password" class="form-control" name="password" placeholder="enter new password">
+            </div>
+            <button type="submit" class="btn btn-block btn-success" disabled>change email</button>
+        </form>
+
+        <br />
+
+        <h3>change password</h3>
+
+        <form id="change-password-form" class="col-md-12">
+            <div id="change-password-old" class="form-group">
+                <label>Current password</label>
+                <input type="password" class="form-control" name="old-password" placeholder="old password">
+            </div>
+            <div id="change-password-new1" class="form-group">
+                <label>New password</label>
+                <input type="password" class="form-control" name="new-password1" placeholder="new password">
+            </div>
+            <div id="change-password-new2" class="form-group">
+                <label>new password</label>
+                <input type="password" class="form-control" name="new-password2" placeholder="new password">
+            </div>
+            <button type="submit" class="btn btn-block btn-success" disabled>change password</button>
         </form>
 
         <br />
@@ -73,28 +95,6 @@
                 </div>
             </div>
 
-        <br />
-
-        <h3>change password</h3>
-
-        <form id="change-password-form" class="col-md-12" action="{{ url_for('main.change_password') }}" method="POST">
-            <div id="change-password-old-password" class="form-group">
-                <label>Current password</label>
-                <input type="password" class="form-control" name="old-password" placeholder="old password">
-            </div>
-            <div id="change-password-new-password1" class="form-group">
-                <label>New password</label>
-                <input type="password" class="form-control" name="new-password1" placeholder="new password">
-            </div>
-            <div id="change-password-new-password2" class="form-group">
-                <label>new password</label>
-                <input type="password" class="form-control" name="new-password2" placeholder="new password">
-            </div>
-            <button type="submit" class="btn btn-block btn-default">change password</button>
-        </form>
-
-        <h3>change email</h3>
-        <br />
     </div>
 </div>
 {% endblock %}
@@ -103,22 +103,9 @@
 {% block scripts %}
 <script>
     $(document).ready(function() {
-        var listener = new SignUpButtonListener('#change-password-form');
-        listener.addSources([
-            '#change-password-old-password',
-            '#change-password-new-password1',
-            '#change-password-new-password2'
-        ]);
-        // decorate "make" method by the listener
-        var current = Notification.prototype.make;
-        Notification.prototype.make = function() {
-            current.apply(this, arguments);
-            listener.check();
-        }
-        var password = new Password('div#change-password-old-password');
-        password.run();
-        var passwords = new Passwords('div#change-password-new-password1', 'div#change-password-new-password2');
-        passwords.run();
+        editUserName();
+        changeEmailForm();
+        changePasswordForm();
     });
 </script>
 {% endblock %}

@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
 
 
-{% block title %}Home{% endblock %}
+{% block title %}Sign up{% endblock %}
 
 
 {% block content %}
-
 <form id="signup-form" class="col-md-4 col-md-push-4" action="{{ url_for('auth.signup') }}" method="POST">
     <div id="signup-email" class="form-group">
         <label>Email:</label>

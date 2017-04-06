@@ -27,6 +27,8 @@
     </div>
     <button type="submit" class="btn btn-block btn-success">Login</button>
 </form>
+<p>Forgot your password? <a href="{{ url_for('auth.password_reset_request') }}">Click here to reset it</a>.</p>
+<p>New user? <a href="{{ url_for('auth.signup') }}">Click here to register</a>.</p>
 {% endblock %}
 
 {% block scripts %}
