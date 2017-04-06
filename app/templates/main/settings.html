@@ -66,35 +66,25 @@
         <div class="page-header">
             <h3>notification settings</h3>
         </div>
-        {% if user.subscribed %}
-            {% set button_type = "btn-default" %}
-            {% set button_text = "Unsubscribe" %}
-            {% set disabled = "" %}
-        {% else %}
-            {% set button_type = "btn-success" %}
-            {% set button_text = "Subscribe" %}
-            {% set disabled = "disabled" %}
-        {% endif %}
-            <button class="btn btn-block {{ button_type }}" onclick="subscribe(this)">{{ button_text }}</button>
-            <div class="row">
-                <div class="col-md-12">
-                {% for n in range(24) %}
-                    {% set time = '{:0>2.2}'.format(n|string) %}
-                    {% if time in schedule %}
-                        {% set checked = "checked" %}
-                    {% else %}
-                        {% set checked = "" %}
-                    {% endif %}
-                    <div class="col-md-3 text-center">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" value="{{ '{:0>2.2}'.format(n|string) }}" {{ checked }} {{ disabled }} onclick="schedule(this)">
-                            {{ '{0:0>2.2}:00'.format(n|string) }}
-                        </label>
-                    </div>
-                {% endfor %}
+        <button id="settings-subscribe" class="btn btn-block">{{ button_text }}</button>
+        <div id="settings-schedule" class="row">
+            <div class="col-md-12">
+            {% for n in range(24) %}
+                {% set time = '{:0>2.2}'.format(n|string) %}
+                {% if time in schedule %}
+                    {% set checked = "checked" %}
+                {% else %}
+                    {% set checked = "" %}
+                {% endif %}
+                <div class="col-md-3 text-center">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" value="{{ '{:0>2.2}'.format(n|string) }}" {{ checked }} onclick="schedule(this)">
+                        {{ '{0:0>2.2}:00'.format(n|string) }}
+                    </label>
                 </div>
+            {% endfor %}
             </div>
-
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -106,6 +96,7 @@
         editUserName();
         changeEmailForm();
         changePasswordForm();
+        subscribe('{{ user.subscribed }}' == 'True');
     });
 </script>
 {% endblock %}

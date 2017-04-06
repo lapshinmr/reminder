@@ -1,22 +1,27 @@
 
 
 // SUBSCRIBE BUTTON
-function subscribe(button) {
-    var subscribe = true;
-    var checkboxes = $(button).next('div').find('input');
-    $(button).toggleClass('btn-default').toggleClass('btn-success');
-    if ($(button).hasClass('btn-default')) {
-        $(button).text('Unsubscribe')
-        subscribe = false;
-        $(checkboxes).prop('disabled', false);
+function subscribe(state) {
+    var $button = $('#settings-subscribe');
+    if (state) {
+        $button.addClass('btn-default')
+        $button.text('Unsubscribe')
     } else {
-        $(button).text('Subscribe');
-        $(checkboxes).each(function() {
-            $(this).prop('disabled', true);
-        });
-    }
-    $.post('/settings/subscribe', {'subscribe': subscribe})
-    button.blur();
+        $button.addClass('btn-success')
+        $button.text('Subscribe')
+    };
+    $button.on('click', function() {
+        $button.toggleClass('btn-default').toggleClass('btn-success');
+        $('#settings-schedule').slideToggle(400);
+        var isSubscribed = $button.hasClass('btn-default')
+        if (isSubscribed) {
+            $button.text('Unsubscribe')
+        } else {
+            $button.text('Subscribe');
+        }
+        $.post('/settings/subscribe', {'subscribe': isSubscribed})
+        $button.blur();
+    });
 }
 
 
