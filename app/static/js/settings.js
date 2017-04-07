@@ -25,11 +25,16 @@ function subscribe(state) {
 }
 
 
-// SCHEDULE CHECKBOX
-function schedule(checkbox) {
-    var value = $(checkbox).attr('value')
-    var checked = $(checkbox).prop('checked')
-    $.post('/settings/schedule', {'value': value, 'checked': checked});
+// SCHEDULE
+function schedule(schedule) {
+    for (var i = 0, length = schedule.length; i < length; i++) {
+        $(`.settings-timestamp[value="${schedule[i]}"]`).prop('checked', true)
+    };
+    $('#settings-schedule').on('click', '.settings-timestamp', function() {
+        var value = $(this).attr('value');
+        var checked = $(this).prop('checked');
+        $.post('/settings/treat-timestamp', {'value': value, 'checked': checked});
+    })
 }
 
 

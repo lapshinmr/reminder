@@ -5,10 +5,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="logo-side col-md-3">
-        <img src="#" class="col-md-3" title="Your logo" alt="Your logo">
-    </div>
-    <div class="settings-side col-md-9">
+    <div class="settings-side col-md-8 col-md-push-2">
 
         <div class="page-header">
             <h3>main information</h3>
@@ -66,24 +63,16 @@
         <div class="page-header">
             <h3>notification settings</h3>
         </div>
-        <button id="settings-subscribe" class="btn btn-block">{{ button_text }}</button>
-        <div id="settings-schedule" class="row">
-            <div class="col-md-12">
-            {% for n in range(24) %}
-                {% set time = '{:0>2.2}'.format(n|string) %}
-                {% if time in schedule %}
-                    {% set checked = "checked" %}
-                {% else %}
-                    {% set checked = "" %}
-                {% endif %}
-                <div class="col-md-3 text-center">
-                    <label class="checkbox-inline">
-                        <input type="checkbox" value="{{ '{:0>2.2}'.format(n|string) }}" {{ checked }} onclick="schedule(this)">
-                        {{ '{0:0>2.2}:00'.format(n|string) }}
-                    </label>
-                </div>
-            {% endfor %}
+        <button id="settings-subscribe" class="btn btn-block"></button>
+        <div id="settings-schedule" class="col-md-12">
+        {% for n in range(24) %}
+            {% set time = '{:0>2.2}'.format(n|string) %}
+            <div class="col-md-2 text-center">
+                <label class="checkbox-inline">
+                    <input class="settings-timestamp" type="checkbox" value="{{ time }}">{{ time }}:00
+                </label>
             </div>
+        {% endfor %}
         </div>
     </div>
 </div>
@@ -97,6 +86,7 @@
         changeEmailForm();
         changePasswordForm();
         subscribe('{{ user.subscribed }}' == 'True');
+        schedule({{ schedule|tojson }});
     });
 </script>
 {% endblock %}

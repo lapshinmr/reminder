@@ -217,16 +217,20 @@ def subscribe():
     return jsonify()
 
 
-@main.route('/settings/schedule', methods=['POST'])
+@main.route('/settings/treat-timestamp', methods=['POST'])
 @login_required
 def schedule():
     value = request.form.get('value')
     checked = request.form.get('checked') == 'true'
-    notification_schedule = current_user.schedule.split(', ')
+    notification_schedule = []
+    if current_user.schedule != 'none':
+        notification_schedule.extend(current_user.schedule.split(', '))
     if checked and value not in notification_schedule:
         notification_schedule.append(value)
     elif not checked and value in notification_schedule:
         notification_schedule.remove(value)
+    if len(notification_schedule) == 0:
+        notification_schedule = ['none']
     current_user.schedule = ', '.join(sorted(notification_schedule))
     db.session.commit()
     return jsonify()
