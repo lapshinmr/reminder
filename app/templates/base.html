@@ -17,46 +17,63 @@
 <body>
     <div class="container" id="message-box"> </div>
 
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-            <!-- Title -->
             <div class="navbar-header">
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">Reminder</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">reminder</a>
+                <img src="{{ url_for('static', filename='img/icons/svg/clipboard.svg') }}" alt="Clipboard">
             </div>
-            <!-- Buttons and LogIn form -->
+
             {% if current_user.is_authenticated %}
-                <form class="navbar-form navbar-right">
-                    {% if current_user.confirmed %}
-                    <a href="{{ url_for('main.settings') }}" class="btn btn-default" role="button">
-                        <span class="glyphicon glyphicon-cog"></span> Settings
-                    </a>
-                    {% endif %}
-                    <a href="{{ url_for('auth.logout') }}" class="btn btn-default" role="button">
-                        <span class="glyphicon glyphicon-log-out"></span> LogOut
-                    </a>
-                </form>
+
+            <form class="navbar-form navbar-right">
+                {% if current_user.confirmed %}
+                <a href="{{ url_for('main.settings') }}" class="btn btn-warning" role="button">
+                    <span class="glyphicon glyphicon-cog"></span> Settings
+                </a>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-warning" role="button">
+                    <span class="glyphicon glyphicon-log-out"></span> LogOut
+                </a>
+            </form>
+
             {% else %}
-                <form class="navbar-form navbar-right" action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
-                    <div class="form-group">
-                        <input type="email" class="form-control" name="email" placeholder="Email">
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control" name="password" placeholder="Password">
-                    </div>
-                    <div class="checkbox">
-                        <label><input type="checkbox" name="remember_me">Remember me</label>
-                    </div>
-                    <button type="submit" class="btn btn-default">
-                        <span class="glyphicon glyphicon-log-in"></span> LogIn</button>
-                    <a class="btn btn-success" href="{{ url_for('auth.signup') }}" role="button">Sign Up</a>
-                </form>
+
+            <form class="navbar-form navbar-right" action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
+                <div class="form-group">
+                    <input type="email" class="form-control" name="email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" placeholder="Password">
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="remember_me">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-warning">
+                    <span class="glyphicon glyphicon-log-in"></span> Login</button>
+                <a class="btn btn-warning" href="{{ url_for('auth.signup') }}" role="button">Sign up</a>
+            </form>
+
             {% endif %}
+
         </div>
     </nav>
 
     <div class="container content temp_color">
         {% block content %}{% endblock %}
     </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p class="footer-copyright">
+                        &copy; Mr&Mrs Lapshin 2017
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script
             src="https://code.jquery.com/jquery-3.1.1.min.js"
