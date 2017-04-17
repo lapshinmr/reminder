@@ -18,10 +18,12 @@
     <div class="container" id="message-box"> </div>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+        <div class="container-fluid">
             <div class="navbar-header">
                 <a class="navbar-brand" href="{{ url_for('main.index') }}">reminder</a>
-                <img src="{{ url_for('static', filename='img/icons/svg/clipboard.svg') }}" alt="Clipboard">
+                <a class="icon" href="{{ url_for('main.index') }}">
+                    <img src="{{ url_for('static', filename='img/icons/svg/clipboard.svg') }}" alt="Clipboard">
+                </a>
             </div>
 
             {% if current_user.is_authenticated %}
@@ -46,12 +48,7 @@
                 <div class="form-group">
                     <input type="password" class="form-control" name="password" placeholder="Password">
                 </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" name="remember_me">Remember me</label>
-                </div>
-                <button type="submit" class="btn btn-warning">
-                    <span class="glyphicon glyphicon-log-in"></span> Login</button>
-                <a class="btn btn-warning" href="{{ url_for('auth.signup') }}" role="button">Sign up</a>
+                <button type="submit" class="btn btn-warning btn-wide">Login</button>
             </form>
 
             {% endif %}
@@ -59,7 +56,7 @@
         </div>
     </nav>
 
-    <div class="container content temp_color">
+    <div class="container content">
         {% block content %}{% endblock %}
     </div>
 
@@ -68,7 +65,7 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <p class="footer-copyright">
-                        &copy; Mr&Mrs Lapshin 2017
+                        &copy; Mr&Mrs Lapshin, 2017
                     </p>
                 </div>
             </div>

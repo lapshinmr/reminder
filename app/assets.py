@@ -14,6 +14,9 @@ bundels = {
         'js/durationpicker.js',
         'js/settings.js',
         'js/popup.js',
+        'js/flat-ui.min.js',
+        'js/flat-ui.min.js',
+        'js/application.js',
         output='gen/main.js'
         #filters='jsmin'
     ),
