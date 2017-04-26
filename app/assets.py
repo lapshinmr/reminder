@@ -2,30 +2,42 @@ import os
 from flask_assets import Bundle, Environment
 
 
-css = ['css/bootstrap.min.css', 'css/font-awesome.min.css', 'css/jquery-ui-1.12.1.min.css', 'css/flat-ui.min.css']
+css = [
+    'css/jquery-ui-1.12.1.min.css',
+    'css/bootstrap.min.css',
+    'css/flat-ui.min.css',
+    'css/font-awesome.min.css'
+]
+
+js = [
+    'js/jquery-3.1.1.min.js',
+    'js/jquery-ui-1.12.1.min.js',
+    'js/flat-ui.min.js',
+    'js/application.js',
+    'js/main.js',
+    'js/input-validation.js',
+    'js/duration-picker.js',
+    'js/settings.js',
+    'js/popup.js'
+]
+
 if os.environ.get('CONFIG') == 'prod':
     css.append('css/main.css')
+else:
+    js.append('js/less-2.7.2.min.js')
 
-bundels = {
 
+bundles = {
     'main_js': Bundle(
-        'js/main.js',
-        'js/input-validation.js',
-        'js/durationpicker.js',
-        'js/settings.js',
-        'js/popup.js',
-        'js/flat-ui.min.js',
-        'js/flat-ui.min.js',
-        'js/application.js',
+        *js,
         output='gen/main.js'
-        #filters='jsmin'
     ),
-
     'main_css': Bundle(
         *css,
         output='gen/main.css',
         filters='cssmin'
     )
 }
+
 assets = Environment()
-assets.register(bundels)
+assets.register(bundles)

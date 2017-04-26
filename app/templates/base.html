@@ -8,6 +8,7 @@
     {% assets "main_css" %}
         <link rel="stylesheet" href="{{ ASSET_URL }}" />
     {% endassets %}
+
     {% if config == 'dev' %}
         <link rel="stylesheet" type="text/less" href="{{ url_for('static', filename='css/main.less') }}">
     {% endif %}
@@ -72,39 +73,9 @@
         </div>
     </footer>
 
-    <script
-            src="https://code.jquery.com/jquery-3.1.1.min.js"
-            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-            crossorigin="anonymous">
-    </script>
-    <script
-            src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-            crossorigin="anonymous">
-    </script>
-    <script
-            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous">
-    </script>
     {% if config == 'dev' %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js"></script>
+        <script src="{{ url_for('static', filename='js/less-2.7.2.min.js') }}"></script>
     {% endif %}
-    <script>
-        if (typeof(jQuery) === 'undefined') {
-            document.write(`<script src="{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"><\/script>`);
-        }
-    </script>
-    <script>
-        if (typeof(jQuery.ui) === 'undefined') {
-            document.write(`<script src="{{ url_for('static', filename='js/jquery-ui-1.12.1.min.js') }}"><\/script>`);
-        }
-    </script>
-    <script>
-        if (typeof($.fn.modal) === "undefined") {
-            document.write('<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"><\/script>');
-        }
-    </script>
 
     {% assets "main_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
