@@ -14,50 +14,34 @@
             <button class="btn btn-success btn-lg btn-block transition" onclick="addNewTask()">create</button>
         </section>
     </div>
-    <div id="right_side" class="col-md-9">
+    <div id="right_side" class="col-md-8 col-md-offset-1">
         <h3 class="text-center">Progress of your tasks</h3>
-        <div class="sort-section row">
-          <div class="col-md-12">
-            <ul class="nav nav-tabs col-md-10">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="btn-group" data-toggle="buttons">
 
-                {{ create_tabs(tabs) }}
+                    {{ create_tabs(tabs) }}
 
-                <div class="btn-group">
-                  <button class="btn btn-inverse dropdown-toggle" type="button" data-toggle="dropdown">
-                    Large button <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu dropdown-menu-inverse" role="menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
-                  </ul>
+                    <button id="add-new-tab" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                        Add new tab <span class="fa fa-plus-square" aria-hidden="true"></span>
+                    </button>
+
                 </div>
-
-                <li class="add-button">
-                    <div class="dropdown pull-right">
-                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">+</button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <input type="text" class="form-control" id="new-tab-name">
-                                <button type="button" class="btn btn-default" onclick="addNewTab()">add</button>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-            <div class="dropdown pull-right">
-              <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Sort by
-              <span class="caret"></span></button>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li role="presentation"><a role="menuitem" onclick="makeOrder(this)" data-value="by_name">name</a></li>
-                <li role="presentation"><a role="menuitem" onclick="makeOrder(this)" data-value="by_time_loop">loop time</a></li>
-                <li role="presentation"><a role="menuitem" onclick="makeOrder(this)" data-value="by_time_init">init time</a></li>
-                <li role="presentation"><a role="menuitem" onclick="makeOrder(this)" data-value="by_time_left">left time</a></li>
-              </ul>
             </div>
-          </div>
+            <div class="col-md-2">
+                <div id="order-button" class="dropdown">
+                    <button class="btn btn-inverse btn-block dropdown-toggle" type="button" data-toggle="dropdown">
+                        Sort by <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-inverse">
+                        <li><a data-value="by_name">name</a></li>
+                        <li><a data-value="by_time_loop">loop time</a></li>
+                        <li><a data-value="by_time_init">init time</a></li>
+                        <li><a data-value="by_time_left">left time</a></li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
         <div class="tab-content">
 
@@ -75,6 +59,8 @@
         $(document).ready(function(){
             CURRENT_TAB = {{ active_tab }}
             durationPicker.show();
+            treatOrderButton();
+            treatNewTabButton();
             initTasksJs();
         });
     </script>

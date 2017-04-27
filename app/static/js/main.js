@@ -93,7 +93,7 @@ function completeTask(id) {
 }
 
 
-// TASK SORTING
+// TASKS SORTING
 function dragTask(tab_content) {
   var taskId, startIndex, changeIndex, currentIndex, marker, dragged;
   tab_content.sortable(
@@ -153,7 +153,7 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
     return s
   }
 
-  this.calc_heights = function() {
+  this.calcHeights = function() {
     for (var i = 0; i < this.lis.length; i++) {
       this.old_heights.push(this.lis.eq(i).outerHeight(true));
     }
@@ -173,7 +173,7 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
     }
   }
 
-  this.create_animations = function() {
+  this.createAnimations = function() {
     for (var i = 0; i < this.old_order.length; i++) {
       var id = this.old_order[i];
       var old_idx = this.old_order.indexOf(id);
@@ -187,48 +187,53 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
     }
   }
 
-  this.activate_animations = function() {
+  this.activateAnimations = function() {
     for (var i = 0; i < this.animations.length; i++) {
       this.animations[i]();
     }
   }
 
-  this.calc_heights();
-  this.create_animations();
-  this.activate_animations();
+  this.calcHeights();
+  this.createAnimations();
+  this.activateAnimations();
 }
 
 
-function makeOrder(order_option) {
-  var value = $(order_option).attr('data-value');
-  $.post('/make_order', {'tab_id': CURRENT_TAB, 'order_type': value}).done(
-    function(response) {
-      new AnimateTasksSorting(CURRENT_TAB, response['old_order'], response['new_order']);
-    }
-  )
+// ORDER BUTTON
+function treatOrderButton() {
+    $('#order-button').on('click', 'ul > li > a',
+        function() {
+            var value = $(this).attr('data-value');
+            $.post('/make_order', {'tab_id': CURRENT_TAB, 'order_type': value}).done(
+              function(response) {
+                new AnimateTasksSorting(CURRENT_TAB, response['old_order'], response['new_order']);
+              }
+            )
+        }
+    )
 }
 
 
 // TABS
-function addNewTab() {
-  var newTabName = $('#new-tab-name').val();
-  if (!newTabName) {
-    return
-  }
-  $.post('/add_new_tab', {'new_tab_name': newTabName}).done(
-    function(response) {
-      var tabId = response['tab_id'];
-      var $newTab = $(response['tab']);
-      var $newTabContent = $(response['tab_content']);
-      var tabs = $('ul.nav.nav-tabs li')
-      var $addButton = $('ul.nav.nav-tabs li.add-button');
-      $newTab.insertBefore($addButton);
-      makeTabDroppable($newTab);
-      $('div.tab-content').append($newTabContent);
-      dragTask($newTabContent.children('ul.tasks_area').eq(0));
-      $(`ul.nav.nav-tabs a[href="#tab${tabId}"]`).trigger('click')
-    }
-  );
+function treatNewTabButton() {
+    $('#add-new-tab').on('click', function() {
+        var newTabName = 'new tab'
+        console.log('+')
+        $.post('/add_new_tab', {'new_tab_name': newTabName}).done(
+            function(response) {
+                var tabId = response['tab_id'];
+                var $newTab = $(response['tab']);
+                var $newTabContent = $(response['tab_content']);
+                var tabs = $('ul.nav.nav-tabs li')
+                var $addButton = $('ul.nav.nav-tabs li.add-button');
+                $newTab.insertBefore($addButton);
+        //        makeTabDroppable($newTab);
+                $('div.tab-content').append($newTabContent);
+        //        dragTask($newTabContent.children('ul.tasks_area').eq(0));
+                $(`ul.nav.nav-tabs a[href="#tab${tabId}"]`).trigger('click')
+            }
+        );
+    })
 }
 
 

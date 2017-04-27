@@ -56,14 +56,19 @@
 {% macro create_tabs(tabs) %}
     {% for tab in tabs %}
         {% if tab.is_active() %}
-            <li class="active">
+            <a class="btn btn-inverse active" data-toggle="tab" href="#tab{{ tab.id }}" onclick="activateTab(this)">
+            <input type="radio" name="options" autocomplete="off" checked>{{ tab.name }}
         {% else %}
-            <li>
+            <a class="btn btn-inverse" data-toggle="tab" href="#tab{{ tab.id }}" onclick="activateTab(this)">
+            <input type="radio" name="options" autocomplete="off">{{ tab.name }}
         {% endif %}
-                <a data-toggle="tab" href="#tab{{ tab.id }}" onclick="activateTab(this)">{{ tab.name }}</a>
                 <a class="tab-close" onclick="attachCloseTab(this)">
                     <i class="fa fa-times" aria-hidden="true"></i>
                 </a>
-            </li>
+            </a>
     {% endfor %}
 {% endmacro %}
+
+                <a class="btn btn-primary active" href="#option1" data-toggle="tab">
+                    <input type="radio" name="options" autocomplete="off" checked>
+                </a>
