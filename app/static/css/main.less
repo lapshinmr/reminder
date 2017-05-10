@@ -261,7 +261,7 @@ div#duration-picker {
 
     a {
         border-radius: 0px;
-        padding: 10px 25px;
+        padding: 15px 35px;
         div {
             position: relative;
             i {
@@ -269,6 +269,9 @@ div#duration-picker {
                 line-height: 1.4;
             }
             span.moved-text {
+                &:focus {
+                    outline: none;
+                }
                 cursor: text;
                 position: absolute;
                 left: 50%;

@@ -18,7 +18,8 @@ js = [
     'js/input-validation.js',
     'js/duration-picker.js',
     'js/settings.js',
-    'js/popup.js'
+    'js/popup.js',
+    'js/tabs.js'
 ]
 
 if os.environ.get('CONFIG') == 'prod':
