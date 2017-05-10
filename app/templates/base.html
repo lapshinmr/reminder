@@ -31,11 +31,11 @@
 
             <form class="navbar-form navbar-right">
                 {% if current_user.confirmed %}
-                <a href="{{ url_for('main.settings') }}" class="btn btn-warning" role="button">
+                <a href="{{ url_for('main.settings') }}" class="btn btn-warning navbar-btn" role="button">
                     <span class="glyphicon glyphicon-cog"></span> Settings
                 </a>
                 {% endif %}
-                <a href="{{ url_for('auth.logout') }}" class="btn btn-warning" role="button">
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-warning navbar-btn" role="button">
                     <span class="glyphicon glyphicon-log-out"></span> LogOut
                 </a>
             </form>
@@ -72,10 +72,6 @@
             </div>
         </div>
     </footer>
-
-    {% if config == 'dev' %}
-        <script src="{{ url_for('static', filename='js/less-2.7.2.min.js') }}"></script>
-    {% endif %}
 
     {% assets "main_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>

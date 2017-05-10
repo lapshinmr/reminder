@@ -62,6 +62,17 @@ def edit():
     return jsonify()
 
 
+@main.route('/edit_tab_name', methods=['POST'])
+def edit_tab_name():
+    tab_id = request.form.get('tab_id')
+    tab = Tab.query.filter_by(id=tab_id).first()
+    new_tab_name = request.form.get('new_tab_name')
+    if tab.name != new_tab_name:
+        tab.name = new_tab_name
+        db.session.commit()
+    return jsonify()
+
+
 @main.route('/complete', methods=['POST'])
 def complete():
     task_id = request.form.get('task_id')

@@ -2,6 +2,11 @@ var CURRENT_TAB = 0; // current active tab
 var LAST_DROPPABLE_TAB = CURRENT_TAB; // last tab where element was moved
 
 
+function print(string) {
+    console.log(string)
+}
+
+
 // ADD TASK
 function addNewTask() {
   var duration = $('#duration').val();
@@ -12,7 +17,6 @@ function addNewTask() {
           'Please choose duration more then ZERO'
       );
       mh.addButton('ok', 'primary');
-      mh.run()
   } else {
       if ($('ul.nav.nav-tabs > li:not(.add-button)').length > 0) {
           $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
@@ -27,7 +31,6 @@ function addNewTask() {
               "You can't add task because you need have at list one tab"
           );
           mh.addButton('ok', 'primary');
-          mh.run()
       }
   }
 }
@@ -215,36 +218,70 @@ function treatOrderButton() {
 
 
 // TABS
+function extendLastTabPadding() {
+    var $lastTab = $('#tabs-navigation > a:not(#add-new-tab):last');
+    $lastTab.css('padding-right', '65px');
+}
+
+
+function narrowLastTabPadding() {
+    var $lastTab = $('#tabs-navigation > a:not(#add-new-tab):last');
+    $lastTab.css('padding-right', '25px');
+}
+
+
+function treatTabNameEdition() {
+    $('#tabs-navigation').on({
+        'keypress': function(e) {
+            //e.preventDefault();
+            if (e.which == 13) {
+                $(this).blur();
+            } else {
+                var newTabName = $(this).text();
+                $(this).prev().text(newTabName);
+            }
+        },
+        'focusout': function(e) {
+            var newTabName = $(this).text();
+            var tabId = $(this).parents('a[href^="#tab"]').attr('href').replace('#tab', '')
+            $.post('/edit_tab_name', {'new_tab_name': newTabName, 'tab_id': tabId});
+        }
+    }, 'a div span.moved-text');
+}
+
 function treatNewTabButton() {
+    extendLastTabPadding();
     $('#add-new-tab').on('click', function() {
         var newTabName = 'new tab'
-        console.log('+')
         $.post('/add_new_tab', {'new_tab_name': newTabName}).done(
             function(response) {
                 var tabId = response['tab_id'];
                 var $newTab = $(response['tab']);
                 var $newTabContent = $(response['tab_content']);
-                var tabs = $('ul.nav.nav-tabs li')
-                var $addButton = $('ul.nav.nav-tabs li.add-button');
-                $newTab.insertBefore($addButton);
+                var $addNewTab = $('a#add-new-tab')
+                narrowLastTabPadding();
+                $newTab.insertBefore($addNewTab);
+                extendLastTabPadding();
         //        makeTabDroppable($newTab);
                 $('div.tab-content').append($newTabContent);
         //        dragTask($newTabContent.children('ul.tasks_area').eq(0));
-                $(`ul.nav.nav-tabs a[href="#tab${tabId}"]`).trigger('click')
+                $(`div#tabs-navigation > a[href="#tab${tabId}"]`).trigger('click')
             }
         );
     })
 }
 
 
-function activateTab(target) {
-    if ($(target).hasClass('noclick')) {
-        $(target).removeClass('noclick');
-    } else {
-        var id = $(target).attr('href').replace('#tab', '').replace('content', '');
-        CURRENT_TAB = id;
-        $.post('/activate_tab', {'current_tab_id': CURRENT_TAB})
-    }
+function treatTabActivation() {
+    $('#tabs-navigation').on('click', '#tabs-navigation > a:not(#tab-holder)', function() {
+        if ($(this).hasClass('noclick')) {
+            $(this).removeClass('noclick');
+        } else {
+            var id = $(this).attr('href').replace('#tab', '').replace('content', '');
+            CURRENT_TAB = id;
+            $.post('/activate_tab', {'current_tab_id': CURRENT_TAB})
+        }
+    })
 }
 
 
@@ -254,29 +291,49 @@ function closeTab(tabId, $tab) {
             var activeTabIdx = response['active_tab_idx']
             $('div#tab' + tabId).remove();
             $tab.remove();
+            extendLastTabPadding();
             if (activeTabIdx >= 0) {
-                $('ul.nav.nav-tabs a[href]:not(.add-button)').eq(activeTabIdx).trigger('click')
+                $('div#tabs-navigation > a[href]:not(#add-new-tab)').eq(activeTabIdx).trigger('click')
             }
         }
     )
 }
 
 
-function attachCloseTab(closeLink) {
-    var $tab = $(closeLink).parents().eq(0);
-    var tabId = $tab.children('a[href^="#tab"]').attr('href').replace('#tab', '');
-    var tab_content_length = $(`div.tab-content div#tab${tabId} ul li.task`).length;
-    if (tab_content_length == 0) {
-        closeTab(tabId, $tab);
-    } else {
-        var mh = new Modal(
-            'Warning',
-            'If you close this tab you will lost all your tasks'
-        );
-        mh.addButton('Yes, close', 'default', function() { closeTab(tabId, $tab) });
-        mh.addButton('no', 'primary');
-        mh.run()
-    }
+function treatTabClosing() {
+    $('#tabs-navigation').on({
+        'mouseenter': function() {
+            $(this).find('span').stop().animate({"left": "40%"}, 300);
+            $(this).find('i').stop().fadeIn(300);
+        },
+        'mouseleave': function() {
+            $(this).find('span').stop().animate({"left": "50%"}, 300);
+            $(this).find('i').stop().fadeOut(300);
+        }
+    }, 'a.btn:not(#add-new-tab)');
+    $('#tabs-navigation').on('click', 'i', function(event) {
+        event.stopPropagation();
+        var $tab = $(this).parents().eq(1);
+        var tabId = $tab.attr('href').replace('#tab', '');
+        var tab_content_length = $(`div.tab-content div#tab${tabId} ul li.task`).length;
+        var $tabs = $('#tabs-navigation > a:not(#add-new-tab)');
+        if ($tabs.length == 1) {
+            var mh = new Modal(
+                'Warning',
+                'You can\'t close this tab, because it is your last tab.'
+            );
+            mh.addButton('Ok', 'primary');
+        } else if (tab_content_length == 0) {
+            closeTab(tabId, $tab);
+        } else {
+            var mh = new Modal(
+                'Warning',
+                'If you close this tab you will lost all your tasks for this tab.'
+            );
+            mh.addButton('Yes, close', 'default', function() { closeTab(tabId, $tab) });
+            mh.addButton('no', 'primary');
+        }
+    })
 }
 
 

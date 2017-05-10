@@ -32,5 +32,6 @@ var Modal = function (title, text) {
         $modal.on('hidden.bs.modal', function() { $modal.remove() })
         $modal.modal('show');
     };
+    this.run();
 }
 
