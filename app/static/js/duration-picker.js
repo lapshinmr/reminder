@@ -9,10 +9,10 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
     self.totalSeconds = totalSeconds;
     self.zeroes = zeroes;
     self.$unit = $(
-        `<div id="${self.id}" class="col-md-3 text-center">
-            <div class="arrow up"></div>
+        `<div id="${self.id}" class="time-unit col-md-3 text-center">
+            <div class="arrow up" style="display: none;"></div>
             <div class="value" contenteditable="true"></div>
-            <div class="arrow down"></div>
+            <div class="arrow down" style="display: none;"></div>
         </div>`
     );
     self.$value = self.$unit.find('.value');
@@ -44,18 +44,22 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
     }
 
     self.animateArrow = function(element) {
-        $( element ).css({
-          color: "#0ac2f9",
-          transition: "text-shadow 0.5s ease-in-out;",
-          fontWeight: "900"
-        });
-        $( element ).stop().animate({
-            color: "rgb(100, 100, 100)",
-            fontWeight: "400",
-            queue: false
-          }, 300
-        );
+        $( element ).css({color: '#3498db', fontSize: 40, top: '-25px'});
+        $( element ).stop().animate({color: '#2c3e50', fontSize: 32, top: '-20px'}, 400 );
     };
+
+    self.treatArrowsFading = function() {
+        self.$unit.on(
+            {
+                'mouseenter': function(e) {
+                    $(this).find('div.arrow').stop().fadeIn(600);
+                },
+                'mouseleave': function(e) {
+                    $(this).find('div.arrow').stop().fadeOut(600);
+                }
+            }
+        )
+    }
 
     self.treatArrowsClicking = function() {
         self.$up.click(function() {
@@ -67,6 +71,19 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
             self.animateArrow(self.$down);
         });
     };
+
+    self.treatArrowsHovering = function() {
+        self.$up.on(
+            {
+                'mouseenter': function() {
+                    $(this).stop().animate({color: '#34495e'}, 400 );
+                },
+                'mouseleave': function() {
+                    $(this).stop().animate({color: '#2c3e50'}, 400 );
+                }
+            }
+        )
+    }
 
     self.treatScrolling = function() {
         self.$unit.on('wheel mousewheel', function(e) {
@@ -106,6 +123,8 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
         );
     };
     self.treatArrowsClicking();
+    self.treatArrowsFading();
+    self.treatArrowsHovering();
     self.treatScrolling();
     self.treatValueEditing();
 }
@@ -114,31 +133,31 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
 //controller
 function DurationPicker(id) {
     var self = this;
-    self.$input = $(id);
     self.id = id.replace('#', '');
+    self.$input = $('#' + self.id);
     self.$replacer = $(`<div id="${self.id}-replacer" class="row">`);
     self.$replacer.insertAfter(self.$input);
     self.$input.hide();
+
     self.units = [];
-    self.getTime = function() {
-      var time = 0;
-      for (var i = 0; i < self.units.length; i++) {
-        time += self.units[i].value * self.units[i].totalSeconds;
-      }
-      return time
-    };
+
     self.append = function( timeUnit ) {
         self.units.push( timeUnit );
         self.$replacer.append(timeUnit.$unit);
     }
+
     self.append( new TimeUnit('days', undefined, 86400, false) );
     self.append( new TimeUnit('hours', 23, 3600, true) );
     self.append( new TimeUnit('minutes', 59, 60, true) );
     self.append( new TimeUnit('seconds', 59, 1, true) );
-    
+
     $('#duration-picker-replacer div.value').on("valueChanged",
-        function(e){
-            $('#duration-picker').val(self.getTime());
+        function(){
+            var timeTotal = 0;
+            for (var i = 0; i < self.units.length; i++) {
+              timeTotal += self.units[i].value * self.units[i].totalSeconds;
+            }
+            $('#' + self.id).val(timeTotal);
         }
     );
 }

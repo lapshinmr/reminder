@@ -155,51 +155,50 @@ div#message-box {
 }
 
 
-/* tasks adding section
-------------------------------------------------------------------------------*/
-section#add_task_section {
-    width: 100%;
-
-    div#duration-picker {
-        text-align: center;
-    }
-
-    #task-name {
-        font-size: 120%;
-        resize: vertical;
-        height: 50px;
-        margin: 10px 0px;
-        padding: 5px;
-    }
-
-}
-
 /* Duration picker
 ------------------------------------------------------------------------------*/
 div#duration-picker-replacer {
 
+    margin-right: -5px;
+    margin-left: -5px;
+
     div {
+        padding-left: 5px;
+        padding-right: 5px;
+        position: relative;
+
+        div {
+            padding: 0px;
+        }
+
         div.value {
             font-size: 40px;
             text-align: center;
+            outline: none;
         }
 
         div.arrow {
             text-align: center;
             font: normal normal normal 14px/1 FontAwesome;
-            font-size: 200%;
-            position: relative;
+            font-size: 32px;
+            position: absolute;
             cursor: pointer;
 
             &.up {
-              &:after {
-                  content: "\f106";
-              }
+                top: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                &:after {
+                    content: "\f106";
+                }
             }
 
             &.down {
-              &:after {
-                  content: "\f107";
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                &:after {
+                    content: "\f107";
                 }
             }
         }
