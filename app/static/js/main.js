@@ -9,6 +9,7 @@ function print(string) {
 
 // ADD TASK
 function addNewTask() {
+    $('form#create-task')
   var duration = $('#duration').val();
   var taskName = $('#task-name').val();
   if (duration == 0) {

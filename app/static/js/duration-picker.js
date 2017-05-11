@@ -1,183 +1,145 @@
 
 
-//view
-var view = {
-  createTimeUnit: function(id) {
-    var unit = document.createElement('div');
-    unit.setAttribute('id', id);
-    unit.innerHTML = (
-      '\
-      <p class="arrow up"></p> \
-      <p class="count" contenteditable="true"></p> \
-      <p class="arrow down"></p> \
-      '
+function TimeUnit(id, maxValue, totalSeconds, zeroes) {
+    var self = this;
+    self.id = id;
+    self.value = 0;
+    self.minValue = 0;
+    self.maxValue = maxValue;
+    self.totalSeconds = totalSeconds;
+    self.zeroes = zeroes;
+    self.$unit = $(
+        `<div id="${self.id}" class="col-md-3 text-center">
+            <div class="arrow up"></div>
+            <div class="value" contenteditable="true"></div>
+            <div class="arrow down"></div>
+        </div>`
     );
-    return unit
-  },
+    self.$value = self.$unit.find('.value');
+    self.$up = self.$unit.find('.arrow.up')
+    self.$down = self.$unit.find('.arrow.down')
 
-  updateTimeUnitValue: function(id, value, zeroes) {
-    value = Number(value);
-    if (zeroes && value < 10) {
-      value = "0" + value;
+    self.updateValue = function() {
+        var value = self.value;
+        if (self.zeroes && self.value < 10) {
+          value = "0" + value;
+        }
+        self.$value.text(value);
+        self.$value.trigger('valueChanged')
     }
-    $('#' + id).find('.count').text(value);
-  },
+    self.updateValue();
 
-  animateArrow: function(element) {
-    $( element ).css({
-      color: "#0ac2f9",
-      transition: "text-shadow 0.5s ease-in-out;",
-      fontWeight: "900"
-    });
-    $( element ).stop().animate({
-        color: "rgb(100, 100, 100)",
-        fontWeight: "400",
-        queue: false
-      }, 300
-    );
-  },
-
-  createSeparator: function(id, value, separator) {
-    $('#' + id).after('<p class="separator">' + separator + '</p>');
-  }
-}
-
-
-//model
-function TimeUnit(id, initValue, minValue, maxValue, totalSeconds, zeroes) {
-  this.id = id;
-  this.value = initValue;
-  this.minValue = minValue;
-  this.maxValue = maxValue;
-  this.totalSeconds = totalSeconds;
-  this.zeroes = zeroes
-}
-
-TimeUnit.prototype.decrease = function() {
-  if (this.value > this.minValue) {
-    this.value--;
-    view.updateTimeUnitValue(this.id, this.value, this.zeroes);
-  }
-};
-
-TimeUnit.prototype.increase = function() {
-  if (this.maxValue === undefined || this.value < this.maxValue) {
-    this.value++;
-    view.updateTimeUnitValue(this.id, this.value, this.zeroes);
-  }
-};
-
-
-var model = {
-  units: [ ],
-
-  getTime: function() {
-    var time = 0;
-    for (var i = 0; i < this.units.length; i++) {
-      time += this.units[i].value * this.units[i].totalSeconds;
-    }
-    return time
-  },
-
-  attachClicksToArrows: function(unitModel, unitView) {
-    var up = $(unitView).find('.arrow.up');
-    var down = $(unitView).find('.arrow.down');
-    up.click(function() {
-      unitModel.increase();
-      view.animateArrow(up);
-      $('#duration').val(model.getTime());
-    });
-    down.click(function() {
-      unitModel.decrease();
-      view.animateArrow(down);
-      $('#duration').val(model.getTime());
-    });
-  },
-
-  attachScrollToUnit: function(unitModel, unitView) {
-    var up = $(unitView).find('.arrow.up');
-    var down = $(unitView).find('.arrow.down');
-    $(unitView).on('wheel mousewheel', function(event) {
-      event.preventDefault();
-      var delta = event.originalEvent.deltaY;
-      if (delta > 0) {
-        unitModel.decrease();
-        view.animateArrow(down);
-      } else if (delta < 0) {
-        unitModel.increase();
-        view.animateArrow(up);
-      };
-      $('#duration').val(model.getTime());
-    })
-  },
-
-  attachHandlerToCount: function(unitModel, unitView) {
-    var element = $(unitView).find('.count');
-    $(element).keypress(function(e) {
-      if (e.which == 13) {
-        $(element).blur();
+    self.decrease = function() {
+      if (self.value > 0) {
+        self.value--;
+        self.updateValue();
       }
-      return e.which != 13;
-    });
-    $(element).on('focusout',
-      function(event) {
-        var cur_value = $(element).text();
-        if (!isNaN(cur_value)) {
-          var maxValue = unitModel.maxValue;
-          var minValue = unitModel.minValue;
-          if (cur_value > maxValue) {
-            var cur_value = maxValue;
-          } else if (cur_value < minValue) {
-            var cur_value = minValue;
-          }
-          unitModel.value = cur_value;
-        };
-        view.updateTimeUnitValue(
-          unitModel.id, unitModel.value, unitModel.zeroes);
-      $('#duration').val(model.getTime());
+    };
+
+    self.increase = function() {
+      if (self.maxValue === undefined || self.value < self.maxValue) {
+        self.value++;
+        self.updateValue();
       }
-    );
-  },
-
-
-  createTimeTable: function() {
-    var duration = document.getElementById("duration-picker");
-    var input = document.createElement('input');
-    input.setAttribute('id', 'duration');
-    input.setAttribute('name', 'duration');
-    duration.appendChild(input)
-    for (var i = 0; i < arguments.length; i++) {
-      var id = arguments[i].id;
-      var value = arguments[i].initValue;
-      var minValue = arguments[i].minValue;
-      var maxValue = arguments[i].maxValue;
-      var totalSeconds = arguments[i].totalSeconds;
-      var zeroes = arguments[i].zeroes;
-      var after = arguments[i].after;
-      var unitModel = new TimeUnit(id, value, minValue, maxValue, totalSeconds, zeroes);
-      var unitView = view.createTimeUnit(id, value);
-      this.units.push(unitModel);
-      this.attachClicksToArrows(unitModel, unitView);
-      this.attachScrollToUnit(unitModel, unitView);
-      duration.appendChild(unitView);
-      this.attachHandlerToCount(unitModel, unitView);
-      view.updateTimeUnitValue(id, value, zeroes);
-      view.createSeparator(id, value, after);
-      $('#duration').val(model.getTime());
     }
-  }
+
+    self.animateArrow = function(element) {
+        $( element ).css({
+          color: "#0ac2f9",
+          transition: "text-shadow 0.5s ease-in-out;",
+          fontWeight: "900"
+        });
+        $( element ).stop().animate({
+            color: "rgb(100, 100, 100)",
+            fontWeight: "400",
+            queue: false
+          }, 300
+        );
+    };
+
+    self.treatArrowsClicking = function() {
+        self.$up.click(function() {
+            self.increase();
+            self.animateArrow(self.$up);
+        });
+        self.$down.click(function() {
+            self.decrease();
+            self.animateArrow(self.$down);
+        });
+    };
+
+    self.treatScrolling = function() {
+        self.$unit.on('wheel mousewheel', function(e) {
+            e.preventDefault();
+            var delta = e.originalEvent.deltaY;
+            if (delta > 0) {
+                self.decrease();
+                self.animateArrow(self.$down);
+            } else if (delta < 0) {
+                self.increase();
+                self.animateArrow(self.$up);
+            };
+        })
+    };
+
+    self.treatValueEditing =  function() {
+        self.$value.on('keypress',
+            function(e) {
+                if (e.which == 13) {
+                    self.$value.blur()
+                }
+            }
+        );
+        self.$value.on('focusout',
+            function() {
+                var curValue = self.$value.text();
+                if (!isNaN(curValue)) {
+                    if (curValue > self.maxValue) {
+                        curValue = self.maxValue;
+                    } else if (curValue < self.minValue) {
+                        curValue = self.minValue;
+                    }
+                    self.value = Number(curValue);
+                };
+                self.updateValue();
+            }
+        );
+    };
+    self.treatArrowsClicking();
+    self.treatScrolling();
+    self.treatValueEditing();
 }
 
 
 //controller
-var durationPicker = {
-  show: function() {
-    model.createTimeTable(
-      {id: 'days', initValue: 0, minValue: 0, maxValue: 999, totalSeconds: 86400, zeroes: false, after: ' '},
-      {id: 'hours', initValue: 0, minValue: 0, maxValue: 23, totalSeconds: 3600, zeroes: true, after: ':'},
-      {id: 'minutes', initValue: 0, minValue: 0, maxValue: 59, totalSeconds: 60, zeroes: true, after: ':'},
-      {id: 'seconds', initValue: 0, minValue: 0, maxValue: 59, totalSeconds: 1, zeroes: true, after: ''}
+function DurationPicker(id) {
+    var self = this;
+    self.$input = $(id);
+    self.id = id.replace('#', '');
+    self.$replacer = $(`<div id="${self.id}-replacer" class="row">`);
+    self.$replacer.insertAfter(self.$input);
+    self.$input.hide();
+    self.units = [];
+    self.getTime = function() {
+      var time = 0;
+      for (var i = 0; i < self.units.length; i++) {
+        time += self.units[i].value * self.units[i].totalSeconds;
+      }
+      return time
+    };
+    self.append = function( timeUnit ) {
+        self.units.push( timeUnit );
+        self.$replacer.append(timeUnit.$unit);
+    }
+    self.append( new TimeUnit('days', undefined, 86400, false) );
+    self.append( new TimeUnit('hours', 23, 3600, true) );
+    self.append( new TimeUnit('minutes', 59, 60, true) );
+    self.append( new TimeUnit('seconds', 59, 1, true) );
+    
+    $('#duration-picker-replacer div.value').on("valueChanged",
+        function(e){
+            $('#duration-picker').val(self.getTime());
+        }
     );
-  }
 }
 

@@ -159,9 +159,6 @@ div#message-box {
 ------------------------------------------------------------------------------*/
 section#add_task_section {
     width: 100%;
-    background-color: #f5f5f5;
-    box-shadow: 0px 2px 7px @lite_gray;
-    padding: 10px 5px;
 
     div#duration-picker {
         text-align: center;
@@ -179,80 +176,34 @@ section#add_task_section {
 
 /* Duration picker
 ------------------------------------------------------------------------------*/
-div#duration-picker {
+div#duration-picker-replacer {
 
-  div {
-    display: inline-block;
-    vertical-align: middle;
-    width: 50px;
-
-    &#days {
-      margin-right: 10px;
-      width: 75px;
-    }
-  }
-
-  p {
-    color: rgb(100, 100, 100);
-    margin: 0px;
-    padding: 0px;
-
-    &.count {
-      text-align: center;
-      font-size: 250%;
-      font-family: monospace;
-    }
-
-    &.arrow {
-      text-align: center;
-      font: normal normal normal 14px/1 FontAwesome;
-      font-size: 200%;
-      position: relative;
-      cursor: pointer;
-
-      &.up {
-        bottom: 0px;
-        &:after {
-          content: "\f106";
+    div {
+        div.value {
+            font-size: 40px;
+            text-align: center;
         }
-      }
 
-      &.down {
-        top: -2px;
-        &:after {
-          content: "\f107";
+        div.arrow {
+            text-align: center;
+            font: normal normal normal 14px/1 FontAwesome;
+            font-size: 200%;
+            position: relative;
+            cursor: pointer;
+
+            &.up {
+              &:after {
+                  content: "\f106";
+              }
+            }
+
+            &.down {
+              &:after {
+                  content: "\f107";
+                }
+            }
         }
-      }
     }
-
-    &.separator {
-      position: relative;
-      top: -4px;
-      display: inline-block;
-      vertical-align: middle;
-      font-size: 200%;
-    }
-  }
-
-  input {
-
-    &#duration {
-      display: none;
-    }
-
-    &.count {
-      width: inherit;
-      margin: 0px;
-      padding: 0px;
-      background-color: transparent;
-      border: none;
-      outline: none;
-      font-size: 250%;
-      font-family: monospace;
-      text-align: center;
-    }
-  }
-
 }
 
 /* Tabs
