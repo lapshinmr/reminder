@@ -806,9 +806,14 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
       }
     }
 
-    self.animateArrow = function(element) {
-        $( element ).css({color: '#3498db', fontSize: 40, top: '-25px'});
-        $( element ).stop().animate({color: '#2c3e50', fontSize: 32, top: '-20px'}, 400 );
+    self.animateArrow = function(element, side) {
+        if (side == 'top') {
+            $( element ).css({color: '#3498db', fontSize: 40, top: '-25px'});
+            $( element ).stop().animate({color: '#2c3e50', fontSize: 32, top: '-20px'}, 400 );
+        } else if (side == 'bottom') {
+            $( element ).css({color: '#3498db', fontSize: 40, bottom: '-25px'});
+            $( element ).stop().animate({color: '#2c3e50', fontSize: 32, bottom: '-20px'}, 400 );
+        }
     };
 
     self.treatArrowsFading = function() {
@@ -827,11 +832,11 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
     self.treatArrowsClicking = function() {
         self.$up.click(function() {
             self.increase();
-            self.animateArrow(self.$up);
+            self.animateArrow(self.$up, 'top');
         });
         self.$down.click(function() {
             self.decrease();
-            self.animateArrow(self.$down);
+            self.animateArrow(self.$down, 'bottom');
         });
     };
 
@@ -854,10 +859,10 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
             var delta = e.originalEvent.deltaY;
             if (delta > 0) {
                 self.decrease();
-                self.animateArrow(self.$down);
+                self.animateArrow(self.$down, 'bottom');
             } else if (delta < 0) {
                 self.increase();
-                self.animateArrow(self.$up);
+                self.animateArrow(self.$up, 'top');
             };
         })
     };
