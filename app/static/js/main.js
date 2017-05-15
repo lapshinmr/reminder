@@ -57,20 +57,22 @@ function animateProgressBar(id) {
 
 
 // EDIT TASK
-function editTaskName(id) {
-  var element = $('#task' + id).find('.task-name');
-  $(element).keypress(function(e) {
-    if (e.which == 13) {
-      $(element).blur();
-    }
-    return e.which != 13;
-  });
-  $(element).on('focusout',
-    function(event) {
-      var cur_value = $(element).text();
-      $.post('/edit', {'new_task_name': cur_value, 'task_id': id});
-    }
-  );
+function treatTaskNameEdition() {
+    $('.tasks').on({
+        'keypress': function(e) {
+            if (e.which == 13) {
+                $(this).blur();
+            }
+        },
+        'focusout': function(e) {
+            var e = $.Event('keypress');
+            e.keyCode = 27;
+            $(this).trigger(e)
+            var newTaskName = $(this).text();
+            var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
+            $.post('/edit', {'new_task_name': newTaskName, 'task_id': taskId});
+        }
+    }, 'div.task-name span.moved-text');
 }
 
 
@@ -234,20 +236,10 @@ function treatOrderButton() {
 }
 
 
-
-
-// TOOLTIPS
-function turnOnTooltips() {
-  $('[data-toggle="tooltip"]').tooltip();
-}
-
-
-
 // CONTROLLER
 
 function attachJsToTask(id) {
     animateProgressBar(id);
-    editTaskName(id);
 }
 
 
@@ -261,11 +253,9 @@ function attachJsToTasksWithClass(func) {
 
 function initTasksJs() {
   attachJsToTasksWithClass(animateProgressBar);
-  attachJsToTasksWithClass(editTaskName);
   //makeTabsDroppable();
   //dragTasks();
   //dragTabs();
-  turnOnTooltips();
 }
 
 
