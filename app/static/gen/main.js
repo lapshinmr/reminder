@@ -287,24 +287,26 @@ function print(string) {
 
 
 // ADD TASK
-function addNewTask() {
-    $('form#create-task')
-  var duration = $('#duration').val();
-  var taskName = $('#task-name').val();
-  if (duration == 0) {
-      var mh = new Modal(
-          'Warning',
-          'Please choose duration more then ZERO'
-      );
-      mh.addButton('ok', 'primary');
-  } else {
-      $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
-          function(response) {
-            $(`#tab${CURRENT_TAB} ul.tasks_area`).prepend(response['task_item_html']);
-            attachJsToTask(response['task_id']);
-          }
-      )
-  }
+function treatAddNewTaskSubmit() {
+    $('form#create-task').submit(function(e) {
+        e.preventDefault();
+        var duration = $('#duration-picker').val();
+        var taskName = $('#task-name').val();
+        if (duration == 0) {
+            var mh = new Modal(
+                'Warning',
+                'Please choose duration more then ZERO'
+            );
+            mh.addButton('ok', 'primary');
+        } else {
+            $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
+                function(response) {
+                  $(`#tab${CURRENT_TAB} div.tasks`).prepend(response['task_item_html']);
+                  attachJsToTask(response['task_id']);
+                }
+            )
+        }
+    })
 }
 
 
@@ -335,7 +337,7 @@ function animateProgressBar(id) {
 
 // EDIT TASK
 function editTaskName(id) {
-  var element = $('#' + id).find('.task-name');
+  var element = $('#task' + id).find('.task-name');
   $(element).keypress(function(e) {
     if (e.which == 13) {
       $(element).blur();
@@ -351,14 +353,38 @@ function editTaskName(id) {
 }
 
 
-// CLOSE TASK
-function closeTask(id) {
-  $.post('/close', {'task_id': id}).done(function(response) { $('#' + id).remove(); });
+// TASK CLOSING
+function treatTaskClosing() {
+    $('.tasks').on({
+        'mouseenter': function() {
+            var $span = $(this).find('span.moved-text');
+            if (!$span.is(':focus')) {
+                $span.stop().animate({"left": "-=10"}, 300);
+                $(this).find('i').stop().fadeIn(300);
+            }
+        },
+        'mouseleave': function() {
+            $(this).find('span.moved-text').stop().animate({"left": "50%"}, 300);
+            $(this).find('i').stop().fadeOut(300);
+        }
+    }, 'div.task-name');
+    $('.tasks').on('click', 'span.moved-text', function(e) {
+        $(this).mouseleave();
+    })
+    $('.tasks').on('click', 'div.task-name i', function(e) {
+        e.stopPropagation();
+        var $task = $(this).parents().eq(1);
+        console.log($task);
+        var taskId = $task.attr('id').replace('task', '');
+        console.log(taskId);
+        $.post('/close', {'task_id': taskId}).done(function() { $('#task' + taskId).remove(); });
+    });
 }
 
 
 // COMPLETE TASK
-function completeTask(id) {
+function completeTask(element) {
+    $().on('click', )
   $.post("/complete", {'task_id': id}).done(
     function(response) {
       $('#' + id).replaceWith($(response['task_item_html']));
@@ -375,7 +401,7 @@ function dragTask(tab_content) {
     {
       handle: ".draggable-area",
       placeholder: 'marker',
-      connectWith: ".connectedSortable",
+      connectWith: ".connected-sortable",
       start: function(e, ui) {
           dragged = ui.item;
           marker = ui.placeholder;
@@ -404,7 +430,7 @@ function dragTask(tab_content) {
 
 
 function dragTasks() {
-  var tab_contents = $('div ul.tasks_area')
+  var tab_contents = $('div ul.tasks')
   for (var i = 0; i < tab_contents.length; i++) {
     dragTask(tab_contents.eq(i));
   }
@@ -415,7 +441,7 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
   this.old_order = old_order;
   this.new_order = new_order;
   this.tab_id = tab_id;
-  this.lis = $(`div#tab${this.tab_id} > ul.tasks_area > li`);
+  this.lis = $(`div#tab${this.tab_id} > ul.tasks > li`);
   this.animations = [];
   this.old_heights = [];
   this.new_heights = [];

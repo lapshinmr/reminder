@@ -6,25 +6,25 @@
 
 {% block content %}
 <div class="row">
-    <div id="left_side" class="col-md-3">
+    <div class="col-md-3">
         <h4 class="header-default">New Task</h4>
         <form id="create-task">
             <div class="form-group">
                 <input id="duration-picker" class="form-control">
             </div>
             <div class="form-group">
-                <textarea class="form-control" placeholder="write your task here"></textarea>
+                <textarea id="task-name" class="form-control" placeholder="write your task here"></textarea>
             </div>
             <div class="form-group">
                 <button class="btn btn-inverse btn-block">create</button>
             </div>
         </form>
     </div>
-    <div id="right_side" class="col-md-8 col-md-offset-1">
+    <div class="col-md-8 col-md-offset-1">
         <h4 class="header-default">Progress of your tasks</h4>
         <div class="row">
             <div class="col-md-10">
-                <div id="tabs-navigation" class="active-primary btn-group" data-toggle="buttons">
+                <div id="tabs-navigation" class="active-primary" data-toggle="buttons">
 
                     {{ create_tabs(tabs) }}
 
@@ -49,7 +49,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-content">
+        <div class="row">
 
             {{ create_tasks_area(tabs_tasks) }}
 
@@ -65,12 +65,14 @@
         $(document).ready(function(){
             CURRENT_TAB = {{ active_tab }}
             new DurationPicker('#duration-picker');
+            treatAddNewTaskSubmit();
             treatOrderButton();
             treatNewTabButton();
             treatTabClosing();
             treatTabActivation();
             treatTabNameEdition();
-            initTasksJs();
+            treatTaskClosing();
+            //initTasksJs();
         });
     </script>
     {% endif %}

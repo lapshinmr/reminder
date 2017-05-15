@@ -3,15 +3,15 @@
 {% macro create_tasks_area(tabs_tasks) %}
     {% for tab, tasks in tabs_tasks %}
         {% if tab.is_active() %}
-            <div id="tab{{ tab.id }}" class="tab-pane fade in active">
+            <div id="tab{{ tab.id }}" class="tab-pane fade in active col-md-10">
         {% else %}
-            <div id="tab{{ tab.id }}" class="tab-pane fade">
+            <div id="tab{{ tab.id }}" class="tab-pane fade col-md-10">
         {% endif %}
-                <ul class="tasks_area connectedSortable">
+                <div class="tasks connected-sortable row">
                     {% for task in tasks %}
                         {{ create_task_item(task) }}
                     {% endfor %}
-                </ul>
+                </div>
             </div>
     {% endfor %}
 {% endmacro %}
@@ -23,32 +23,26 @@
         {% if left_percents < 0 %}
             {% set left_percents = 0 %}
         {% endif %}
-        <li id="{{ task.id }}" class="task well well-sm">
-            <div class="draggable-area">
-                <i class="fa fa-arrows" aria-hidden="true"></i>
-            </div>
-            <div class="complete">
-                <a onclick="completeTask('{{ task.id }}')">
-                    <i class="fa fa-check-circle" aria-hidden="true"></i>
-                </a>
-            </div>
-            <div class="name-and-progress">
-                <p class="task-name" contenteditable="true">{{ task.name }}</p>
-                <div class="progress">
+        <div class="col-md-12">
+            <div id="task{{ task.id }}" class="task well well-sm">
+                <div class="task-complete">
+                    <i class="fa fa-check-circle"></i>
+                </div>
+                <div class="task-draggable-area">
+                    <i class="fa fa-ellipsis-v"></i>
+                </div>
+                <div class="task-name">
+                    <span class="moved-text" contenteditable="true">{{ task.name }}</span>
+                    <i class="fa fa-times" style="display: none"></i>
+                </div>
+                <!--
+                <div class="task-progress">
                     <div class="progress-bar" style="width: {{ left_percents }}%"
                          data-left-time="{{ task.count_left_time() }}"></div>
                 </div>
+                -->
             </div>
-            <div class="add-info">
-                <a class="task-close" onclick="closeTask('{{ task.id }}')">
-                    <i class="fa fa-times" aria-hidden="true"></i>
-                </a>
-                <br />
-                <a data-toggle="tooltip" title="{{ task.show_loop_time() }}">
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
-                </a>
-            </div>
-        </li>
+        </div>
     {% endif %}
 {% endmacro %}
 
@@ -66,7 +60,7 @@
         {% endif %}
                     <span class="place-holder">{{ tab.name }}</span>
                     <span class="moved-text" contenteditable="true">{{ tab.name }}</span>
-                    <i class="fa fa-times" aria-hidden="true" style="display: none"></i>
+                    <i class="fa fa-times" style="display: none"></i>
                 </div>
             </a>
     {% endfor %}
