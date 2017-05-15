@@ -19,10 +19,6 @@
 
 {% macro create_task_item(task) %}
     {% if task.is_active() %}
-        {% set left_percents = task.count_left_time() / task.time_loop * 100 %}
-        {% if left_percents < 0 %}
-            {% set left_percents = 0 %}
-        {% endif %}
         <div class="col-md-12">
             <div id="task{{ task.id }}" class="task well well-sm">
                 <div class="task-complete">
@@ -34,13 +30,11 @@
                 <div class="task-name">
                     <span class="moved-text" contenteditable="true">{{ task.name }}</span>
                     <i class="fa fa-times" style="display: none"></i>
+                    <div class="task-progress-bar"
+                         data-time-loop="{{ task.time_loop }}"
+                         data-left-time="{{ task.count_left_time() }}">
+                    </div>
                 </div>
-                <!--
-                <div class="task-progress">
-                    <div class="progress-bar" style="width: {{ left_percents }}%"
-                         data-left-time="{{ task.count_left_time() }}"></div>
-                </div>
-                -->
             </div>
         </div>
     {% endif %}

@@ -6,13 +6,14 @@
 @close: #e0ab96;
 @lite_gray: #a9b0aa;
 
-@midnight_blue: #2c3e50;
-@nephritis: #27ae60;
-@turquoise: #1abc9c;
-@sun_flower: #f1c40f;
-@peter_river: #3498db;
-@clouds: #ecf0f1;
-@clouds_1: #edeff1;
+@midnight_blue: #2C3E50;
+@nephritis: #27AE60;
+@turquoise: #1ABC9C;
+@sun_flower: #F1C40F;
+@peter_river: #3498DB;
+@clouds: #ECF0F1;
+@clouds_1: #EDEFF1;
+@progress_bar: #53DFCF;
 
 body {
     padding: 0px;
@@ -65,8 +66,8 @@ nav.navbar {
 /* FOOTER
 ------------------------------------------------------------------------------*/
 .footer {
-    position: fixed;
-    bottom: 0;
+    position: absolute;
+    bottom: 0px;
     width: 100%;
     height: 50px;
     background-color: @nephritis;
@@ -333,6 +334,7 @@ div.tasks {
                     line-height: 32px;
                     transform: translateX(50%);
                     cursor: pointer;
+                    z-index: 200;
                 }
                 span.moved-text {
                     &:focus {
@@ -342,10 +344,15 @@ div.tasks {
                     position: absolute;
                     left: 50%;
                     transform: translateX(-50%);
+                    z-index: 200;
                 }
-            }
-            &.task-progress {
-                width: 0px;
+                div.task-progress-bar {
+                    position: absolute;
+                    background-color: @progress_bar;
+                    right: 0%;
+                    border-radius: 3px;
+                    z-index: 100;
+                }
             }
         }
     }

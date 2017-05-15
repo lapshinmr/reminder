@@ -302,7 +302,6 @@ function treatAddNewTaskSubmit() {
             $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
                 function(response) {
                   $(`#tab${CURRENT_TAB} div.tasks`).prepend(response['task_item_html']);
-                  attachJsToTask(response['task_id']);
                 }
             )
         }
@@ -310,28 +309,15 @@ function treatAddNewTaskSubmit() {
 }
 
 
-
 // ANIMATE TASK BAR
-function animateProgressBar(id) {
-  var $progressBar = $('#' + id).find('.progress-bar');
-  var width = $progressBar.attr('style')
-  width = width.split(' ')[1].replace("%", "");
-  if (width > 0) {
-    var width_step = 0.5;
-    var leftTime = $progressBar.attr("data-left-time");
-    var updateTime = leftTime / (width / width_step) * 1000;
-    var interval_id = setInterval(
-      function() {
-        if (width <= 0) {
-          clearInterval(interval_id);
-        } else {
-          width -= width_step;
-          $progressBar.css("width", width + "%");
-        }
-      },
-      updateTime
-    )
-  }
+function treatTaskProgressBarAnimation() {
+    $('.tasks').on('click', 'div.task-progress-bar', function(e) {
+        var leftTime = $(this).attr("data-left-time");
+        var timeLoop = $(this).attr("data-time-loop");
+        print(leftTime / timeLoop * 100 + "%")
+        $(this).css({width: (1 - leftTime / timeLoop) * 100 + "%"}).animate({width: '100%'}, leftTime * 1000, 'linear')
+    });
+    $('.tasks .task-progress-bar').trigger('click');
 }
 
 
@@ -348,9 +334,7 @@ function treatTaskNameEdition() {
             e.keyCode = 27;
             $(this).trigger(e)
             var newTaskName = $(this).text();
-            console.log($(this))
             var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
-            console.log(taskId);
             $.post('/edit', {'new_task_name': newTaskName, 'task_id': taskId});
         }
     }, 'div.task-name span.moved-text');
@@ -377,22 +361,31 @@ function treatTaskClosing() {
     })
     $('.tasks').on('click', 'div.task-name i', function(e) {
         e.stopPropagation();
-        var $task = $(this).parents().eq(1);
-        var taskId = $task.attr('id').replace('task', '');
+        var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
         $.post('/close', {'task_id': taskId}).done(function() { $('#task' + taskId).remove(); });
     });
 }
 
 
 // COMPLETE TASK
-function completeTask(element) {
-    $().on('click', )
-  $.post("/complete", {'task_id': id}).done(
-    function(response) {
-      $('#' + id).replaceWith($(response['task_item_html']));
-      attachJsToTask(id);
-    }
-  )
+function treatTaskCompleting() {
+    $('.tasks').on('click', 'div.task-complete i', function() {
+        var $taskCompleteButton = $(this);
+        $(this).parents('div[id^="task"]').fadeOut(600,
+            function() {
+                var taskId = $taskCompleteButton.parents('div[id^="task"]').attr('id').replace('task', '')
+                var tabId = $taskCompleteButton.parents('div[id^="tab"]').attr('id').replace('tab', '')
+                $.post("/complete", {'task_id': taskId}).done(
+                    function(response) {
+                        $(response['task_item_html']).hide().appendTo('#tab' + tabId + ' .tasks')
+                        .fadeIn(600, function() {
+                            $('#task' + taskId + ' .task-progress-bar').trigger('click')
+                        });
+                    }
+                )
+            }
+        );
+    })
 }
 
 
@@ -517,39 +510,11 @@ function treatOrderButton() {
 }
 
 
-
-
-// TOOLTIPS
-function turnOnTooltips() {
-  $('[data-toggle="tooltip"]').tooltip();
-}
-
-
-
 // CONTROLLER
 
-function attachJsToTask(id) {
-    animateProgressBar(id);
-    editTaskName(id);
-}
-
-
-function attachJsToTasksWithClass(func) {
-  var tasks = document.getElementsByClassName("task");
-  for (var i = 0; i < tasks.length; i++) {
-    func(tasks[i].id);
-  }
-}
-
-
-function initTasksJs() {
-  attachJsToTasksWithClass(animateProgressBar);
-  attachJsToTasksWithClass(editTaskName);
   //makeTabsDroppable();
   //dragTasks();
   //dragTabs();
-  turnOnTooltips();
-}
 
 
 
