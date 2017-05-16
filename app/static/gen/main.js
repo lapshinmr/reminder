@@ -287,7 +287,7 @@ function print(string) {
 
 
 // ADD TASK
-function treatAddNewTaskSubmit() {
+function treatAddNewTask() {
     $('form#create-task').submit(function(e) {
         e.preventDefault();
         var duration = $('#duration-picker').val();
@@ -315,7 +315,7 @@ function treatAddNewTaskSubmit() {
 }
 
 
-// ANIMATE TASK BAR
+// TASK BAR ANIMATION
 function treatTaskProgressBarAnimation() {
     $('.tasks').on('click', 'div.task-progress-bar', function(e) {
         var leftTime = $(this).attr("data-left-time");
@@ -326,7 +326,7 @@ function treatTaskProgressBarAnimation() {
 }
 
 
-// EDIT TASK
+// TASK EDITION
 function treatTaskNameEdition() {
     $('.tasks').on({
         'keypress': function(e) {
@@ -376,7 +376,7 @@ function treatTaskClosing() {
 }
 
 
-// COMPLETE TASK
+// TASK COMPLETING
 function treatTaskCompleting() {
     $('.tasks').on('click', 'div.task-complete i', function() {
         var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
@@ -389,7 +389,9 @@ function treatTaskCompleting() {
                     "data-time-loop": `${loopTime}`,
                     "data-left-time": `${loopTime}`
                 });
-                $newProcessBar.css({'width': '100%'});
+                var curWidth = $processBar.outerWidth();
+                var totalWidth = $processBar.parents('.task-name').outerWidth()
+                $newProcessBar.css({'width': curWidth / totalWidth * 100}).animate({'width': '100%'}, 600);
                 $processBar.after($newProcessBar);
                 $processBar.remove()
                 $newProcessBar.trigger('click');
