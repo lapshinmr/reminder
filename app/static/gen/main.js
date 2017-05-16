@@ -301,7 +301,13 @@ function treatAddNewTaskSubmit() {
         } else {
             $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
                 function(response) {
-                  $(`#tab${CURRENT_TAB} div.tasks`).prepend(response['task_item_html']);
+                    var $task = $(response['task_item_html']);
+                    var taskId = response['task_id'];
+                    $task.find('.task-progress-bar').css({'width': '100%'});
+                    $task.hide();
+                    $(`#tab${CURRENT_TAB} div.tasks`).prepend($task);
+                    $task.fadeIn(600);
+                    $(`#task${taskId} .task-progress-bar`).trigger('click');
                 }
             )
         }
@@ -314,8 +320,7 @@ function treatTaskProgressBarAnimation() {
     $('.tasks').on('click', 'div.task-progress-bar', function(e) {
         var leftTime = $(this).attr("data-left-time");
         var timeLoop = $(this).attr("data-time-loop");
-        print(leftTime / timeLoop * 100 + "%")
-        $(this).css({width: (1 - leftTime / timeLoop) * 100 + "%"}).animate({width: '100%'}, leftTime * 1000, 'linear')
+        $(this).css({width: leftTime / timeLoop * 100 + "%"}).animate({width: '0%'}, leftTime * 1000, 'linear')
     });
     $('.tasks .task-progress-bar').trigger('click');
 }
@@ -358,11 +363,15 @@ function treatTaskClosing() {
     }, 'div.task-name');
     $('.tasks').on('click', 'span.moved-text', function(e) {
         $(this).mouseleave();
-    })
+    });
     $('.tasks').on('click', 'div.task-name i', function(e) {
         e.stopPropagation();
         var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
-        $.post('/close', {'task_id': taskId}).done(function() { $('#task' + taskId).remove(); });
+        $.post('/close', {'task_id': taskId}).done(
+            function() {
+                $('#task' + taskId).fadeOut( 600, function() { $(this).remove() } )
+            }
+        )
     });
 }
 
@@ -370,21 +379,22 @@ function treatTaskClosing() {
 // COMPLETE TASK
 function treatTaskCompleting() {
     $('.tasks').on('click', 'div.task-complete i', function() {
-        var $taskCompleteButton = $(this);
-        $(this).parents('div[id^="task"]').fadeOut(600,
+        var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
+        $.post("/complete", {'task_id': taskId}).done(
             function() {
-                var taskId = $taskCompleteButton.parents('div[id^="task"]').attr('id').replace('task', '')
-                var tabId = $taskCompleteButton.parents('div[id^="tab"]').attr('id').replace('tab', '')
-                $.post("/complete", {'task_id': taskId}).done(
-                    function(response) {
-                        $(response['task_item_html']).hide().appendTo('#tab' + tabId + ' .tasks')
-                        .fadeIn(600, function() {
-                            $('#task' + taskId + ' .task-progress-bar').trigger('click')
-                        });
-                    }
-                )
+                var $processBar = $('#task' + taskId + ' .task-progress-bar');
+                var loopTime = $processBar.attr('data-time-loop');
+                var $newProcessBar = $('<div/>', {
+                    "class": "task-progress-bar",
+                    "data-time-loop": `${loopTime}`,
+                    "data-left-time": `${loopTime}`
+                });
+                $newProcessBar.css({'width': '100%'});
+                $processBar.after($newProcessBar);
+                $processBar.remove()
+                $newProcessBar.trigger('click');
             }
-        );
+        )
     })
 }
 
@@ -510,9 +520,6 @@ function treatOrderButton() {
 }
 
 
-// CONTROLLER
-
-  //makeTabsDroppable();
   //dragTasks();
   //dragTabs();
 

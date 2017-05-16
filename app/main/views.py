@@ -83,10 +83,7 @@ def complete():
         time.time_complete = time_complete
         task.time_last = time_complete
         db.session.commit()
-    task = Task.query.filter_by(id=task_id).first()
-    return jsonify(
-        task_item_html=get_template_attribute('main/macroses.html', 'create_task_item')(task)
-    )
+    return jsonify()
 
 
 @main.route('/close', methods=['POST'])
