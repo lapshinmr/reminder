@@ -27,12 +27,17 @@
                 <div class="task-draggable-area">
                     <i class="fa fa-ellipsis-v"></i>
                 </div>
-                <div class="task-name">
+                <div class="task-name" >
+                    <span class="place-holder">{{ task.name }}</span>
                     <span class="moved-text" contenteditable="true">{{ task.name }}</span>
                     <i class="fa fa-times" style="display: none"></i>
                     <div class="task-progress-bar"
                          data-time-loop="{{ task.time_loop }}"
                          data-left-time="{{ task.count_left_time() }}">
+                        <div class="progress-bar-tooltip" style="display: none;">
+                            <div class="tooltip-arrow"></div>
+                            <div class="tooltip-content">text</div>
+                        </div>
                     </div>
                 </div>
             </div>

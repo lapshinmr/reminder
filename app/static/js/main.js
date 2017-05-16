@@ -243,6 +243,20 @@ function treatOrderButton() {
 }
 
 
+// TOOLTIP
+function treatTaskProgressBarTooltip() {
+    $('.tasks').on(
+        {
+            'mouseover': function() {
+                $(this).find('.progress-bar-tooltip').show()
+            },
+            'mouseout': function() {
+                $(this).find('.progress-bar-tooltip').hide()
+            }
+        }, '.task-name'
+    )
+}
+
   //dragTasks();
   //dragTabs();
 

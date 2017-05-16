@@ -297,61 +297,97 @@ div.tasks {
     div.task {
         border-radius: 6px;
         margin-bottom: 3px;
-        overflow: auto;
 
         div {
+            display: inline-block;
             vertical-align: middle;
             text-align: center;
-            height: 32px;
-            line-height: 32px;
             border-radius: 3px;
 
             &.task-complete {
-                float: left;
                 cursor: pointer;
                 font-size: 32px;
+                line-height: 32px;
                 margin: 0px 5px;
             }
             &.task-draggable-area {
-                float: left;
                 background-color: @midnight_blue;
                 color: white;
                 cursor: grabbing;
                 font-size: 16px;
+                line-height: 32px;
                 width: 22px;
                 margin: 0px 15px 0px 10px;
             }
             &.task-name {
+                position: relative;
                 background-color: @progress_bar;
                 color: white;
                 padding: 0px 25px;
-                overflow: hidden;
-                width: auto;
-                position: relative;
+                width: calc(~"100% - 90px");
+                line-height: 32px;
+                min-height: 32px;
                 i {
                     position: absolute;
                     right: 12.5px;
-                    line-height: 32px;
-                    transform: translateX(50%);
+                    top: 50%;
+                    transform: translate(50%, -50%);
                     cursor: pointer;
                     z-index: 200;
                 }
+                span.place-holder {
+                    visibility: hidden;
+                    width: calc(~"100% - 50px");
+                }
                 span.moved-text {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    width: calc(~"100% - 50px");
+                    z-index: 200;
+                    cursor: text;
                     &:focus {
                         outline: none;
                     }
-                    cursor: text;
-                    position: absolute;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    z-index: 200;
                 }
                 div.task-progress-bar {
                     position: absolute;
-                    background-color: @midnight_blue;
                     left: 0%;
+                    top: 0%;
+                    background-color: @midnight_blue;
+                    height: 100%;
                     border-radius: 3px;
                     z-index: 100;
+                    overflow: visible !important;
+
+                    div.progress-bar-tooltip {
+                        position: absolute;
+                        right: 0%;
+                        height: 100%;
+
+                        div.tooltip-content {
+                            position: absolute;
+                            bottom: -18px;
+                            right: 0%;
+                            line-height: 14px;
+                            font-size: 14px;
+                            padding: 0px 10px 2px 10px;
+                            border-radius: 2px;
+                            background-color: @midnight_blue;
+                            transform: translateX(50%);
+                        }
+                        div.tooltip-arrow {
+                            position: absolute;
+                            bottom: -2px;
+                            transform: translateX(50%);
+                            border-radius: 0px;
+                            right: 0%;
+                            border-width: 4px;
+                            border-color: transparent;
+                            border-bottom-color: @midnight_blue;
+                        }
+                    }
                 }
             }
         }
