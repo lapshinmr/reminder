@@ -382,19 +382,19 @@ function treatTaskCompleting() {
         var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
         $.post("/complete", {'task_id': taskId}).done(
             function() {
-                var $processBar = $('#task' + taskId + ' .task-progress-bar');
-                var loopTime = $processBar.attr('data-time-loop');
-                var $newProcessBar = $('<div/>', {
+                var $progressBar = $('#task' + taskId + ' .task-progress-bar');
+                var loopTime = $progressBar.attr('data-time-loop');
+                var $newProgressBar = $('<div/>', {
                     "class": "task-progress-bar",
                     "data-time-loop": `${loopTime}`,
                     "data-left-time": `${loopTime}`
                 });
-                var curWidth = $processBar.outerWidth();
-                var totalWidth = $processBar.parents('.task-name').outerWidth()
-                $newProcessBar.css({'width': curWidth / totalWidth * 100}).animate({'width': '100%'}, 600);
-                $processBar.after($newProcessBar);
-                $processBar.remove()
-                $newProcessBar.trigger('click');
+                var curWidth = $progressBar.outerWidth();
+                var totalWidth = $progressBar.parents('.task-name').outerWidth()
+                $newProgressBar.css({'width': curWidth / totalWidth * 100}).animate({'width': '100%'}, 600);
+                $progressBar.after($newProgressBar);
+                $progressBar.remove()
+                $newProgressBar.trigger('click');
             }
         )
     })
@@ -521,16 +521,46 @@ function treatOrderButton() {
     )
 }
 
+function formatTime(seconds) {
+    seconds = Number(seconds);
+
+    var d = Math.floor(seconds / 3600 / 24);
+    var h = Math.floor(seconds / 3600 % 24);
+    var m = Math.floor(seconds % 3600 / 60);
+    var s = Math.floor(seconds % 3600 % 60);
+
+    return ((d) ? `${d}  ` : ``) + `00${h}`.slice(-2) + ":" + `00${m}`.slice(-2) + ":" + `00${s}`.slice(-2);
+}
+
 
 // TOOLTIP
 function treatTaskProgressBarTooltip() {
+    var id;
     $('.tasks').on(
         {
-            'mouseover': function() {
-                $(this).find('.progress-bar-tooltip').show()
+            'mouseover': function(e) {
+                var $progressBar = $(this).find('.task-progress-bar');
+                $(this).find('.progress-bar-tooltip').show();
+                var curWidth = $progressBar.outerWidth();
+                var totalWidth = $progressBar.parents('.task-name').outerWidth();
+                var timeLoop = $progressBar.attr('data-time-loop')
+                var seconds = Math.floor(curWidth / totalWidth * timeLoop);
+                $progressBar.find('.tooltip-content').text(formatTime(seconds));
+                if (seconds >= 1) {
+                    id = setInterval(function() {
+                        if (seconds >= 1) {
+                            seconds--;
+                            print(seconds)
+                            $progressBar.find('.tooltip-content').text(formatTime(seconds));
+                        } else {
+                            clearInterval(id);
+                        }
+                    }, 1000)
+                }
             },
             'mouseout': function() {
                 $(this).find('.progress-bar-tooltip').hide()
+                clearInterval(id);
             }
         }, '.task-name'
     )
