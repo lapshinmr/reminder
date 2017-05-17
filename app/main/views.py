@@ -47,8 +47,8 @@ def add():
     db.session.add(new_task)
     db.session.commit()
     return jsonify(
-        task_item_html=get_template_attribute('main/macroses.html', 'create_task_item')(new_task),
-        task_id=new_task.id)
+            task_item_html=get_template_attribute('main/macroses.html', 'create_task_item')(new_task)
+        )
 
 
 @main.route('/edit', methods=['POST'])
