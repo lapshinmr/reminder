@@ -3,9 +3,9 @@
 {% macro create_tasks_area(tabs_tasks) %}
     {% for tab, tasks in tabs_tasks %}
         {% if tab.is_active() %}
-            <div id="tab{{ tab.id }}" class="tab-pane fade in active col-md-10">
+            <div id="tab{{ tab.id }}" class="tab-pane fade in active col-md-12">
         {% else %}
-            <div id="tab{{ tab.id }}" class="tab-pane fade col-md-10">
+            <div id="tab{{ tab.id }}" class="tab-pane fade col-md-12">
         {% endif %}
                 <ul class="tab-tasks connected-sortable">
                     {% for task in tasks %}

@@ -62,7 +62,7 @@ function treatTaskNameEdition() {
             e.keyCode = 27;
             $(this).trigger(e)
             var newTaskName = $(this).text();
-            var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
+            var taskId = $(this).parents('li[id^="task"]').attr('id').replace('task', '')
             $.post('/edit', {'new_task_name': newTaskName, 'task_id': taskId});
         }
     }, '.task-name .moved-text');
@@ -89,7 +89,7 @@ function treatTaskClosing() {
     });
     $('.tab-tasks').on('click', '.task-name i', function(e) {
         e.stopPropagation();
-        var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
+        var taskId = $(this).parents('li[id^="task"]').attr('id').replace('task', '')
         $.post('/close', {'task_id': taskId}).done(
             function() {
                 $('#task' + taskId).fadeOut( 600, function() { $(this).remove() } )
@@ -102,7 +102,8 @@ function treatTaskClosing() {
 // TASK COMPLETING
 function treatTaskCompleting() {
     $('.tab-tasks').on('click', '.task-complete i', function() {
-        var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
+        print($(this));
+        var taskId = $(this).parents('li[id^="task"]').attr('id').replace('task', '')
         $.post("/complete", {'task_id': taskId}).done(
             function() {
                 var $progressBar = $('#task' + taskId + ' .task-progress-bar');
@@ -137,7 +138,6 @@ function treatTaskDragging() {
             connectWith: ".connected-sortable",
             start: function(e, ui) {
                 dragged = ui.item;
-                print(dragged)
                 marker = ui.placeholder;
                 marker.css({'height': dragged.outerHeight(true)});
                 dragged.fadeTo('medium', 0.33);
@@ -167,7 +167,7 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
   this.old_order = old_order;
   this.new_order = new_order;
   this.tab_id = tab_id;
-  this.lis = $(`div#tab${this.tab_id} > ul.tasks > li`);
+  this.lis = $(`div#tab${this.tab_id} > ul.tab-tasks > li`);
   this.animations = [];
   this.old_heights = [];
   this.new_heights = [];
@@ -191,10 +191,11 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
 
   this.animation = function(id, li, li_clone, delta) {
     return function() {
+        print(delta)
       li_clone.animate({top: delta}, 'slow',
         function() {
           li_clone.remove();
-          li.attr('id', id).removeAttr('style').show();
+          li.attr('id', 'task' + id).removeAttr('style').show();
         }
       )
     }
@@ -205,10 +206,10 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
       var id = this.old_order[i];
       var old_idx = this.old_order.indexOf(id);
       var new_idx = this.new_order.indexOf(id);
-      var $li = $('li#' + id);
+      var $li = $('li#task' + id);
       var $li_clone = $li.clone();
       $li_clone.insertAfter($li);
-      $li.removeAttr('id').insertAfter($('li#' + this.old_order[new_idx])).hide();
+      $li.removeAttr('id').insertAfter($('li#task' + this.old_order[new_idx])).hide();
       var delta = this.sum(this.new_heights.slice(0, new_idx)) - this.sum(this.old_heights.slice(0, old_idx));
       this.animations.push(this.animation(id, $li, $li_clone, delta))
     }
