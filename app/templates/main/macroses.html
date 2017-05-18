@@ -7,7 +7,7 @@
         {% else %}
             <div id="tab{{ tab.id }}" class="tab-pane fade col-md-10">
         {% endif %}
-                <div class="tasks connected-sortable row">
+                <div class="tab-tasks connected-sortable row">
                     {% for task in tasks %}
                         {{ create_task_item(task) }}
                     {% endfor %}

@@ -11,8 +11,8 @@ css = [
 
 js = [
     'js/jquery-3.1.1.min.js',
-    'js/jquery-ui-1.12.1.min.js',
     'js/flat-ui.min.js',
+    'js/jquery-ui-1.12.1.min.js',
     'js/application.js',
     'js/main.js',
     'js/input-validation.js',

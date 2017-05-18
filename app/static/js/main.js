@@ -23,9 +23,9 @@ function treatAddNewTask() {
             $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
                 function(response) {
                     var $task = $(response['task_item_html']).hide();
-                    $(`#tab${CURRENT_TAB} div.tasks`).prepend($task);
+                    $(`#tab${CURRENT_TAB} div.tab-tasks`).prepend($task);
                     $task.fadeIn(600);
-                    $task.find('.task-progress-bar').trigger('click');
+                    $task.find('.task-progress-bar').trigger('runTaskProgressBarAnimation');
                 }
             )
         }
@@ -35,20 +35,20 @@ function treatAddNewTask() {
 
 // TASK BAR ANIMATION
 function treatTaskProgressBarAnimation() {
-    $('.tasks').on('click', 'div.task-progress-bar', function(e) {
+    $('.tab-tasks').on('runTaskProgressBarAnimation', 'div.task-progress-bar', function(e) {
         var leftTime = $(this).attr("data-left-time");
         var timeLoop = $(this).attr("data-time-loop");
         var timeInit = new Date().getTime() / 1000;
         $(this).attr('data-init-time', timeInit);
         $(this).css({width: leftTime / timeLoop * 100 + "%"}).animate({width: '0%'}, leftTime * 1000, 'linear')
     });
-    $('.tasks .task-progress-bar').trigger('click');
+    $('.tab-tasks .task-progress-bar').trigger('runTaskProgressBarAnimation');
 }
 
 
 // TASK EDITION
 function treatTaskNameEdition() {
-    $('.tasks').on({
+    $('.tab-tasks').on({
         'keypress': function(e) {
             if (e.which == 13) {
                 $(this).blur();
@@ -71,7 +71,7 @@ function treatTaskNameEdition() {
 
 // TASK CLOSING
 function treatTaskClosing() {
-    $('.tasks').on({
+    $('.tab-tasks').on({
         'mouseenter': function() {
             var $span = $(this).find('span.moved-text');
             if (!$span.is(':focus')) {
@@ -84,10 +84,10 @@ function treatTaskClosing() {
             $(this).find('i').stop().fadeOut(300);
         }
     }, 'div.task-name');
-    $('.tasks').on('click', 'span.moved-text', function(e) {
+    $('.tab-tasks').on('click', 'span.moved-text', function(e) {
         $(this).mouseleave();
     });
-    $('.tasks').on('click', 'div.task-name i', function(e) {
+    $('.tab-tasks').on('click', 'div.task-name i', function(e) {
         e.stopPropagation();
         var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
         $.post('/close', {'task_id': taskId}).done(
@@ -101,7 +101,7 @@ function treatTaskClosing() {
 
 // TASK COMPLETING
 function treatTaskCompleting() {
-    $('.tasks').on('click', 'div.task-complete i', function() {
+    $('.tab-tasks').on('click', 'div.task-complete i', function() {
         var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
         $.post("/complete", {'task_id': taskId}).done(
             function() {
@@ -120,7 +120,7 @@ function treatTaskCompleting() {
                 $newProgressBar.css({'width': curWidth / totalWidth * 100}).animate({'width': '100%'}, 600);
                 $progressBar.after($newProgressBar);
                 $progressBar.remove()
-                $newProgressBar.trigger('click');
+                $newProgressBar.trigger('runTaskProgressBarAnimation');
             }
         )
     })
@@ -128,37 +128,37 @@ function treatTaskCompleting() {
 
 
 // TASKS SORTING
-function dragTask(tab_content) {
-  var taskId, startIndex, changeIndex, currentIndex, marker, dragged;
-  tab_content.sortable(
-    {
-      handle: ".draggable-area",
-      placeholder: 'marker',
-      connectWith: ".connected-sortable",
-      start: function(e, ui) {
-          dragged = ui.item;
-          marker = ui.placeholder;
-          marker.height(dragged.outerHeight(true));
-          dragged.fadeTo('medium', 0.33);
-          startIndex = marker.index();
-          taskId = ui.item[0].id;
-          LAST_DROPPABLE_TAB = marker.parents().eq(1).attr('id').replace('tab', '')
-          currentIndex = startIndex;
-      },
-      change: function(e, ui) {
-          changeIndex = marker.index();
-          if (startIndex > changeIndex) {
-            changeIndex += 1
-          } else if (startIndex < changeIndex) {
-          }
-          currentIndex = changeIndex
-      },
-      stop: function(e, ui) {
-          dragged.fadeTo('medium', 1);
-          $.post('/change_task_idx', {'tab_id': LAST_DROPPABLE_TAB, 'task_id': taskId, 'order_idx': currentIndex});
-      }
-    }
-  );
+function treatTaskDragging() {
+    var taskId, startIndex, changeIndex, currentIndex, marker, dragged;
+    $('div.tasks-area').on('turnOnTaskDragging',  'div.tab-tasks', function() {
+        $(this).sortable({
+            handle: ".task-draggable-area",
+            placeholder: 'marker',
+            connectWith: ".connected-sortable",
+            start: function(e, ui) {
+                dragged = ui.item;
+                marker = ui.placeholder;
+                marker.height(dragged.outerHeight(true));
+                dragged.fadeTo('medium', 0.33);
+                startIndex = marker.index();
+                taskId = $(dragged).children('div').attr('id').replace('task', '');
+                LAST_DROPPABLE_TAB = marker.parents('.tab-pane').attr('id').replace('tab', '')
+                currentIndex = startIndex;
+            },
+            change: function(e, ui) {
+                changeIndex = marker.index();
+                if (startIndex > changeIndex) {
+                  changeIndex += 1
+                }
+                currentIndex = changeIndex
+            },
+            stop: function(e, ui) {
+                dragged.fadeTo('medium', 1);
+                $.post('/change_task_idx', {'tab_id': LAST_DROPPABLE_TAB, 'task_id': taskId, 'order_idx': currentIndex});
+            }
+        });
+    });
+    $('div.tab-tasks div.col-md-12').trigger('turnOnTaskDragging');
 }
 
 
@@ -263,7 +263,7 @@ function formatTime(seconds) {
 // TOOLTIP
 function treatTaskProgressBarTooltip() {
     var id;
-    $('.tasks').on(
+    $('.tab-tasks').on(
         {
             'mouseover': function(e) {
                 var $progressBar = $(this).find('.task-progress-bar');

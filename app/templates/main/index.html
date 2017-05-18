@@ -49,7 +49,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="tab-content tasks-area row">
 
             {{ create_tasks_area(tabs_tasks) }}
 
@@ -76,6 +76,7 @@
             treatTaskNameEdition();
             treatTaskProgressBarAnimation();
             treatTaskProgressBarTooltip();
+            treatTaskDragging();
         });
     </script>
     {% endif %}
