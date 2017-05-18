@@ -331,6 +331,9 @@ function treatTaskNameEdition() {
         'keypress': function(e) {
             if (e.which == 13) {
                 $(this).blur();
+            } else {
+                var newTaskName = $(this).text();
+                $(this).prev().text(newTaskName);
             }
         },
         'focusout': function(e) {
@@ -529,7 +532,7 @@ function formatTime(seconds) {
     var h = Math.floor(seconds / 3600 % 24);
     var m = Math.floor(seconds % 3600 / 60);
     var s = Math.floor(seconds % 3600 % 60);
-    return ((d) ? `${d}  ` : ``) +
+    return (d ? `${d} ` : ``) +
             `00${h}`.slice(-2) + ":" +
             `00${m}`.slice(-2) + ":" +
             `00${s}`.slice(-2);
