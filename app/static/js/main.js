@@ -65,7 +65,7 @@ function treatTaskNameEdition() {
             var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
             $.post('/edit', {'new_task_name': newTaskName, 'task_id': taskId});
         }
-    }, 'div.task-name span.moved-text');
+    }, '.task-name .moved-text');
 }
 
 
@@ -73,21 +73,21 @@ function treatTaskNameEdition() {
 function treatTaskClosing() {
     $('.tab-tasks').on({
         'mouseenter': function() {
-            var $span = $(this).find('span.moved-text');
+            var $span = $(this).find('.moved-text');
             if (!$span.is(':focus')) {
                 $span.stop().animate({"left": "-=10"}, 300);
                 $(this).find('i').stop().fadeIn(300);
             }
         },
         'mouseleave': function() {
-            $(this).find('span.moved-text').stop().animate({"left": "50%"}, 300);
+            $(this).find('.moved-text').stop().animate({"left": "50%"}, 300);
             $(this).find('i').stop().fadeOut(300);
         }
-    }, 'div.task-name');
-    $('.tab-tasks').on('click', 'span.moved-text', function(e) {
+    }, '.task-name');
+    $('.tab-tasks').on('click', '.moved-text', function(e) {
         $(this).mouseleave();
     });
-    $('.tab-tasks').on('click', 'div.task-name i', function(e) {
+    $('.tab-tasks').on('click', '.task-name i', function(e) {
         e.stopPropagation();
         var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
         $.post('/close', {'task_id': taskId}).done(
@@ -101,7 +101,7 @@ function treatTaskClosing() {
 
 // TASK COMPLETING
 function treatTaskCompleting() {
-    $('.tab-tasks').on('click', 'div.task-complete i', function() {
+    $('.tab-tasks').on('click', '.task-complete i', function() {
         var taskId = $(this).parents('div[id^="task"]').attr('id').replace('task', '')
         $.post("/complete", {'task_id': taskId}).done(
             function() {
@@ -130,18 +130,19 @@ function treatTaskCompleting() {
 // TASKS SORTING
 function treatTaskDragging() {
     var taskId, startIndex, changeIndex, currentIndex, marker, dragged;
-    $('div.tasks-area').on('turnOnTaskDragging',  'div.tab-tasks', function() {
+    $('div.tab-content').on('turnOnTaskDragging', '.tab-tasks', function() {
         $(this).sortable({
             handle: ".task-draggable-area",
-            placeholder: 'marker',
+            placeholder: 'task-marker',
             connectWith: ".connected-sortable",
             start: function(e, ui) {
                 dragged = ui.item;
+                print(dragged)
                 marker = ui.placeholder;
-                marker.height(dragged.outerHeight(true));
+                marker.css({'height': dragged.outerHeight(true)});
                 dragged.fadeTo('medium', 0.33);
                 startIndex = marker.index();
-                taskId = $(dragged).children('div').attr('id').replace('task', '');
+                taskId = $(dragged).attr('id').replace('task', '');
                 LAST_DROPPABLE_TAB = marker.parents('.tab-pane').attr('id').replace('tab', '')
                 currentIndex = startIndex;
             },
@@ -156,17 +157,9 @@ function treatTaskDragging() {
                 dragged.fadeTo('medium', 1);
                 $.post('/change_task_idx', {'tab_id': LAST_DROPPABLE_TAB, 'task_id': taskId, 'order_idx': currentIndex});
             }
-        });
+        }).disableSelection();
     });
-    $('div.tab-tasks div.col-md-12').trigger('turnOnTaskDragging');
-}
-
-
-function dragTasks() {
-  var tab_contents = $('div ul.tasks')
-  for (var i = 0; i < tab_contents.length; i++) {
-    dragTask(tab_contents.eq(i));
-  }
+    $('.tab-tasks > .task').trigger('turnOnTaskDragging');
 }
 
 
@@ -247,6 +240,8 @@ function treatOrderButton() {
     )
 }
 
+
+// TOOLTIP
 function formatTime(seconds) {
     seconds = Number(seconds);
     var d = Math.floor(seconds / 3600 / 24);
@@ -260,7 +255,6 @@ function formatTime(seconds) {
 }
 
 
-// TOOLTIP
 function treatTaskProgressBarTooltip() {
     var id;
     $('.tab-tasks').on(
@@ -290,8 +284,3 @@ function treatTaskProgressBarTooltip() {
         }, '.task-name'
     )
 }
-
-  //dragTasks();
-  //dragTabs();
-
-

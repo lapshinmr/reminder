@@ -60,13 +60,8 @@ function treatNewTabButton() {
 
 function treatTabActivation() {
     $('#tabs-navigation').on('click', 'a', function() {
-        if ($(this).hasClass('noclick')) {
-            $(this).removeClass('noclick');
-        } else {
-            var id = $(this).attr('href').replace('#tab', '').replace('content', '');
-            CURRENT_TAB = id;
-            $.post('/activate_tab', {'current_tab_id': CURRENT_TAB})
-        }
+        CURRENT_TAB = $(this).attr('href').replace('#tab', '').replace('content', '');
+        $.post('/activate_tab', {'current_tab_id': CURRENT_TAB})
     })
 }
 
@@ -144,36 +139,41 @@ function makeTabDroppable(tab) {
 }
 
 
-function dragTabs() {
-    var marker, newTabOrderIdx, startIndex, tabId, a;
-    var tabs = $('ul.nav.nav-tabs');
-    tabs.sortable({
-        placeholder: 'tabs-marker',
-        opacity: 0.5,
-        items: "li:not(.add-button)",
-        start: function(e, ui) {
-            dragged = ui.item;
-            a = dragged.children('a').eq(0);
-            a.addClass('noclick');
-            tabId = dragged.children('a').eq(0).attr('href').replace('#tab', '');
-            marker = ui.placeholder;
-            marker.css({
-                width: dragged.outerWidth(true),
-                height: dragged.outerHeight()
-            })
-            startIndex = marker.index()
-            newTabOrderIdx = startIndex;
-        },
-        change: function(e, ui) {
-            newTabOrderIdx = marker.index();
-            if (startIndex > newTabOrderIdx) {
-              newTabOrderIdx += 1
-            };
-        },
-        stop: function(e, ui) {
-            $.post('/change_tab_order_idx', {'tab_id': tabId, 'new_tab_order_idx': newTabOrderIdx});
-        }
+function treatTabsDragging() {
+    var marker, newTabOrderIdx, startIndex, tabId;
+    $('#tabs-navigation').on('turnOnTabDragging', function() {
+        $(this).sortable({
+            placeholder: 'tabs-marker',
+            items: 'a[href^="#tab"]',
+            start: function(e, ui) {
+                print('+')
+                dragged = ui.item;
+                print(dragged)
+                tabId = dragged.attr('href').replace('#tab', '');
+                marker = ui.placeholder;
+                print(dragged.outerWidth(true))
+                marker.css({
+                    width: dragged.outerWidth(true),
+                    height: dragged.outerHeight()
+                });
+                print('width', marker.css('width'), 'height', marker.css('height'))
+                print(marker)
+                dragged.fadeTo('medium', 0.33);
+                startIndex = marker.index()
+                newTabOrderIdx = startIndex;
+            },
+            change: function(e, ui) {
+                newTabOrderIdx = marker.index();
+                if (startIndex > newTabOrderIdx) {
+                  newTabOrderIdx += 1
+                };
+            },
+            stop: function(e, ui) {
+                $.post('/change_tab_order_idx', {'tab_id': tabId, 'new_tab_order_idx': newTabOrderIdx});
+            }
+        });
     });
+    $('#tabs-navigation > a[href^="#tab"]').trigger('turnOnTabDragging');
 }
 
 

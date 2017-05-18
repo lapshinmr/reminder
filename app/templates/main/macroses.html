@@ -7,11 +7,11 @@
         {% else %}
             <div id="tab{{ tab.id }}" class="tab-pane fade col-md-10">
         {% endif %}
-                <div class="tab-tasks connected-sortable row">
+                <ul class="tab-tasks connected-sortable">
                     {% for task in tasks %}
                         {{ create_task_item(task) }}
                     {% endfor %}
-                </div>
+                </ul>
             </div>
     {% endfor %}
 {% endmacro %}
@@ -19,29 +19,27 @@
 
 {% macro create_task_item(task) %}
     {% if task.is_active() %}
-        <div class="col-md-12">
-            <div id="task{{ task.id }}" class="task well well-sm">
-                <div class="task-complete">
-                    <i class="fa fa-check-circle"></i>
-                </div>
-                <div class="task-draggable-area">
-                    <i class="fa fa-ellipsis-v"></i>
-                </div>
-                <div class="task-name" >
-                    <span class="place-holder">{{ task.name }}</span>
-                    <span class="moved-text" contenteditable="true">{{ task.name }}</span>
-                    <i class="fa fa-times" style="display: none"></i>
-                    <div class="task-progress-bar"
-                         data-time-loop="{{ task.time_loop }}"
-                         data-left-time="{{ task.count_left_time() }}">
-                        <div class="progress-bar-tooltip" style="display: none;">
-                            <div class="tooltip-arrow"></div>
-                            <div class="tooltip-content"></div>
-                        </div>
+        <li id="task{{ task.id }}" class="task well well-sm">
+            <div class="task-complete">
+                <i class="fa fa-check-circle"></i>
+            </div>
+            <div class="task-draggable-area">
+                <i class="fa fa-ellipsis-v"></i>
+            </div>
+            <div class="task-name" >
+                <span class="place-holder">{{ task.name }}</span>
+                <span class="moved-text" contenteditable="true">{{ task.name }}</span>
+                <i class="fa fa-times" style="display: none"></i>
+                <div class="task-progress-bar"
+                     data-time-loop="{{ task.time_loop }}"
+                     data-left-time="{{ task.count_left_time() }}">
+                    <div class="progress-bar-tooltip" style="display: none;">
+                        <div class="tooltip-arrow"></div>
+                        <div class="tooltip-content"></div>
                     </div>
                 </div>
             </div>
-        </div>
+        </li>
     {% endif %}
 {% endmacro %}
 
