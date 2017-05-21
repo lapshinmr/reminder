@@ -14,50 +14,74 @@
 @clouds: #ECF0F1;
 @clouds_1: #EDEFF1;
 @progress_bar: #53DFCF;
+@emerald: #2ECC71;
 
-body {
+html {
     padding: 0px;
     margin: 0px;
+    height: 100%;
+}
+
+body {
+    position: relative;
+    padding: 0px;
+    margin: 0px;
+    min-height: 100%;
     background-color: @turquoise;
 }
+
 
 /* HEADER
 ------------------------------------------------------------------------------*/
 nav.navbar {
-    height: 120px;
-
-    .navbar-header {
-
-        a.navbar-brand {
-            display: inline-block;
-            height: 120px;
-            padding-top: 40px;
-            padding-bottom: 40px;
+    .container {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    ul {
+        a {
+            position: relative;
+            line-height: 40px;
             font-size: 40px;
+            padding-top: 20.0px;
+            padding-bottom: 20.0px;
             text-transform: uppercase;
+            height: 80px;
         }
-        a.icon {
-            display: inline-block;
-            height: 120px;
-            padding-top: 20px;
-            padding-bottom: 20px;
-
+        a.reminder-icon {
+            width: 60px;
             img {
-                height: 100%;
+                display: block;
+                height: 60px;
+                width: 60px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -55%);
             }
         }
     }
-
-    form {
-        padding-top: 42px;
-        padding-bottom: 43px;
+    form.navbar-form {
+        padding-top: 22.5px;
+        padding-bottom: 22.5px;
+        padding-right: 15px;
+        padding-left: 15px;
     }
-
     .btn {
-
+        border-radius: 3px;
+        font-size: 16px;
+        span {
+            &.glyphicon {
+                margin-right: 10px;
+            }
+            display: inline-block;
+            vertical-align: middle;
+        }
         &.btn-warning {
-            font-size: 16px;
             background-color: @sun_flower !important;
+        }
+        &.btn-success {
+            background-color: @emerald !important;
         }
     }
 }
@@ -82,12 +106,13 @@ nav.navbar {
 /* content
 ------------------------------------------------------------------------------*/
 div.content {
-    padding-top: 130px;
-    padding-bottom: 60px;
+    padding-top: 100px;
+    padding-bottom: 70px;
 
     .header-default {
         text-transform: uppercase;
         color: white;
+        margin: 15px 0px 25px 0px;
     }
 
     .active-primary .active {
@@ -158,10 +183,6 @@ div#message-box {
 
 /* Duration picker
 ------------------------------------------------------------------------------*/
-form#create-task {
-    position: fixed;
-}
-
 div#duration-picker-replacer {
 
     margin-right: -5px;
@@ -224,6 +245,7 @@ div#duration-picker-replacer {
 /* Tabs
 ------------------------------------------------------------------------------*/
 #tabs-navigation {
+    margin-bottom: 25px;
 
     a {
         border-top-left-radius: 5px;

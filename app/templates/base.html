@@ -16,28 +16,34 @@
     <title>{% block title %}Start{% endblock %}</title>
 </head>
 <body>
-    <div class="container" id="message-box"> </div>
+    <div class="container" id="message-box"></div>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">reminder</a>
-                <a class="icon" href="{{ url_for('main.index') }}">
-                    <img src="{{ url_for('static', filename='img/icons/svg/clipboard.svg') }}" alt="Clipboard">
-                </a>
-            </div>
+        <div class="container">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a class="reminder-icon" href="{{ url_for('main.index') }}">
+                        <img class="bounce-hover" src="{{ url_for('static', filename='img/icons/svg/clipboard.svg') }}" alt="Clipboard">
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('main.index') }}">reminder</a>
+                </li>
+            </ul>
 
             {% if current_user.is_authenticated %}
 
             <form class="navbar-form navbar-right">
+
                 {% if current_user.confirmed %}
-                <a href="{{ url_for('main.settings') }}" class="btn btn-warning navbar-btn" role="button">
-                    <span class="glyphicon glyphicon-cog"></span> Settings
-                </a>
+                    <a class="btn navbar-btn btn-warning btn-wide" href="{{ url_for('main.settings') }}">
+                        <span class="glyphicon glyphicon-cog"></span><span>Settings</span>
+                    </a>
                 {% endif %}
-                <a href="{{ url_for('auth.logout') }}" class="btn btn-warning navbar-btn" role="button">
-                    <span class="glyphicon glyphicon-log-out"></span> LogOut
-                </a>
+
+                    <a class="btn navbar-btn btn-warning btn-wide" href="{{ url_for('auth.logout') }}">
+                        <span>Log out</span>
+                    </a>
             </form>
 
             {% else %}

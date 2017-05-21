@@ -123,6 +123,13 @@ function treatTabClosing() {
     });
 }
 
+function makeTabsDroppable() {
+    var tabs = $("ul.nav.nav-tabs li");
+    for (var i = 0; i < tabs.length; i++) {
+        makeTabDroppable(tabs[i]);
+    }
+}
+
 
 function makeTabDroppable(tab) {
     $(tab).droppable({
@@ -176,12 +183,5 @@ function treatTabsDragging() {
     $('#tabs-navigation > a[href^="#tab"]').trigger('turnOnTabDragging');
 }
 
-
-function makeTabsDroppable() {
-    var tabs = $("ul.nav.nav-tabs li");
-    for (var i = 0; i < tabs.length; i++) {
-        makeTabDroppable(tabs[i]);
-    }
-}
 
 

@@ -302,7 +302,7 @@ function treatAddNewTask() {
             $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
                 function(response) {
                     var $task = $(response['task_item_html']).hide();
-                    $(`#tab${CURRENT_TAB} div.tab-tasks`).prepend($task);
+                    $(`#tab${CURRENT_TAB} ul.tab-tasks`).prepend($task);
                     $task.fadeIn(600);
                     $task.find('.task-progress-bar').trigger('runTaskProgressBarAnimation');
                 }
@@ -1259,6 +1259,13 @@ function treatTabClosing() {
     });
 }
 
+function makeTabsDroppable() {
+    var tabs = $("ul.nav.nav-tabs li");
+    for (var i = 0; i < tabs.length; i++) {
+        makeTabDroppable(tabs[i]);
+    }
+}
+
 
 function makeTabDroppable(tab) {
     $(tab).droppable({
@@ -1312,13 +1319,6 @@ function treatTabsDragging() {
     $('#tabs-navigation > a[href^="#tab"]').trigger('turnOnTabDragging');
 }
 
-
-function makeTabsDroppable() {
-    var tabs = $("ul.nav.nav-tabs li");
-    for (var i = 0; i < tabs.length; i++) {
-        makeTabDroppable(tabs[i]);
-    }
-}
 
 
 
