@@ -29,6 +29,8 @@ function treatAddNewTask() {
                 }
             )
         }
+        $('#duration-picker').trigger('valueReset');
+        $('#task-name').val('');
     })
 }
 

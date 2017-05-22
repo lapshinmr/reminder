@@ -127,6 +127,12 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
             }
         );
     };
+
+    self.reset = function() {
+        self.value = 0;
+        self.updateValue();
+    };
+
     self.treatArrowsClicking();
     self.treatArrowsFading();
     self.treatArrowsHovering();
@@ -156,7 +162,7 @@ function DurationPicker(id) {
     self.append( new TimeUnit('minutes', 59, 60, true) );
     self.append( new TimeUnit('seconds', 59, 1, true) );
 
-    $('#duration-picker-replacer div.value').on("valueChanged",
+    $(`#${self.id}-replacer div.value`).on("valueChanged",
         function(){
             var timeTotal = 0;
             for (var i = 0; i < self.units.length; i++) {
@@ -165,5 +171,14 @@ function DurationPicker(id) {
             $('#' + self.id).val(timeTotal);
         }
     );
+
+    $(`#${self.id}`).on('valueReset',
+        function() {
+            for (var i = 0; i < self.units.length; i++) {
+              self.units[i].reset();
+              print(self.units[i].value)
+            }
+        }
+    )
 }
 
