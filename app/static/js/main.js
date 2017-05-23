@@ -132,7 +132,7 @@ function treatTaskCompleting() {
 
 // TASKS SORTING
 function treatTaskDragging() {
-    var taskId, startIndex, changeIndex, currentIndex, marker, dragged;
+    var taskId, startIndex, changeIndex, newTaskOrderIdx, marker, dragged;
     $('div.tab-content').on('turnOnTaskDragging', '.tab-tasks', function() {
         $(this).sortable({
             handle: ".task-draggable-area",
@@ -140,28 +140,31 @@ function treatTaskDragging() {
             connectWith: ".connected-sortable",
             start: function(e, ui) {
                 dragged = ui.item;
+                dragged.fadeTo('medium', 0.33);
                 marker = ui.placeholder;
                 marker.css({'height': dragged.outerHeight(true)});
-                dragged.fadeTo('medium', 0.33);
+                print(marker)
                 startIndex = marker.index();
                 taskId = $(dragged).attr('id').replace('task', '');
+                newTaskOrderIdx = startIndex;
                 LAST_DROPPABLE_TAB = marker.parents('.tab-pane').attr('id').replace('tab', '')
-                currentIndex = startIndex;
             },
             change: function(e, ui) {
-                changeIndex = marker.index();
-                if (startIndex > changeIndex) {
-                  changeIndex += 1
+                newTaskOrderIdx = marker.index();
+                if (startIndex > newTaskOrderIdx) {
+                  newTaskOrderIdx += 1
                 }
-                currentIndex = changeIndex
             },
             stop: function(e, ui) {
                 dragged.fadeTo('medium', 1);
-                $.post('/change_task_idx', {'tab_id': LAST_DROPPABLE_TAB, 'task_id': taskId, 'order_idx': currentIndex});
+                $.post('/change_task_idx', {
+                    'tab_id': LAST_DROPPABLE_TAB, 'task_id': taskId,
+                    'order_idx': newTaskOrderIdx
+                });
             }
         }).disableSelection();
     });
-    $('.tab-tasks > .task').trigger('turnOnTaskDragging');
+    $('.tab-tasks').trigger('turnOnTaskDragging');
 }
 
 

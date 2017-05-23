@@ -246,14 +246,14 @@ div#duration-picker-replacer {
 ------------------------------------------------------------------------------*/
 #tabs-navigation {
     margin-bottom: 25px;
+    font-size: 0px;
 
     a {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        border-bottom-left-radius: 5px;
+        border-radius: 5px;
         padding: 15px 35px;
         margin-bottom: 3px;
+        font-size: 15px;
+        margin-right: 3px;
         div {
             position: relative;
             i {
@@ -273,6 +273,13 @@ div#duration-picker-replacer {
                 visibility: hidden;
             }
         }
+        &.tab-droppable-hover {
+            background-color: black;
+        }
+    }
+    a.marker {
+        background-color: black;
+        margin: 0px 50px;
     }
     a#add-new-tab {
         padding-right: 0px;
@@ -286,14 +293,11 @@ div#duration-picker-replacer {
                 position: absolute;
                 right: 0px;
                 top: 50%;
-                transform: translate(-10px, -50%);
+                transform: translate(-20px, -50%);
                 font-size: 30px;
                 z-index: 200;
             }
         }
-    }
-    a:last-child {
-        padding-right: 50px;
     }
 }
 

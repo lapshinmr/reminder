@@ -47,11 +47,11 @@
 {% macro create_tabs(tabs) %}
     {% for tab in tabs %}
         {% if tab.is_active() %}
-            <a class="btn btn-inverse active" data-toggle="tab" href="#tab{{ tab.id }}">
-                <div>
+            <a class="btn btn-inverse ui-sortable-handle active" data-toggle="tab" href="#tab{{ tab.id }}">
+                <div> <!-- should be for moved text absolute align -->
                     <input type="radio" name="options" autocomplete="off" checked>
         {% else %}
-            <a class="btn btn-inverse" data-toggle="tab" href="#tab{{ tab.id }}">
+            <a class="btn btn-inverse ui-sortable-handle" data-toggle="tab" href="#tab{{ tab.id }}">
                 <div>
                     <input type="radio" name="options" autocomplete="off">
         {% endif %}
