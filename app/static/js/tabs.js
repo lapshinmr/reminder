@@ -144,12 +144,13 @@ function treatTabsDragging() {
     var newTabOrderIdx, startIndex, tabId, placeholder, dragged;
     $('#tabs-navigation').on('turnOnTabDragging', function() {
         $(this).sortable({
-            placeholder: 'marker',
+            placeholder: 'tabs-placeholder',
             items: 'a[href^="#tab"]',
             start: function(e, ui) {
                 dragged = ui.item;
                 dragged.fadeTo('medium', 0.33);
                 placeholder = ui.placeholder;
+                placeholder.css({'width': dragged.outerWidth()});
                 print(placeholder)
                 print(placeholder.outerWidth())
                 print(placeholder.width())
