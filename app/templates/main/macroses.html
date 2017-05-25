@@ -47,18 +47,16 @@
 {% macro create_tabs(tabs) %}
     {% for tab in tabs %}
         {% if tab.is_active() %}
-            <a class="btn btn-inverse ui-sortable-handle active" data-toggle="tab" href="#tab{{ tab.id }}">
+            <li><a class="btn btn-inverse ui-sortable-handle active" data-toggle="tab" href="#tab{{ tab.id }}">
                 <div> <!-- should be for moved text absolute align -->
-                    <input type="radio" name="options" autocomplete="off" checked>
         {% else %}
-            <a class="btn btn-inverse ui-sortable-handle" data-toggle="tab" href="#tab{{ tab.id }}">
+            <li><a class="btn btn-inverse ui-sortable-handle" data-toggle="tab" href="#tab{{ tab.id }}">
                 <div>
-                    <input type="radio" name="options" autocomplete="off">
         {% endif %}
                     <span class="place-holder">{{ tab.name }}</span>
                     <span class="moved-text" contenteditable="true">{{ tab.name }}</span>
                     <i class="fa fa-times" style="display: none"></i>
                 </div>
-            </a>
+            </a></li>
     {% endfor %}
 {% endmacro %}

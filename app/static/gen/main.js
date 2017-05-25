@@ -422,7 +422,6 @@ function treatTaskDragging() {
                 dragged.fadeTo('medium', 0.33);
                 marker = ui.placeholder;
                 marker.css({'height': dragged.outerHeight(true)});
-                print(marker)
                 startIndex = marker.index();
                 taskId = $(dragged).attr('id').replace('task', '');
                 newTaskOrderIdx = startIndex;
@@ -441,7 +440,7 @@ function treatTaskDragging() {
                     'order_idx': newTaskOrderIdx
                 });
             }
-        }).disableSelection();
+        });
     });
     $('.tab-tasks').trigger('turnOnTaskDragging');
 }
@@ -1193,7 +1192,7 @@ function treatTabNameEdition() {
             var tabId = $(this).parents('a[href^="#tab"]').attr('href').replace('#tab', '')
             $.post('/edit_tab_name', {'new_tab_name': newTabName, 'tab_id': tabId});
         }
-    }, 'a div span.moved-text');
+    }, '.moved-text');
 }
 
 
@@ -1207,7 +1206,7 @@ function treatNewTabButton() {
                 var tabId = response['tab_id'];
                 var $newTab = $(response['tab']).hide();
                 var $newTabContent = $(response['tab_content']);
-                var $addNewTab = $('a#add-new-tab')
+                var $addNewTab = $('#add-new-tab').parents('li');
                 narrowLastTabPadding();
                 $newTab.insertBefore($addNewTab).fadeIn(600);
                 extendLastTabPadding();
@@ -1222,6 +1221,8 @@ function treatNewTabButton() {
 
 function treatTabActivation() {
     $('#tabs-navigation').on('click', 'a', function() {
+        $('#tabs-navigation a.active').removeClass('active')
+        $(this).addClass('active');
         CURRENT_TAB = $(this).attr('href').replace('#tab', '').replace('content', '');
         $.post('/activate_tab', {'current_tab_id': CURRENT_TAB})
     })
@@ -1232,11 +1233,12 @@ function closeTab(tabId, $tab) {
     $.post('/close_tab', {'tab_id': tabId}).done(
         function(response) {
             var activeTabIdx = response['active_tab_idx']
-            $('div#tab' + tabId).remove();
-            $tab.remove();
+            $('#tab' + tabId).remove();
+            $tab.parents('li').remove();
             extendLastTabPadding();
+            print(activeTabIdx)
             if (activeTabIdx >= 0) {
-                $('div#tabs-navigation > a[href]:not(#add-new-tab)').eq(activeTabIdx).trigger('click')
+                $('#tabs-navigation a:not(#add-new-tab)').eq(activeTabIdx).trigger('click')
             }
         }
     )
@@ -1286,20 +1288,20 @@ function treatTabClosing() {
 }
 
 function treatTabsDroppable() {
-    $("#tabs-navigation").on('turnOnTabDroppable', 'a[href^="#tab"]', function() {
+    $("#tabs-navigation").on('turnOnTabDroppable', 'li', function() {
         $(this).droppable({
             accept: ".connected-sortable li",
             hoverClass: 'tab-droppable-hover',
             tolerance: 'pointer',
             drop: function (event, ui) {
-                 var tabHref = $(this).attr('href');
-                 var tabId = tabHref.replace('#tab', '');
-                 LAST_DROPPABLE_TAB = tabId;
-                 $(tabHref).find('.connected-sortable').prepend($(`li.ui-sortable-placeholder.task-marker`));
+                var tabHref = $(this).children('a').attr('href');
+                var tabId = tabHref.replace('#tab', '');
+                LAST_DROPPABLE_TAB = tabId;
+                $(tabHref).find('.connected-sortable').prepend($(`li.ui-sortable-placeholder.task-marker`));
             }
         });
     });
-    $('#tabs-navigation > a[href^="#tab"]').trigger('turnOnTabDroppable');
+    $('#tabs-navigation > li').trigger('turnOnTabDroppable');
 }
 
 
@@ -1308,16 +1310,14 @@ function treatTabsDragging() {
     $('#tabs-navigation').on('turnOnTabDragging', function() {
         $(this).sortable({
             placeholder: 'tabs-placeholder',
-            items: 'a[href^="#tab"]',
+            cancel: 'span, i',
+            items: 'li',
             start: function(e, ui) {
                 dragged = ui.item;
                 dragged.fadeTo('medium', 0.33);
                 placeholder = ui.placeholder;
                 placeholder.css({'width': dragged.outerWidth()});
-                print(placeholder)
-                print(placeholder.outerWidth())
-                print(placeholder.width())
-                tabId = dragged.attr('href').replace('#tab', '');
+                tabId = dragged.children('a').attr('href').replace('#tab', '');
                 startIndex = placeholder.index()
                 newTabOrderIdx = startIndex;
             },
@@ -1333,9 +1333,9 @@ function treatTabsDragging() {
                 dragged.fadeTo('medium', 1);
                 $.post('/change_tab_order_idx', {'tab_id': tabId, 'new_tab_order_idx': newTabOrderIdx});
             }
-        }).disableSelection();
+        });
     });
-    $('#tabs-navigation > a[href^="#tab"]').trigger('turnOnTabDragging');
+    $('#tabs-navigation').trigger('turnOnTabDragging');
 }
 
 

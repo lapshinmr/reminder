@@ -143,7 +143,6 @@ function treatTaskDragging() {
                 dragged.fadeTo('medium', 0.33);
                 marker = ui.placeholder;
                 marker.css({'height': dragged.outerHeight(true)});
-                print(marker)
                 startIndex = marker.index();
                 taskId = $(dragged).attr('id').replace('task', '');
                 newTaskOrderIdx = startIndex;
@@ -162,7 +161,7 @@ function treatTaskDragging() {
                     'order_idx': newTaskOrderIdx
                 });
             }
-        }).disableSelection();
+        });
     });
     $('.tab-tasks').trigger('turnOnTaskDragging');
 }

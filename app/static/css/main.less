@@ -252,8 +252,19 @@ div#duration-picker-replacer {
 /* Tabs
 ------------------------------------------------------------------------------*/
 #tabs-navigation {
+    padding: 0px;
+    margins: 0px;
     margin-bottom: 25px;
     font-size: 0px;
+
+    li {
+        display: inline-block;
+        list-style: none;
+
+        &.tab-droppable-hover a {
+            background-color: @sun_flower;
+        }
+    }
 
     a {
         border-radius: 5px;
@@ -281,14 +292,6 @@ div#duration-picker-replacer {
                 visibility: hidden;
             }
         }
-        &.tab-droppable-hover {
-            background-color: @sun_flower;
-        }
-    }
-    a.tabs-placeholder {
-        width: inherit;
-        background-color: black;
-        margin: 0px 50px;
     }
     a#add-new-tab {
         padding-right: 0px;
