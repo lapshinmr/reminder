@@ -77,12 +77,12 @@ function treatTaskClosing() {
         'mouseenter': function() {
             var $span = $(this).find('.moved-text');
             if (!$span.is(':focus')) {
-                $span.stop().animate({"left": "-=10"}, 300);
+                $span.css({"left": "calc(50% - 10px)"}, 300);
                 $(this).find('i').stop().fadeIn(300);
             }
         },
         'mouseleave': function() {
-            $(this).find('.moved-text').stop().animate({"left": "50%"}, 300);
+            $(this).find('.moved-text').css({"left": "50%"}, 300);
             $(this).find('i').stop().fadeOut(300);
         }
     }, '.task-name');
@@ -288,5 +288,13 @@ function treatTaskProgressBarTooltip() {
                 clearInterval(id);
             }
         }, '.task-name'
+    )
+}
+
+
+function treatSettingsButton() {
+    $('#settings').hover(
+        function() {$(this).find('span.fa.fa-cog').addClass('fa-spin')},
+        function() {$(this).find('span.fa.fa-cog').removeClass('fa-spin')}
     )
 }

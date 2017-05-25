@@ -10,9 +10,9 @@
 @nephritis: #27AE60;
 @turquoise: #1ABC9C;
 @sun_flower: #F1C40F;
+@sun_flower_hover: #F4D313;
 @peter_river: #3498DB;
 @clouds: #ECF0F1;
-@clouds_1: #EDEFF1;
 @progress_bar: #53DFCF;
 @emerald: #2ECC71;
 
@@ -58,6 +58,12 @@ nav.navbar {
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -55%);
+                transition: width 0.25s, height 0.25s;
+                transition-timing-function: easeInOutBack;
+                &:hover {
+                    height: 63px;
+                    width: 63px;
+                }
             }
         }
     }
@@ -71,17 +77,18 @@ nav.navbar {
         border-radius: 3px;
         font-size: 16px;
         span {
-            &.glyphicon {
-                margin-right: 10px;
+            &.fa {
+                margin-right: 5px;
             }
             display: inline-block;
             vertical-align: middle;
         }
         &.btn-warning {
-            background-color: @sun_flower !important;
-        }
-        &.btn-success {
-            background-color: @emerald !important;
+            background-color: @sun_flower;
+            &:hover {
+                background-color: @sun_flower_hover;
+                border-color: @sun_flower_hover;
+            }
         }
     }
 }
@@ -267,6 +274,7 @@ div#duration-picker-replacer {
                 cursor: text;
                 position: absolute;
                 left: 50%;
+                transition: left 0.3s;
                 transform: translateX(-50%);
             }
             span.place-holder {
@@ -274,7 +282,7 @@ div#duration-picker-replacer {
             }
         }
         &.tab-droppable-hover {
-            background-color: black;
+            background-color: @sun_flower;
         }
     }
     a.marker {
@@ -369,6 +377,7 @@ ul.tab-tasks {
                     position: absolute;
                     left: 50%;
                     top: 50%;
+                    transition: left 0.3s;
                     transform: translate(-50%, -50%);
                     width: calc(~"100% - 50px");
                     z-index: 200;

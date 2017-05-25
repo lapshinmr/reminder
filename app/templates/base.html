@@ -23,7 +23,7 @@
             <ul class="nav navbar-nav">
                 <li>
                     <a class="reminder-icon" href="{{ url_for('main.index') }}">
-                        <img class="bounce-hover" src="{{ url_for('static', filename='img/icons/svg/clipboard.svg') }}" alt="Clipboard">
+                        <img src="{{ url_for('static', filename='img/icons/svg/clipboard.svg') }}" alt="Clipboard">
                     </a>
                 </li>
                 <li>
@@ -36,8 +36,8 @@
             <form class="navbar-form navbar-right">
 
                 {% if current_user.confirmed %}
-                    <a class="btn navbar-btn btn-warning btn-wide" href="{{ url_for('main.settings') }}">
-                        <span class="glyphicon glyphicon-cog"></span><span>Settings</span>
+                    <a id="settings" class="btn navbar-btn btn-warning btn-wide" href="{{ url_for('main.settings') }}">
+                        <span class="fa fa-cog"></span><span>Settings</span>
                     </a>
                 {% endif %}
 

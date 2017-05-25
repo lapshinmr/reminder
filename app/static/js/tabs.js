@@ -42,11 +42,11 @@ function treatNewTabButton() {
         $.post('/add_new_tab', {'new_tab_name': newTabName}).done(
             function(response) {
                 var tabId = response['tab_id'];
-                var $newTab = $(response['tab']);
+                var $newTab = $(response['tab']).hide();
                 var $newTabContent = $(response['tab_content']);
                 var $addNewTab = $('a#add-new-tab')
                 narrowLastTabPadding();
-                $newTab.insertBefore($addNewTab);
+                $newTab.insertBefore($addNewTab).fadeIn(600);
                 extendLastTabPadding();
                 $('div.tab-content').append($newTabContent);
                 $newTab.trigger('click').trigger('turnOnTabDroppable');
@@ -85,12 +85,12 @@ function treatTabClosing() {
         'mouseenter': function() {
             var $span = $(this).find('span.moved-text');
             if (!$span.is(':focus')) {
-                $span.stop().animate({"left": "-=10"}, 300);
+                $span.css({"left": "calc(50% - 10px)"}, 300);
                 $(this).find('i').stop().fadeIn(300);
             }
         },
         'mouseleave': function() {
-            $(this).find('span.moved-text').stop().animate({"left": "50%"}, 300);
+            $(this).find('span.moved-text').css({"left": "50%"}, 300);
             $(this).find('i').stop().fadeOut(300);
         }
     }, 'a.btn:not(#add-new-tab)');
