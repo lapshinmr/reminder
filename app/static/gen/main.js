@@ -1332,12 +1332,14 @@ function treatTabsDragging() {
                 dragged = ui.item;
                 dragged.children('a').trigger('click');
                 dragged.fadeTo('medium', 0.33);
+                var placeholder_width = dragged.children('a').outerWidth();
                 if (dragged.children('a').is('.extended')) {
                     narrowLastTabPadding();
                     $('#add-new-tab').hide();
+                    placeholder_width -= 40;
                 }
                 ui.placeholder.css({
-                    'width': dragged.children('a').outerWidth()
+                    'width': placeholder_width
                 });
                 tabId = dragged.children('a').attr('href').replace('#tab', '');
                 startIndex = ui.placeholder.index()
