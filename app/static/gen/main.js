@@ -1163,14 +1163,14 @@ var Modal = function (title, text) {
 
 
 function extendLastTabPadding() {
-    var $lastTab = $('#tabs-navigation > a:not(#add-new-tab):last');
-    $lastTab.css('padding-right', '75px');
+    var $lastTab = $('#tabs-navigation a:not(#add-new-tab):not():last');
+    $lastTab.addClass('extended');
 }
 
 
 function narrowLastTabPadding() {
-    var $lastTab = $('#tabs-navigation > a:not(#add-new-tab):last');
-    $lastTab.css('padding-right', '25px');
+    var $lastTab = $('#tabs-navigation a:not(#add-new-tab)');
+    $lastTab.removeClass('extended');
 }
 
 
@@ -1208,11 +1208,14 @@ function treatNewTabButton() {
                 var $newTabContent = $(response['tab_content']);
                 var $addNewTab = $('#add-new-tab').parents('li');
                 narrowLastTabPadding();
+                $('#add-new-tab').hide();
                 $newTab.insertBefore($addNewTab).fadeIn(600);
+                $('#add-new-tab').fadeIn(600);
                 extendLastTabPadding();
                 $('div.tab-content').append($newTabContent);
-                $newTab.trigger('click').trigger('turnOnTabDroppable');
+                $newTab.trigger('turnOnTabDroppable');
                 $(`#tab${tabId} .tab-tasks`).trigger('turnOnTaskDragging');
+                $newTab.children('a').trigger('click');
             }
         );
     })
@@ -1234,12 +1237,17 @@ function closeTab(tabId, $tab) {
         function(response) {
             var activeTabIdx = response['active_tab_idx']
             $('#tab' + tabId).remove();
-            $tab.parents('li').remove();
-            extendLastTabPadding();
-            print(activeTabIdx)
-            if (activeTabIdx >= 0) {
-                $('#tabs-navigation a:not(#add-new-tab)').eq(activeTabIdx).trigger('click')
+            if ($tab.is('.extended')) {
+                $('#add-new-tab').fadeOut(600);
             }
+            $tab.parents('li').fadeOut(600, function() {
+                $(this).remove();
+                extendLastTabPadding();
+                if (activeTabIdx >= 0) {
+                    $('#tabs-navigation a:not(#add-new-tab)').eq(activeTabIdx).trigger('click')
+                }
+                $('#add-new-tab').fadeIn(600);
+            });
         }
     )
 }
@@ -1315,20 +1323,30 @@ function treatTabsDragging() {
             start: function(e, ui) {
                 dragged = ui.item;
                 dragged.fadeTo('medium', 0.33);
-                placeholder = ui.placeholder;
-                placeholder.css({'width': dragged.outerWidth()});
+                if (dragged.children('a').is('.extended')) {
+                    narrowLastTabPadding();
+                    $('#add-new-tab').hide();
+                }
+                ui.placeholder.css({
+                    'width': dragged.children('a').outerWidth()
+                });
                 tabId = dragged.children('a').attr('href').replace('#tab', '');
-                startIndex = placeholder.index()
+                startIndex = ui.placeholder.index()
                 newTabOrderIdx = startIndex;
             },
             change: function(e, ui) {
-                newTabOrderIdx = placeholder.index();
+                var tabs_total = $('#tabs-navigation li a:not(#add-new-tab)').length;
+                newTabOrderIdx = ui.placeholder.index();
+                if (newTabOrderIdx == tabs_total) {
+                    narrowLastTabPadding();
+                    $('#add-new-tab').hide();
+                }
                 if (startIndex > newTabOrderIdx) {
                   newTabOrderIdx += 1
                 };
             },
             stop: function(e, ui) {
-                narrowLastTabPadding();
+                $('#add-new-tab').show();
                 extendLastTabPadding();
                 dragged.fadeTo('medium', 1);
                 $.post('/change_tab_order_idx', {'tab_id': tabId, 'new_tab_order_idx': newTabOrderIdx});

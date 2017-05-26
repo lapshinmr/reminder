@@ -1,18 +1,16 @@
-@lite_blue: #a0d5e8;
-@lite_red: #e0ab96;
-@lite_green: #5cb85c;
-@dark_green: #449d44;
-@restore: #a0d5e8;
-@close: #e0ab96;
-@lite_gray: #a9b0aa;
-
+@wisteria: #8E44AD;
 @midnight_blue: #2C3E50;
 @nephritis: #27AE60;
 @turquoise: #1ABC9C;
+@green_sea: #16A085;
 @sun_flower: #F1C40F;
 @sun_flower_hover: #F4D313;
+@orange: #F39C12;
+@pumpkin: #D35400;
 @peter_river: #3498DB;
+@belize_hole: #2980B9;
 @clouds: #ECF0F1;
+@asbestos: #7F8C8D;
 @progress_bar: #53DFCF;
 @emerald: #2ECC71;
 
@@ -121,10 +119,6 @@ div.content {
         color: white;
         margin: 15px 0px 25px 0px;
     }
-
-    .active-primary .active {
-        background-color: @turquoise;
-    }
 }
 
 
@@ -143,7 +137,7 @@ div#message-box {
 /* login form
 ------------------------------------------------------------------------------*/
 .login-form {
-    border-radius: 6px;
+    border-radius: 3px;
     background-color: @clouds;
 }
 
@@ -260,18 +254,23 @@ div#duration-picker-replacer {
     li {
         display: inline-block;
         list-style: none;
+        margin-right: 3px;
 
         &.tab-droppable-hover a {
             background-color: @sun_flower;
         }
     }
+    li:last-child {
+        margin-right: 0px;
+    }
 
     a {
-        border-radius: 5px;
+        position: relative;
+        border-radius: 3px;
         padding: 15px 35px;
+        transition: padding-right 0.6s;
         margin-bottom: 3px;
         font-size: 15px;
-        margin-right: 3px;
         div {
             position: relative;
             i {
@@ -292,22 +291,28 @@ div#duration-picker-replacer {
                 visibility: hidden;
             }
         }
-    }
-    a#add-new-tab {
-        padding-right: 0px;
-        padding-left: 0px;
-        div {
-            position: relative;
-            height: calc(15px * 1.4);
+        &.active {
+            background-color: @wisteria;
+        }
+        &.extended {
+            padding-right: 75px;
+        }
+        &#add-new-tab {
+            padding-right: 0px;
+            padding-left: 0px;
+            div {
+                position: relative;
+                height: calc(15px * 1.4);
 
-            span {
-                display: inline-block;
-                position: absolute;
-                right: 0px;
-                top: 50%;
-                transform: translate(-20px, -50%);
-                font-size: 30px;
-                z-index: 200;
+                span {
+                    display: inline-block;
+                    position: absolute;
+                    right: 0px;
+                    top: 50%;
+                    transform: translate(-20px, -50%);
+                    font-size: 30px;
+                    z-index: 200;
+                }
             }
         }
     }
@@ -318,6 +323,9 @@ div#duration-picker-replacer {
 #order-button {
     ul.dropdown-menu {
         min-width: 100%;
+        li {
+            cursor: pointer;
+        }
     }
 }
 
@@ -333,7 +341,7 @@ ul.tab-tasks {
     }
 
     li.task {
-        border-radius: 6px;
+        border-radius: 3px;
         margin-bottom: 10px;
 
         div {
