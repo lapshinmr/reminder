@@ -1189,6 +1189,15 @@ function treatTabNameEdition() {
             e.keyCode = 27;
             $(this).trigger(e)
             var newTabName = $(this).text();
+            if (newTabName == '') {
+                newTabName = 'empty';
+                $(this).text(newTabName);
+                $(this).prev().text(newTabName);
+                new Modal(
+                    'Warning',
+                    'Please, don\'t leave empty tab name field.'
+                ).addButton('Okay', 'primary');
+            }
             var tabId = $(this).parents('a[href^="#tab"]').attr('href').replace('#tab', '')
             $.post('/edit_tab_name', {'new_tab_name': newTabName, 'tab_id': tabId});
         }
@@ -1275,13 +1284,12 @@ function treatTabClosing() {
         var $tab = $(this).parents('a[href^="#tab"]');
         var tabId = $tab.attr('href').replace('#tab', '');
         var tab_content_length = $(`div.tab-content div#tab${tabId} ul li.task`).length;
-        var $tabs = $('#tabs-navigation > a:not(#add-new-tab)');
+        var $tabs = $('#tabs-navigation a:not(#add-new-tab)');
         if ($tabs.length == 1) {
-            var mh = new Modal(
+            new Modal(
                 'Warning',
                 'You can\'t close this tab, because it is your last tab.'
-            );
-            mh.addButton('Ok', 'primary');
+            ).addButton('Okay', 'primary');
         } else if (tab_content_length == 0) {
             closeTab(tabId, $tab);
         } else {
@@ -1290,7 +1298,7 @@ function treatTabClosing() {
                 'If you close this tab you will lost all your tasks for this tab.'
             );
             mh.addButton('Yes, close', 'default', function() { closeTab(tabId, $tab) });
-            mh.addButton('no', 'primary');
+            mh.addButton('No', 'primary');
         }
     });
 }
@@ -1322,6 +1330,7 @@ function treatTabsDragging() {
             items: 'li',
             start: function(e, ui) {
                 dragged = ui.item;
+                dragged.children('a').trigger('click');
                 dragged.fadeTo('medium', 0.33);
                 if (dragged.children('a').is('.extended')) {
                     narrowLastTabPadding();
