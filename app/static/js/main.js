@@ -104,7 +104,6 @@ function treatTaskClosing() {
 // TASK COMPLETING
 function treatTaskCompleting() {
     $('.tab-tasks').on('click', '.task-complete i', function() {
-        print($(this));
         var taskId = $(this).parents('li[id^="task"]').attr('id').replace('task', '')
         $.post("/complete", {'task_id': taskId}).done(
             function() {
@@ -195,7 +194,6 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
 
   this.animation = function(id, li, li_clone, delta) {
     return function() {
-        print(delta)
       li_clone.animate({top: delta}, 'slow',
         function() {
           li_clone.remove();

@@ -38,7 +38,7 @@ function treatTabNameEdition() {
             }
             var tabId = $(this).parents('a[href^="#tab"]').attr('href').replace('#tab', '')
             $.post('/edit_tab_name', {'new_tab_name': newTabName, 'tab_id': tabId});
-        }
+        },
     }, '.moved-text');
 }
 

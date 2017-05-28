@@ -383,7 +383,6 @@ function treatTaskClosing() {
 // TASK COMPLETING
 function treatTaskCompleting() {
     $('.tab-tasks').on('click', '.task-complete i', function() {
-        print($(this));
         var taskId = $(this).parents('li[id^="task"]').attr('id').replace('task', '')
         $.post("/complete", {'task_id': taskId}).done(
             function() {
@@ -474,7 +473,6 @@ function AnimateTasksSorting(tab_id, old_order, new_order) {
 
   this.animation = function(id, li, li_clone, delta) {
     return function() {
-        print(delta)
       li_clone.animate({top: delta}, 'slow',
         function() {
           li_clone.remove();
@@ -1000,18 +998,18 @@ function DurationPicker(id) {
 
 
 // SUBSCRIBE BUTTON
-function subscribe(state) {
+function treatSubscribeButton(subscribed) {
     var $button = $('#settings-subscribe');
-    if (state) {
+    if (subscribed) {
         $button.addClass('btn-default')
         $button.text('Unsubscribe')
     } else {
         $button.addClass('btn-success')
         $button.text('Subscribe')
     };
-    $button.on('click', function() {
+    $button.on('click', function(e) {
+        e.preventDefault();
         $button.toggleClass('btn-default').toggleClass('btn-success');
-        $('#settings-schedule').slideToggle(400);
         var isSubscribed = $button.hasClass('btn-default')
         if (isSubscribed) {
             $button.text('Unsubscribe')
@@ -1019,19 +1017,22 @@ function subscribe(state) {
             $button.text('Subscribe');
         }
         $.post('/settings/subscribe', {'subscribe': isSubscribed})
+        $('')
         $button.blur();
     });
 }
 
 
 // SCHEDULE
-function schedule(schedule) {
+function treatSubscribeSchedule(schedule) {
     for (var i = 0, length = schedule.length; i < length; i++) {
-        $(`.settings-timestamp[value="${schedule[i]}"]`).prop('checked', true)
+        var $timestamp = $(`.schedule-timestamp[value="${schedule[i]}"]`)
+        $timestamp.prop('checked', true)
+        $timestamp.parents('label').addClass('active');
     };
-    $('#settings-schedule').on('click', '.settings-timestamp', function() {
-        var value = $(this).attr('value');
-        var checked = $(this).prop('checked');
+    $('#settings-schedule').on('click', 'label', function() {
+        var value = $(this).children('input').attr('value');
+        var checked = !$(this).children('input').prop('checked');
         $.post('/settings/treat-timestamp', {'value': value, 'checked': checked});
     })
 }
@@ -1200,7 +1201,7 @@ function treatTabNameEdition() {
             }
             var tabId = $(this).parents('a[href^="#tab"]').attr('href').replace('#tab', '')
             $.post('/edit_tab_name', {'new_tab_name': newTabName, 'tab_id': tabId});
-        }
+        },
     }, '.moved-text');
 }
 

@@ -5,75 +5,114 @@
 
 {% block content %}
 <div class="row">
-    <div class="settings-side col-md-8 col-md-push-2">
+    <div class="settings-side col-md-8 col-md-offset-2">
 
         <div class="page-header">
-            <h3>main information</h3>
+            <h4 class="header-default">main information</h4>
         </div>
         <form class="form-horizontal">
             <div class="form-group">
-                <label class="control-label col-sm-2">Name</label>
-                <div class="col-sm-10">
+                <label class="control-label col-md-3">Name</label>
+                <div class="col-md-8">
                     <input id="username" type="text" class="form-control" placeholder="Name" value="{{ user.username }}">
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-2">Timezone</label>
-                <div class="col-sm-10">
+                <label class="control-label col-md-3">Timezone</label>
+                <div class="col-md-8">
                     <input type="text" class="form-control" placeholder="Timezone">
                 </div>
             </div>
         </form>
 
         <div class="page-header">
-            <h3>change email</h3>
+            <h4 class="header-default">change email</h4>
         </div>
-        <form id="change-email-form" class="col-md-12" action="{{ url_for('main.change_email_request') }}" method="POST">
+
+        <div class="row">
+            <label class="col-md-3 text-right">your email</label>
+            <p class="col-md-8">{{ user.email }}</p>
+        </div>
+
+        <form id="change-email-form" class="form-horizontal" action="{{ url_for('main.change_email_request') }}" method="POST">
             <div id="change-email" class="form-group">
-                <p>Current email: {{ user.email }}</p>
-                <label>New email:</label>
-                <input type="email" class="form-control" name="email" placeholder="enter your email">
+                <label class="control-label col-md-3">new email</label>
+                <div class="col-md-8">
+                    <input type="email" class="form-control" name="email" placeholder="enter new email">
+                </div>
             </div>
             <div id="change-email-password" class="form-group">
-                <label>Password:</label>
-                <input type="password" class="form-control" name="password" placeholder="enter new password">
+                <label class="control-label col-md-3">password</label>
+                <div class="col-md-8">
+                    <input type="password" class="form-control" name="password" placeholder="enter your password">
+                </div>
             </div>
-            <button type="submit" class="btn btn-block btn-success" disabled>change email</button>
+            <div class="form-group">
+                <div class="col-md-8 col-md-offset-3">
+                    <button type="submit" class="btn btn-block btn-success" disabled>change email</button>
+                </div>
+            </div>
         </form>
 
         <div class="page-header">
-            <h3>change password</h3>
+            <h4 class="header-default">change password</h4>
         </div>
-        <form id="change-password-form" class="col-md-12">
+
+        <form id="change-password-form" class="form-horizontal">
             <div id="change-password-old" class="form-group">
-                <label>Current password</label>
-                <input type="password" class="form-control" name="old-password" placeholder="old password">
+                <label class="control-label col-md-3">your password</label>
+                <div class="col-md-8">
+                    <input type="password" class="form-control" name="old-password" placeholder="your password">
+                </div>
             </div>
             <div id="change-password-new1" class="form-group">
-                <label>New password</label>
-                <input type="password" class="form-control" name="new-password1" placeholder="new password">
+                <label class="control-label col-md-3">new password</label>
+                <div class="col-md-8">
+                    <input type="password" class="form-control" name="new-password1" placeholder="new password">
+                </div>
             </div>
             <div id="change-password-new2" class="form-group">
-                <label>new password</label>
-                <input type="password" class="form-control" name="new-password2" placeholder="new password">
+                <label class="control-label col-md-3">repeat new password</label>
+                <div class="col-md-8">
+                    <input type="password" class="form-control" name="new-password2" placeholder="new password">
+                </div>
             </div>
-            <button type="submit" class="btn btn-block btn-success" disabled>change password</button>
+            <div class="form-group">
+                <div class="col-md-8 col-md-offset-3">
+                    <button type="submit" class="btn btn-block btn-success" disabled>change password</button>
+                </div>
+            </div>
         </form>
 
         <div class="page-header">
-            <h3>notification settings</h3>
+            <h4 class="header-default">notification settings</h4>
         </div>
-        <button id="settings-subscribe" class="btn btn-block"></button>
-        <div id="settings-schedule" class="col-md-12">
-        {% for n in range(24) %}
-            {% set time = '{:0>2.2}'.format(n|string) %}
-            <div class="col-md-2 text-center">
-                <label class="checkbox-inline">
-                    <input class="settings-timestamp" type="checkbox" value="{{ time }}">{{ time }}:00
-                </label>
+
+        <div class="row">
+            <p class="col-md-10 col-md-offset-1">
+                Choose time when you want to receive notifications about your tasks ready for completing
+            </p>
+        </div>
+
+        <form>
+            <div class="form-group">
+                <div id="settings-schedule" class="btn-group" data-toggle="buttons">
+                    {% for n in range(6) %}
+                    {% for m in range(4) %}
+                    {% set time = '{:0>2.2}'.format((n + (m * 6))|string) %}
+                    <label class="btn btn-primary col-md-3">
+                        <input class="schedule-timestamp" type="checkbox" value="{{ time }}" autocomplete="off">{{ time }}:00
+                    </label>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
-        {% endfor %}
-        </div>
+            <div class="form-group">
+                <div class="col-md-6 col-md-offset-3">
+                    <button id="settings-subscribe" class="btn btn-block"></button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
@@ -85,8 +124,8 @@
         editUserName();
         changeEmailForm();
         changePasswordForm();
-        subscribe('{{ user.subscribed }}' == 'True');
-        schedule({{ schedule|tojson }});
+        treatSubscribeButton('{{ user.subscribed }}' == 'True');
+        treatSubscribeSchedule({{ schedule|tojson }});
     });
 </script>
 {% endblock %}

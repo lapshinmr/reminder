@@ -1,18 +1,18 @@
 
 
 // SUBSCRIBE BUTTON
-function subscribe(state) {
+function treatSubscribeButton(subscribed) {
     var $button = $('#settings-subscribe');
-    if (state) {
+    if (subscribed) {
         $button.addClass('btn-default')
         $button.text('Unsubscribe')
     } else {
         $button.addClass('btn-success')
         $button.text('Subscribe')
     };
-    $button.on('click', function() {
+    $button.on('click', function(e) {
+        e.preventDefault();
         $button.toggleClass('btn-default').toggleClass('btn-success');
-        $('#settings-schedule').slideToggle(400);
         var isSubscribed = $button.hasClass('btn-default')
         if (isSubscribed) {
             $button.text('Unsubscribe')
@@ -20,19 +20,22 @@ function subscribe(state) {
             $button.text('Subscribe');
         }
         $.post('/settings/subscribe', {'subscribe': isSubscribed})
+        $('')
         $button.blur();
     });
 }
 
 
 // SCHEDULE
-function schedule(schedule) {
+function treatSubscribeSchedule(schedule) {
     for (var i = 0, length = schedule.length; i < length; i++) {
-        $(`.settings-timestamp[value="${schedule[i]}"]`).prop('checked', true)
+        var $timestamp = $(`.schedule-timestamp[value="${schedule[i]}"]`)
+        $timestamp.prop('checked', true)
+        $timestamp.parents('label').addClass('active');
     };
-    $('#settings-schedule').on('click', '.settings-timestamp', function() {
-        var value = $(this).attr('value');
-        var checked = $(this).prop('checked');
+    $('#settings-schedule').on('click', 'label', function() {
+        var value = $(this).children('input').attr('value');
+        var checked = !$(this).children('input').prop('checked');
         $.post('/settings/treat-timestamp', {'value': value, 'checked': checked});
     })
 }
