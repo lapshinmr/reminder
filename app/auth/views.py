@@ -1,5 +1,5 @@
 import os
-from flask import request, url_for, redirect, render_template, flash
+from flask import request, url_for, redirect, render_template, flash, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
 from . import auth
 from app.models import User
@@ -24,18 +24,17 @@ def unconfirmed():
     return render_template('auth/unconfirmed.html', config=os.environ.get('CONFIG'))
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+@auth.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        remember_me = request.form.get('remember_me')
-        remember_me = True if remember_me else False
-        user = User.query.filter_by(email=email).first()
-        if user is not None and user.verify_password(password):
-            login_user(user, remember_me)
-            return redirect(request.args.get('next') or url_for('main.index'))
-    return render_template('auth/login.html', config=os.environ.get('CONFIG'))
+    email = request.form.get('email')
+    password = request.form.get('password')
+    remember_me = request.form.get('remember_me')
+    remember_me = True if remember_me else False
+    user = User.query.filter_by(email=email).first()
+    if user is not None and user.verify_password(password):
+        login_user(user, remember_me)
+        return redirect(request.args.get('next') or url_for('main.index'))
+    return jsonify()
 
 
 @auth.route('/logout', methods=['GET', 'POST'])

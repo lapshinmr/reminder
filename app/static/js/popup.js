@@ -2,7 +2,7 @@
 
 var Modal = function (title, text) {
     this.template = $(`
-        <div class="modal fade" id="modal-window" role="dialog">
+        <div class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -28,10 +28,26 @@ var Modal = function (title, text) {
     };
     this.run = function() {
         var $modal = $(this.template);
-        $('#message-box').append($modal);
+        $('#modal-box').append($modal);
         $modal.on('hidden.bs.modal', function() { $modal.remove() })
         $modal.modal('show');
     };
     this.run();
 }
+
+
+// Modal login form
+function treatLoginModal () {
+    $('#login-button').on('click', function(e) {
+        e.preventDefault();
+        var email = $('#login-form-horizontal input[name="email"]').val();
+        var password = $('#login-form-horizontal input[name="password"]').val();
+        if (email == '' || password == '') {
+            $('#login-modal').modal('show');
+        } else {
+            $('#login-form-horizontal').submit();
+        }
+    })
+}
+
 

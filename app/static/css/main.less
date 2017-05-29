@@ -137,11 +137,17 @@ div#message-box {
 
 /* login form
 ------------------------------------------------------------------------------*/
-.login-form {
+#login-form {
     border-radius: 3px;
     background-color: @clouds;
     p {
         font-size: 16px;
+    }
+}
+
+#login-form-horizontal {
+    button {
+        border-radius: 3px;
     }
 }
 
@@ -248,11 +254,19 @@ div#duration-picker-replacer {
     margin: 0px;
     margin-bottom: 25px;
     font-size: 0px;
+    /*
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    */
 
     li {
         display: inline-block;
         list-style: none;
         margin-right: 3px;
+        /*flex-grow: 1;*/
 
         &.tab-droppable-hover a {
             background-color: @sun_flower;
@@ -260,6 +274,7 @@ div#duration-picker-replacer {
     }
     li:last-child {
         margin-right: 0px;
+        /*flex-grow: 0;*/
     }
 
     a {
@@ -270,6 +285,7 @@ div#duration-picker-replacer {
         margin-bottom: 3px;
         font-size: 15px;
         height: 51px;
+        /*width: 100%; for flex*/
         div {
             position: relative;
             i {
@@ -336,21 +352,24 @@ ul.tab-tasks {
     font-size: 0px;
 
     li {
+        position: relative; /* need for task sorting animation */
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
         list-style-type: none;
-        position: relative;
         border-radius: 3px;
         margin-bottom: 10px;
 
         div {
             display: inline-block;
-            vertical-align: middle;
             text-align: center;
             border-radius: 3px;
+            line-height: 32px;
 
             &.task-complete {
                 cursor: pointer;
                 font-size: 32px;
-                line-height: 32px;
                 margin: 0px 5px;
             }
             &.task-draggable-area {
@@ -358,17 +377,15 @@ ul.tab-tasks {
                 color: white;
                 cursor: grabbing;
                 font-size: 16px;
-                line-height: 32px;
                 width: 22px;
                 margin: 0px 15px 0px 10px;
             }
             &.task-name {
+                flex-grow: 1;
                 position: relative;
                 background-color: @progress_bar;
                 color: white;
                 padding: 0px 25px;
-                width: calc(~"100% - 85px");
-                line-height: 32px;
                 min-height: 32px;
                 font-size: 18px;
                 i {
@@ -392,9 +409,7 @@ ul.tab-tasks {
                     width: calc(~"100% - 50px");
                     z-index: 200;
                     cursor: text;
-                    &:focus {
-                        outline: none;
-                    }
+                    outline: none;
                 }
                 div.task-progress-bar {
                     position: absolute;
