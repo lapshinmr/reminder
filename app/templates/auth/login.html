@@ -5,17 +5,6 @@
 
 
 {% block content %}
-
-{% for message in get_flashed_messages() %}
-<div class="row">
-
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ message }}
-    </div>
-</div>
-{% endfor %}
-
 <div class="row">
     <form id="login-form" class="col-md-4 col-md-push-4 login-form"
           action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
@@ -37,8 +26,8 @@
             <button type="submit" class="btn btn-block btn-success">Login</button>
         </div>
         <div class="form-group">
-            <p>Forgot your password? <a href="{{ url_for('auth.password_reset_request') }}">Click here to reset it</a>.</p>
-            <p>New user? <a href="{{ url_for('auth.signup') }}">Click here to register</a>.</p>
+            <p>Forgot your password? <a href="{{ url_for('auth.password_reset_request') }}">Click here to reset it.</a></p>
+            <p>New user? <a href="{{ url_for('auth.signup') }}">Click here to register.</a></p>
         </div>
     </form>
 </div>

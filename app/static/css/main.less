@@ -38,29 +38,25 @@ nav.navbar {
     }
     ul {
         a {
-            position: relative;
-            line-height: 40px;
-            font-size: 40px;
-            padding-top: 20.0px;
-            padding-bottom: 20.0px;
-            text-transform: uppercase;
             height: 80px;
+            padding: 20px;
+            font-size: 40px;
+            line-height: 45px;
+            text-transform: uppercase;
         }
         a.reminder-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 60px;
             img {
-                display: block;
                 height: 60px;
                 width: 60px;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -55%);
-                transition: width 0.25s, height 0.25s;
+                transition: all 0.25s;
                 transition-timing-function: easeInOutBack;
+                transform: translateY(-5%);
                 &:hover {
-                    height: 63px;
-                    width: 63px;
+                    transform: translateY(-5%) scale(1.1);
                 }
             }
         }
@@ -144,6 +140,9 @@ div#message-box {
 .login-form {
     border-radius: 3px;
     background-color: @clouds;
+    p {
+        font-size: 16px;
+    }
 }
 
 

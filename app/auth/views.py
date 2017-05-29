@@ -35,8 +35,6 @@ def login():
         if user is not None and user.verify_password(password):
             login_user(user, remember_me)
             return redirect(request.args.get('next') or url_for('main.index'))
-        else:
-            flash('Please, use your email and password to log in.')
     return render_template('auth/login.html', config=os.environ.get('CONFIG'))
 
 
