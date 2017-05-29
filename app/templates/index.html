@@ -5,19 +5,82 @@
 
 
 {% block content %}
-<div class="col-md-12">
+<div id="intro-part">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <h1>Sign up - It's free</h1>
+                <a id="button-signup" class="btn btn-warning btn-wide" href="#signup-form">Sign up</a>
+            </div>
+            <div id="imac" class="col-md-6 col-md-offset-1"></div>
+        </div>
+    </div>
+</div>
 
-    <a id="button-signup" class="btn btn-warning btn-wide" href="{{ url_for('auth.signup') }}" role="button">Sign up</a>
+<div id="description-part">
+    <div class="container">
+        <div class="row">
 
-    Landing page will be here!
+        </div>
+    </div>
+</div>
+
+<div id="signup-part">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <form id="signup-form" class="login-form" action="{{ url_for('auth.signup') }}" method="POST">
+                    <div id="signup-email" class="form-group">
+                        <label>Email:</label>
+                        <input type="email" class="form-control" name="email" placeholder="enter your email">
+                    </div>
+                    <div id="signup-name" class="form-group">
+                        <label>Name:</label>
+                        <input type="text" class="form-control" name="username" placeholder="enter your name">
+                    </div>
+                    <div class="row">
+                        <div id="signup-password1" class="form-group col-md-6">
+                            <label>Password:</label>
+                            <input type="password" class="form-control" name="password" placeholder="enter new password">
+                        </div>
+                        <div id="signup-password2" class="form-group col-md-6">
+                            <label>Password:</label>
+                            <input type="password" class="form-control" name="password2" placeholder="repeat your new password">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-block btn-success" disabled>Sing Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 
 {% block scripts %}
-    <script>
-        $(document).ready(function() {
-            treatLoginModal();
-        });
-    </script>
+<script>
+    $(document).ready(function() {
+        treatLoginModal();
+
+        var listener = new SignUpButtonListener('#signup-form');
+        listener.addSources([
+            '#signup-email',
+            '#signup-name',
+            '#signup-password1',
+            '#signup-password2'
+        ]);
+        // decorate "make" method by the listener
+        var current = Notification.prototype.make;
+        Notification.prototype.make = function() {
+            current.apply(this, arguments);
+            listener.check();
+        }
+        var email = new Email('div#signup-email');
+        email.run();
+        var username = new Name('div#signup-name');
+        username.run();
+        var passwords = new Passwords('div#signup-password1', 'div#signup-password2');
+        passwords.run();
+    });
+</script>
 {% endblock %}

@@ -5,58 +5,60 @@
 {% block title %}Reminder{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-3">
-        <div class="page-header">
-            <h4 class="header-default">New Task</h4>
-        </div>
-        <form id="create-task">
-            <div class="form-group">
-                <input id="duration-picker" class="form-control" autocomplete="off">
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="page-header">
+                <h4 class="header-default">New Task</h4>
             </div>
-            <div class="form-group">
-                <textarea id="task-name" class="form-control" placeholder="write your task here" autocomplete="off"></textarea>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-inverse btn-block">create</button>
-            </div>
-        </form>
-        <div id="order-button" class="dropdown">
-            <button class="btn btn-inverse btn-block dropdown-toggle" type="button" data-toggle="dropdown">
-                Sort by <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-inverse">
-                <li><a data-value="by_name">name</a></li>
-                <li><a data-value="by_time_loop">loop time</a></li>
-                <li><a data-value="by_time_init">init time</a></li>
-                <li><a data-value="by_time_left">left time</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="col-md-8 col-md-offset-1">
-        <div class="page-header">
-            <h4 class="header-default">Progress of your tasks</h4>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <ul id="tabs-navigation" class="active-primary">
-
-                    {{ create_tabs(tabs) }}
-
-                    <li>
-                        <a id="add-new-tab" class="btn btn-inverse">
-                            <div>
-                                <span class="fa fa-plus-square" aria-hidden="true"></span>
-                            </div>
-                        </a>
-                    </li>
+            <form id="create-task">
+                <div class="form-group">
+                    <input id="duration-picker" class="form-control" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <textarea id="task-name" class="form-control" placeholder="write your task here" autocomplete="off"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-inverse btn-block">create</button>
+                </div>
+            </form>
+            <div id="order-button" class="dropdown">
+                <button class="btn btn-inverse btn-block dropdown-toggle" type="button" data-toggle="dropdown">
+                    Sort by <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-inverse">
+                    <li><a data-value="by_name">name</a></li>
+                    <li><a data-value="by_time_loop">loop time</a></li>
+                    <li><a data-value="by_time_init">init time</a></li>
+                    <li><a data-value="by_time_left">left time</a></li>
                 </ul>
             </div>
         </div>
-        <div class="tab-content row">
+        <div class="col-md-8 col-md-offset-1">
+            <div class="page-header">
+                <h4 class="header-default">Progress of your tasks</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <ul id="tabs-navigation" class="active-primary">
 
-            {{ create_tasks_area(tabs_tasks) }}
+                        {{ create_tabs(tabs) }}
 
+                        <li>
+                            <a id="add-new-tab" class="btn btn-inverse">
+                                <div>
+                                    <span class="fa fa-plus-square" aria-hidden="true"></span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-content row">
+
+                {{ create_tasks_area(tabs_tasks) }}
+
+            </div>
         </div>
     </div>
 </div>

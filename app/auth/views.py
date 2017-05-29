@@ -65,8 +65,8 @@ def signup():
             )
             flash('Email with confirmation has been sent to your email address. Please go to your mailbox and use link'
                   'to confirm your account.')
-        return redirect(url_for('auth.login'))
-    return render_template('auth/signup.html', config=os.environ.get('CONFIG'))
+        return redirect(url_for('main.index'))
+    return jsonify()
 
 
 @auth.route('/confirm/<token>', methods=['GET', 'POST'])
