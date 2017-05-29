@@ -120,6 +120,10 @@ div.content {
         padding: 15px 0px 15px 0px;
         margin: 0px;
     }
+
+    .page-header {
+        margin: 30px 0px;
+    }
 }
 
 
@@ -147,11 +151,9 @@ div#message-box {
 ------------------------------------------------------------------------------*/
 .popover-success {
     border-color: #3c763d;
-
     .arrow {
         border-right-color: #3c763d !important;
     }
-
     .popover-content {
         color: #3c763d;
     }
@@ -159,11 +161,9 @@ div#message-box {
 
 .popover-warning {
     border-color: #8a6d3b;
-
     .arrow {
         border-right-color: #8a6d3b !important;
     }
-
     .popover-content {
         color: #8a6d3b;
     }
@@ -172,11 +172,9 @@ div#message-box {
 
 .popover-error {
     border-color: #a94442;
-
     .arrow {
         border-right-color: #a94442 !important;
     }
-
     .popover-content {
         color: #a94442;
     }
@@ -248,7 +246,7 @@ div#duration-picker-replacer {
 ------------------------------------------------------------------------------*/
 #tabs-navigation {
     padding: 0px;
-    margins: 0px;
+    margin: 0px;
     margin-bottom: 25px;
     font-size: 0px;
 
@@ -336,13 +334,11 @@ div#duration-picker-replacer {
 ------------------------------------------------------------------------------*/
 ul.tab-tasks {
     padding-left: 0px;
+    font-size: 0px;
 
     li {
         list-style-type: none;
         position: relative;
-    }
-
-    li.task {
         border-radius: 3px;
         margin-bottom: 10px;
 
@@ -372,9 +368,10 @@ ul.tab-tasks {
                 background-color: @progress_bar;
                 color: white;
                 padding: 0px 25px;
-                width: calc(~"100% - 90px");
+                width: calc(~"100% - 85px");
                 line-height: 32px;
                 min-height: 32px;
+                font-size: 18px;
                 i {
                     position: absolute;
                     right: 12.5px;
