@@ -303,7 +303,6 @@ def change_username():
 def check_email_usage():
     email = request.form.get('email')
     user = User.query.filter_by(email=email).first()
-    is_exist = True if user else False
-    return jsonify({'email_exist': is_exist})
+    return jsonify(False if user else True)
 
 

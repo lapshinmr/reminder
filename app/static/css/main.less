@@ -13,6 +13,9 @@
 @asbestos: #7F8C8D;
 @progress_bar: #53DFCF;
 @emerald: #2ECC71;
+/* REDS */
+@alizarin: #E74C3C;
+
 
 html {
     padding: 0px;
@@ -173,8 +176,36 @@ div#message-box {
 }
 
 
-/* Popover
+/* Validation
 ------------------------------------------------------------------------------*/
+form {
+    .form-group {
+        position: relative;
+    }
+    input {
+        &.error {
+            position: relative;
+            border-color: @alizarin;
+            color: @alizarin;
+        }
+        &.success {
+            border-color: @emerald;
+            color: @emerald;
+        }
+    }
+    label {
+        &.error {
+            color: @alizarin;
+            font-weight: 700;
+            position: absolute;
+            right: 0px;
+            top: 0px;
+        }
+    }
+}
+
+
+/*
 .popover-success {
     border-color: #3c763d;
     .arrow {
@@ -205,6 +236,7 @@ div#message-box {
         color: #a94442;
     }
 }
+*/
 
 
 /* Duration picker

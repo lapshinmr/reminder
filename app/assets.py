@@ -14,6 +14,7 @@ js = [
     'js/flat-ui.min.js',
     'js/jquery-ui-1.12.1.min.js',
     'js/application.js',
+    'js/jquery.validate.min.js',
     'js/main.js',
     'js/input-validation.js',
     'js/duration-picker.js',
