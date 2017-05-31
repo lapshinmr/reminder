@@ -54,6 +54,39 @@
         </div>
     </div>
 </div>
+
+<div id="login-modal" class="modal fade" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="col-md-8 col-md-offset-2 col-xs-12 col-xs-offset-0">
+                <form id="login-form" class="login-form" action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" class="form-control" name="email" placeholder="enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" class="form-control" name="password" placeholder="enter your password">
+                    </div>
+                    <div class="form-group">
+                        <label>Remember me</label>
+                        <div class="pull-right">
+                            <input type="checkbox" data-toggle="switch" name="remember_me" data-on-color="success" data-off-color="default" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-block btn-success">Login</button>
+                    </div>
+                    <div class="form-group">
+                        <p>Forgot your password? <a href="{{ url_for('auth.password_reset_request') }}">Click here to reset it.</a></p>
+                        <p>New user? <a href="{{ url_for('auth.signup') }}">Click here to register.</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 
@@ -62,28 +95,6 @@
     $(document).ready(function() {
         treatLoginModal();
         treatSingUpValidation();
-        /*
-
-        var listener = new SignUpButtonListener('#signup-form');
-        listener.addSources([
-            '#signup-email',
-            '#signup-name',
-            '#signup-password1',
-            '#signup-password2'
-        ]);
-        // decorate "make" method by the listener
-        var current = Notification.prototype.make;
-        Notification.prototype.make = function() {
-            current.apply(this, arguments);
-            listener.check();
-        }
-        var email = new Email('div#signup-email');
-        email.run();
-        var username = new Name('div#signup-name');
-        username.run();
-        var passwords = new Passwords('div#signup-password1', 'div#signup-password2');
-        passwords.run();
-        */
     });
 </script>
 {% endblock %}

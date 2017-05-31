@@ -16,7 +16,7 @@ js = [
     'js/application.js',
     'js/jquery.validate.min.js',
     'js/main.js',
-    'js/input-validation.js',
+    'js/validations.js',
     'js/duration-picker.js',
     'js/settings.js',
     'js/popup.js',
