@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-md-5">
                 <h1>Sign up - It's free</h1>
-                <a id="button-signup" class="btn btn-warning btn-wide" href="#signup-form">Sign up</a>
+                <a class="btn btn-warning btn-wide" href="#signup-form">Sign up</a>
             </div>
             <div id="imac" class="col-md-6 col-md-offset-1"></div>
         </div>
@@ -29,24 +29,36 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
-                <form id="signup-form" class="login-form" action="{{ url_for('auth.signup') }}" method="POST">
+                <form id="signup-form" class="login-form" method="POST">
                     <div class="form-group">
                         <label>Email:</label>
                         <div class="input-wrapper">
-                            <input type="email" class="form-control" name="email" id="signup-email" placeholder="enter your email">
+                            <input type="email" class="form-control" name="email"
+                                   id="signup-email" placeholder="enter your email"
+                                   autocomplete="off"
+                            >
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Name:</label>
-                        <input type="text" class="form-control" name="username" id="signup-username" placeholder="enter your name">
+                        <input type="text" class="form-control" name="username"
+                               id="signup-username" placeholder="enter your name"
+                               autocomplete="off"
+                        >
                     </div>
                     <div class="form-group">
                         <label>Password:</label>
-                        <input type="password" class="form-control" name="password" id="signup-password" placeholder="enter new password">
+                        <input type="password" class="form-control" name="password"
+                               id="signup-password" placeholder="enter new password"
+                               autocomplete="off"
+                        >
                     </div>
                     <div class="form-group">
                         <label>Confirm password:</label>
-                        <input type="password" class="form-control" name="confirm_password" id="signup-confirm-password" placeholder="repeat your new password">
+                        <input type="password" class="form-control" name="confirm_password"
+                               id="signup-confirm-password" placeholder="repeat your new password"
+                               autocomplete="off"
+                        >
                     </div>
                     <button type="submit" class="btn btn-block btn-success">Sing Up</button>
                 </form>
@@ -62,11 +74,11 @@
                 <form id="login-form" class="login-form" action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
                     <div class="form-group">
                         <label>Email:</label>
-                        <input type="email" class="form-control" name="email" placeholder="enter your email">
+                        <input type="email" class="form-control" name="email" id="login-email" placeholder="enter your email">
                     </div>
                     <div class="form-group">
                         <label>Password:</label>
-                        <input type="password" class="form-control" name="password" placeholder="enter your password">
+                        <input type="password" class="form-control" name="password" id="login-password" placeholder="enter your password">
                     </div>
                     <div class="form-group">
                         <label>Remember me</label>
@@ -93,8 +105,9 @@
 {% block scripts %}
 <script>
     $(document).ready(function() {
-        treatLoginModal();
-        treatSingUpValidation();
+        createModalForNavigationLoginButton();
+        validateSignUp();
+        validateSignIn();
     });
 </script>
 {% endblock %}

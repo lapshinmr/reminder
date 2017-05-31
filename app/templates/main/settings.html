@@ -60,27 +60,27 @@
             </div>
 
             <form id="change-password-form" class="form-horizontal">
-                <div id="change-password-old" class="form-group">
+                <div class="form-group">
                     <label class="control-label col-md-3">your password</label>
                     <div class="col-md-8">
-                        <input type="password" class="form-control" name="old-password" placeholder="your password">
+                        <input type="password" class="form-control" name="old_password" placeholder="your password">
                     </div>
                 </div>
-                <div id="change-password-new1" class="form-group">
+                <div class="form-group">
                     <label class="control-label col-md-3">new password</label>
                     <div class="col-md-8">
-                        <input type="password" class="form-control" name="new-password1" placeholder="new password">
+                        <input type="password" class="form-control" name="password" placeholder="new password">
                     </div>
                 </div>
-                <div id="change-password-new2" class="form-group">
+                <div class="form-group">
                     <label class="control-label col-md-3">repeat new password</label>
                     <div class="col-md-8">
-                        <input type="password" class="form-control" name="new-password2" placeholder="new password">
+                        <input type="password" class="form-control" name="confirm_password" placeholder="new password">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-8 col-md-offset-3">
-                        <button type="submit" class="btn btn-block btn-success" disabled>change password</button>
+                        <button type="submit" class="btn btn-block btn-success">change password</button>
                     </div>
                 </div>
             </form>
@@ -109,8 +109,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-md-6 col-md-offset-3">
-                        <button id="settings-subscribe" class="btn btn-block"></button>
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3">
+                            <button id="settings-subscribe" class="btn btn-block"></button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -124,8 +126,7 @@
 <script>
     $(document).ready(function() {
         editUserName();
-        changeEmailForm();
-        changePasswordForm();
+        validateChangePasswordForm();
         treatSubscribeButton('{{ user.subscribed }}' == 'True');
         treatSubscribeSchedule({{ schedule|tojson }});
     });

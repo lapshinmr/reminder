@@ -2,7 +2,7 @@ import os
 from flask import request, url_for, redirect, render_template, flash, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
 from . import auth
-from app.models import User
+from app.models import User, Tab
 from app import db
 from app.celery_tasks import send_async_email
 from app.utils import make_subject
@@ -24,17 +24,20 @@ def unconfirmed():
     return render_template('auth/unconfirmed.html', config=os.environ.get('CONFIG'))
 
 
-@auth.route('/login', methods=['POST'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
-    email = request.form.get('email')
-    password = request.form.get('password')
-    remember_me = request.form.get('remember_me')
-    remember_me = True if remember_me else False
-    user = User.query.filter_by(email=email).first()
-    if user is not None and user.verify_password(password):
-        login_user(user, remember_me)
-        return redirect(request.args.get('next') or url_for('main.index'))
-    return jsonify()
+    if request.method == 'GET':
+        return render_template('index.html', config=os.environ.get('CONFIG'))
+    else:
+        email = request.form.get('email')
+        password = request.form.get('password')
+        remember_me = request.form.get('remember_me')
+        remember_me = True if remember_me else False
+        user = User.query.filter_by(email=email).first()
+        if user is not None and user.verify_password(password):
+            login_user(user, remember_me)
+            return redirect(request.args.get('next') or url_for('main.index'))
+        return jsonify()
 
 
 @auth.route('/logout', methods=['GET', 'POST'])
@@ -46,16 +49,23 @@ def logout():
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
-    email = request.form.get('email')
-    username = request.form.get('username')
-    password = request.form.get('password')
-    if email and username and password:
-        if not User.query.filter_by(email=email).first():
+    if request.method == 'GET':
+        return render_template('index.html', config=os.environ.get('CONFIG'))
+    else:
+        email = request.form.get('email')
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user_exist = User.query.filter_by(email=email).first()
+        if email and username and password and not user_exist:
             user = User(email=email, username=username, password=password)
             db.session.add(user)
             db.session.commit()
+            new_tab = Tab(name="new tab", user_id=user.id, active=True)
+            new_tab.update_order_idx(0)
+            db.session.add(new_tab)
+            db.session.commit()
             token = user.generate_confirmation_token()
-            message_text = render_template('auth/email/confirm.txt', user=user, token=token)
+            message_text = render_template('email/confirm.txt', user=user, token=token)
             send_async_email.apply_async(
                 args=[
                     user.email,
@@ -63,10 +73,8 @@ def signup():
                     message_text
                 ]
             )
-            flash('Email with confirmation has been sent to your email address. Please go to your mailbox and use link'
-                  'to confirm your account.')
-        return redirect(url_for('main.index'))
-    return jsonify()
+            return jsonify({'signup': True})
+        return jsonify({'signup': False})
 
 
 @auth.route('/confirm/<token>', methods=['GET', 'POST'])
@@ -78,11 +86,11 @@ def confirm(token):
     return redirect(url_for('main.index'))
 
 
-@auth.route('/confirm')
+@auth.route('/resend_confirmation')
 @login_required
 def resend_confirmation():
     token = current_user.generate_confirmation_token()
-    message_text = render_template('auth/email/confirm.txt', user=current_user, token=token)
+    message_text = render_template('email/confirm.txt', user=current_user, token=token)
     send_async_email.apply_async(
         args=[
             current_user.email,
@@ -90,7 +98,6 @@ def resend_confirmation():
             message_text
         ]
     )
-    flash('A new confirmation email has been sent to you by email.')
     return redirect(url_for('main.index'))
 
 

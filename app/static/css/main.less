@@ -1,21 +1,46 @@
-@wisteria: #8E44AD;
-@midnight_blue: #2C3E50;
-@nephritis: #27AE60;
+/* MAIN THEME */
 @turquoise: #1ABC9C;
 @green_sea: #16A085;
+
+/* GREEN */
+@emerald: #2ECC71;
+@nephritis: #27AE60;
+
+/* PURPLE */
+@amethyst: #9B59B6;
+@wisteria: #8E44AD;
+
+/* YELLOW */
 @sun_flower: #F1C40F;
 @sun_flower_hover: #F4D313;
 @orange: #F39C12;
+
+/* ORANGE */
+@carrot: #E67E22;
 @pumpkin: #D35400;
+
+/* BLUE */
 @peter_river: #3498DB;
 @belize_hole: #2980B9;
-@clouds: #ECF0F1;
+
+/* DARK GRAY */
+@wet_asphalt: #34495E;
+@midnight_blue: #2C3E50;
+
+/* GRAY */
+@concrete: #95A5A6;
 @asbestos: #7F8C8D;
-@progress_bar: #53DFCF;
-@emerald: #2ECC71;
+
+/* LIGTH GRAY */
+@clouds: #ECF0F1;
+@silver: #bdc3c7;
+
 /* REDS */
 @alizarin: #E74C3C;
+@pomegranate: #C0392B;
 
+/* NOT INCLUDED */
+@progress_bar: #53DFCF;
 
 html {
     padding: 0px;
@@ -120,10 +145,16 @@ div.content {
         margin: 0px;
     }
 
+    .header-default-lower {
+        color: white;
+        padding: 15px 0px 15px 0px;
+        margin: 0px;
+    }
+
     .page-header {
         margin: 30px 0px;
     }
-    > div {
+    #intro-part, #description-part, #signup-part {
         width: 100%;
         min-height: 500px;
         padding: 70px 0px;
@@ -205,38 +236,15 @@ form {
 }
 
 
-/*
-.popover-success {
-    border-color: #3c763d;
-    .arrow {
-        border-right-color: #3c763d !important;
-    }
-    .popover-content {
-        color: #3c763d;
-    }
-}
-
-.popover-warning {
-    border-color: #8a6d3b;
-    .arrow {
-        border-right-color: #8a6d3b !important;
-    }
-    .popover-content {
-        color: #8a6d3b;
+/* Unconfirmed
+------------------------------------------------------------------------------*/
+a#resend-confirmation-link {
+    cursor: pointer;
+    color: @wisteria;
+    &:hover {
+        color: @amethyst;
     }
 }
-
-
-.popover-error {
-    border-color: #a94442;
-    .arrow {
-        border-right-color: #a94442 !important;
-    }
-    .popover-content {
-        color: #a94442;
-    }
-}
-*/
 
 
 /* Duration picker

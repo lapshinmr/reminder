@@ -1,6 +1,6 @@
-Dear {{ user.name }},
+Dear {{ user.username }},
 
-Welcome to article2pdf!
+Welcome to reminder!
 
 To confirm your account please click on the following link:
 
@@ -8,6 +8,6 @@ To confirm your account please click on the following link:
 
 Sincerely,
 
-The Word Booster Team
+The Reminder Team
 
 Note: replies to this email address are not monitored.

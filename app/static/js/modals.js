@@ -36,9 +36,9 @@ var Modal = function (title, text) {
 }
 
 
-// Modal login form
-function treatLoginModal () {
-    $('#login-button').on('click', function(e) {
+// LOGIN
+function createModalForNavigationLoginButton () {
+    $('#navigation-login-button').on('click', function(e) {
         e.preventDefault();
         var email = $('#login-form-horizontal input[name="email"]').val();
         var password = $('#login-form-horizontal input[name="password"]').val();
@@ -50,4 +50,15 @@ function treatLoginModal () {
     })
 }
 
+
+function createModalForResendConfirmationLink() {
+    $('#resend-confirmation-link').on('click', function(e) {
+        e.preventDefault();
+        var mh = new Modal(
+            'Info',
+            'A new confirmation email has been sent to you by email.'
+        );
+        mh.addButton('Okay', 'primary', function() {$.get("/resend_confirmation")});
+    })
+}
 
