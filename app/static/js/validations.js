@@ -48,13 +48,15 @@ function validateSignUp() {
                         'Info',
                         'Email with confirmation has been sent to your email address. Please go to your mailbox and use link to confirm your account.'
                     );
-                    mh.addButton('ok', 'primary', function() {location.reload()});
+                    mh.addButton('Okay', 'primary', function() {
+                        document.getElementById('signup-form').reset();
+                    });
                 } else {
                     var mh = new Modal(
                         'Error',
                         'Sorry, something goes wrong :-('
                     );
-                    mh.addButton('ok', 'primary');
+                    mh.addButton('Okay', 'primary');
                 }
             })
         }
@@ -91,30 +93,47 @@ function validateSignIn() {
 function validateChangePasswordForm() {
     $('#change-password-form').validate({
         rules: {
-            old-password: {
-                required: true
-                remote: '/settings/check_password'
+            cur_password: {
+                required: true,
+                remote: {
+                    url: '/settings/check_password',
+                    type: 'post'
+                }
             },
-            password: {
+            new_password: {
                 required: true
             },
-            confirm-password: {
-                required: true
+            confirm_password: {
+                equalTo: '#change-password-form input[name="new_password"]'
             }
         },
         messages: {
-            email: {
+            cur_password: {
+                required: "password is required",
+                remote: "wrong password"
+            },
+            new_password: {
                 required: "password is required",
             },
-            password: {
-                required: "password is required",
-            },
-            confirm-password: {
-                required: "password is required",
+            confirm_password: {
+                equalTo: "password is not equal",
             }
         },
         errorClass: 'error',
         validClass: 'success',
+        submitHandler: function(form) {
+            $.post('/settings/change-password', $(form).serialize()).done(function(response) {
+                if (response == true) {
+                    var mh = new Modal(
+                        'Info',
+                        'Password has been changed.'
+                    );
+                    mh.addButton('Okay', 'primary', function() {
+                        document.getElementById('change-password-form').reset();
+                    });
+                }
+            })
+        }
     });
 
 }

@@ -224,13 +224,19 @@ form {
             color: @emerald;
         }
     }
-    label {
-        &.error {
-            color: @alizarin;
-            font-weight: 700;
-            position: absolute;
-            right: 0px;
-            top: 0px;
+    label.error {
+        color: @alizarin;
+        font-weight: 700;
+        position: absolute;
+        right: 0px;
+        top: 0px;
+    }
+    &.form-horizontal {
+        label.error {
+            white-space: nowrap;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
         }
     }
 }

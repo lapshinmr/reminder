@@ -247,11 +247,8 @@ def schedule():
 @main.route('/settings/check_password', methods=['POST'])
 @login_required
 def check_password():
-    current_password = request.form.get('password')
-    password_is_right = False
-    if current_user.verify_password(current_password):
-        password_is_right = True
-    return jsonify({'password_is_right': password_is_right})
+    cur_password = request.form.get('cur_password')
+    return jsonify(current_user.verify_password(cur_password))
 
 
 @main.route('/settings/change-email', methods=['POST'])
@@ -282,12 +279,12 @@ def change_email(token):
 @main.route('/settings/change-password', methods=['POST'])
 @login_required
 def change_password():
-    old_password = request.form.get('old')
-    new_password = request.form.get('new')
-    if current_user.verify_password(old_password):
+    cur_password = request.form.get('cur_password')
+    new_password = request.form.get('new_password')
+    if current_user.verify_password(cur_password):
         current_user.password = new_password
         db.session.add(current_user)
-        return jsonify({'response': True})
+        return jsonify(True)
 
 
 @main.route('/settings/change-username', methods=['POST'])

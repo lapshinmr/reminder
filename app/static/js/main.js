@@ -18,7 +18,7 @@ function treatAddNewTask() {
                 'Warning',
                 'Please choose duration more then ZERO'
             );
-            mh.addButton('ok', 'primary');
+            mh.addButton('Okay', 'primary');
         } else {
             $.post('/add_task', {'duration': duration, 'task_name': taskName, 'tab_id': CURRENT_TAB}).done(
                 function(response) {
