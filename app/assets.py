@@ -19,7 +19,6 @@ js = [
     'js/validations.js',
     'js/duration-picker.js',
     'js/settings.js',
-    'js/modals.js',
     'js/tabs.js'
 ]
 

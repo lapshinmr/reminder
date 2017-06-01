@@ -73,8 +73,8 @@ def signup():
                     message_text
                 ]
             )
-            return jsonify({'signup': True})
-        return jsonify({'signup': False})
+            return jsonify(True)
+        return jsonify(False)
 
 
 @auth.route('/confirm/<token>', methods=['GET', 'POST'])

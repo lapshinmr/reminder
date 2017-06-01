@@ -244,14 +244,14 @@ def schedule():
     return jsonify()
 
 
-@main.route('/settings/check_password', methods=['POST'])
+@main.route('/settings/check-password', methods=['POST'])
 @login_required
 def check_password():
     cur_password = request.form.get('cur_password')
     return jsonify(current_user.verify_password(cur_password))
 
 
-@main.route('/settings/change-email', methods=['POST'])
+@main.route('/settings/change-email-request', methods=['POST'])
 @login_required
 def change_email_request():
     if current_user.verify_password(request.form.get('password')):
@@ -265,14 +265,14 @@ def change_email_request():
                 message_text
             ]
         )
-        return redirect(url_for('main.settings'))
+        return jsonify(True)
 
 
 @main.route('/settings/change-email/<token>')
 @login_required
 def change_email(token):
     if current_user.change_email(token):
-        print('email has been changed')
+        flash('email has been changed')
     return redirect(url_for('main.settings'))
 
 

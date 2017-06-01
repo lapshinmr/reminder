@@ -36,13 +36,13 @@
             </div>
 
             <form id="change-email-form" class="form-horizontal" action="{{ url_for('main.change_email_request') }}" method="POST">
-                <div id="change-email" class="form-group">
+                <div class="form-group">
                     <label class="control-label col-md-3">new email</label>
                     <div class="col-md-8">
                         <input type="email" class="form-control" name="email" placeholder="enter new email">
                     </div>
                 </div>
-                <div id="change-email-password" class="form-group">
+                <div class="form-group">
                     <label class="control-label col-md-3">password</label>
                     <div class="col-md-8">
                         <input type="password" class="form-control" name="password" placeholder="enter your password">
@@ -50,7 +50,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-md-8 col-md-offset-3">
-                        <button type="submit" class="btn btn-block btn-success" disabled>change email</button>
+                        <button type="submit" class="btn btn-block btn-success">change email</button>
                     </div>
                 </div>
             </form>
@@ -119,6 +119,9 @@
         </div>
     </div>
 </div>
+
+<div id="modal-box"></div>
+
 {% endblock %}
 
 
@@ -127,8 +130,12 @@
     $(document).ready(function() {
         editUserName();
         validateChangePasswordForm();
+        validateChangeEmailForm();
         treatSubscribeButton('{{ user.subscribed }}' == 'True');
         treatSubscribeSchedule({{ schedule|tojson }});
+
+        showFlashMessages({{ get_flashed_messages()|tojson }})
+
     });
 </script>
 {% endblock %}
