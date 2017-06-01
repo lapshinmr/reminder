@@ -126,16 +126,9 @@
 
 
 {% block scripts %}
-<script>
-    $(document).ready(function() {
-        editUserName();
-        validateChangePasswordForm();
-        validateChangeEmailForm();
-        treatSubscribeButton('{{ user.subscribed }}' == 'True');
-        treatSubscribeSchedule({{ schedule|tojson }});
-
-        showFlashMessages({{ get_flashed_messages()|tojson }})
-
-    });
-</script>
+    editUserName();
+    validateChangePasswordForm();
+    validateChangeEmailForm();
+    treatSubscribeButton('{{ user.subscribed }}' == 'True');
+    treatSubscribeSchedule({{ schedule|tojson }});
 {% endblock %}

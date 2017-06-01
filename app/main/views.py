@@ -272,7 +272,7 @@ def change_email_request():
 @login_required
 def change_email(token):
     if current_user.change_email(token):
-        flash('email has been changed')
+        flash(u'email has been changed', 'information')
     return redirect(url_for('main.settings'))
 
 

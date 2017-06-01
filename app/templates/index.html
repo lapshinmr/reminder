@@ -101,13 +101,8 @@
 
 {% endblock %}
 
-
 {% block scripts %}
-<script>
-    $(document).ready(function() {
-        createModalForNavigationLoginButton();
-        validateSignUp();
-        validateSignIn();
-    });
-</script>
+    createModalForNavigationLoginButton();
+    validateSignUp();
+    validateSignIn();
 {% endblock %}

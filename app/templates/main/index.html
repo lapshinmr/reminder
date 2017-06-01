@@ -66,27 +66,21 @@
 
 
 {% block scripts %}
-    {% if current_user.is_authenticated %}
-    <script>
-        $(document).ready(function(){
-            CURRENT_TAB = {{ active_tab }}
-            new DurationPicker('#duration-picker');
-            treatAddNewTask();
-            treatOrderButton();
-            treatNewTabButton();
-            treatTabClosing();
-            treatTabActivation();
-            treatTabNameEdition();
-            treatTaskCompleting();
-            treatTaskClosing();
-            treatTaskNameEdition();
-            treatTaskProgressBarAnimation();
-            treatTaskProgressBarTooltip();
-            treatTaskDragging();
-            treatTabsDragging();
-            treatTabsDroppable();
-            treatSettingsButton();
-        });
-    </script>
-    {% endif %}
+    CURRENT_TAB = {{ active_tab }}
+    new DurationPicker('#duration-picker');
+    treatAddNewTask();
+    treatOrderButton();
+    treatNewTabButton();
+    treatTabClosing();
+    treatTabActivation();
+    treatTabNameEdition();
+    treatTaskCompleting();
+    treatTaskClosing();
+    treatTaskNameEdition();
+    treatTaskProgressBarAnimation();
+    treatTaskProgressBarTooltip();
+    treatTaskDragging();
+    treatTabsDragging();
+    treatTabsDroppable();
+    treatSettingsButton();
 {% endblock %}

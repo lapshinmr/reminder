@@ -244,10 +244,10 @@ function validateChangeEmailForm() {
 
 function showFlashMessages(messages) {
     if (messages.length > 0) {
-        var mh = new Modal(
-            "Info",
-            messages.join(', ')
-        )
-        mh.addButton('Okay', 'primary')
+        message = messages[0];
+        var category = message[0];
+        var message = message[1];
+        var mh = new Modal( category, message );
+        mh.addButton('Okay', 'primary');
     }
 }

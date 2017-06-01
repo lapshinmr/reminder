@@ -83,6 +83,7 @@ def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('main.index'))
     current_user.confirm(token)
+    flash(u'You have just confirmed your account.', 'information')
     return redirect(url_for('main.index'))
 
 

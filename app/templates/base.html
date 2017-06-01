@@ -83,7 +83,13 @@
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 
-    {% block scripts %}{% endblock %}
+<script>
+    $(document).ready(function() {
+        showFlashMessages({{ get_flashed_messages(with_categories=true)|tojson }})
+
+        {% block scripts %}{% endblock %}
+    });
+</script>
 
 </body>
 </html>
