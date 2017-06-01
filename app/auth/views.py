@@ -36,8 +36,10 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user is not None and user.verify_password(password):
             login_user(user, remember_me)
-            return redirect(request.args.get('next') or url_for('main.index'))
-        return jsonify()
+        else:
+            flash(u'Please check email and password and try again. Or press arrow near login button to '
+                  'call extend login form and restore your credentials.', 'information')
+        return redirect(request.args.get('next') or url_for('main.index'))
 
 
 @auth.route('/logout', methods=['GET', 'POST'])
@@ -117,24 +119,27 @@ def password_reset_request():
                     message_text
                 ]
             )
-            flash('An email with instructions to reset your password has been sent to you.')
+            flash(
+                u'An email with instructions to reset your password has been sent to you.',
+                'information'
+            )
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password_request.html', config=os.environ.get('CONFIG'))
 
 
 @auth.route('/reset/<token>', methods=['GET', 'POST'])
 def password_reset(token):
-    email = request.form.get('email')
+    email = request.args.get('email')
     password = request.form.get('password')
-    if email:
+    if request.method == 'POST' and email and password:
         user = User.query.filter_by(email=email).first()
         if user is None:
             return redirect(url_for('main.index'))
         if user.reset_password(token, password):
-            flash('Your password has been updated.')
+            flash('Your password has been updated. Now you can login.', 'information')
             return redirect(url_for('auth.login'))
         else:
             return redirect(url_for('main.index'))
-    return render_template('auth/reset_password.html', token=token, config=os.environ.get('CONFIG'))
+    return render_template('auth/reset_password.html', token=token, email=email, config=os.environ.get('CONFIG'))
 
 

@@ -615,6 +615,17 @@ var Modal = function (title, text) {
 }
 
 
+function showFlashMessages(messages) {
+    if (messages.length > 0) {
+        message = messages[0];
+        var category = message[0];
+        var message = message[1];
+        var mh = new Modal( category, message );
+        mh.addButton('Okay', 'primary');
+    }
+}
+
+
 // LOGIN
 function createModalForNavigationLoginButton () {
     $('#navigation-login-button').on('click', function(e) {
@@ -661,7 +672,7 @@ function validateSignUp() {
                 minlength: 8
             },
             confirm_password: {
-                equalTo: '#signup-password'
+                equalTo: '#signup-password input[name="password"]'
             }
         },
         messages: {
@@ -808,8 +819,8 @@ function validateChangeEmailForm() {
         submitHandler: function(form, e) {
             var mh = new Modal(
                 'Info',
-                `Are you sure that you want to change email address?
-                Confirmation information will be send to your new email.`
+                `You are changing email address.
+                To confirm you new email address go to your inbox and follow confirmation instruction.`
             );
             mh.addButton('No', 'primary');
             mh.addButton('Okay', 'primary', function() {
@@ -822,16 +833,26 @@ function validateChangeEmailForm() {
 }
 
 
-function showFlashMessages(messages) {
-    if (messages.length > 0) {
-        message = messages[0];
-        var category = message[0];
-        var message = message[1];
-        var mh = new Modal( category, message );
-        mh.addButton('Okay', 'primary');
-    }
+function validateResetPasswordForm() {
+    $('#reset-password-form').validate({
+        rules: {
+            password: {
+                required: true
+            },
+            confirm_password: {
+                equalTo: '#reset-password-form input[name="password"]'
+            }
+        },
+        messages: {
+            password: {
+                required: "password is required",
+            },
+            confirm_password: "password is not equal"
+        },
+        errorClass: 'error',
+        validClass: 'success'
+    })
 }
-
 
 
 function TimeUnit(id, maxValue, totalSeconds, zeroes) {

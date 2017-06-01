@@ -34,31 +34,23 @@
                         <label>Email:</label>
                         <div class="input-wrapper">
                             <input type="email" class="form-control" name="email"
-                                   id="signup-email" placeholder="enter your email"
-                                   autocomplete="off"
-                            >
+                                   placeholder="enter your email" autocomplete="off">
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Name:</label>
                         <input type="text" class="form-control" name="username"
-                               id="signup-username" placeholder="enter your name"
-                               autocomplete="off"
-                        >
+                               placeholder="enter your name" autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label>Password:</label>
                         <input type="password" class="form-control" name="password"
-                               id="signup-password" placeholder="enter new password"
-                               autocomplete="off"
-                        >
+                               placeholder="enter new password" autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label>Confirm password:</label>
                         <input type="password" class="form-control" name="confirm_password"
-                               id="signup-confirm-password" placeholder="repeat your new password"
-                               autocomplete="off"
-                        >
+                               placeholder="repeat your new password" autocomplete="off">
                     </div>
                     <button type="submit" class="btn btn-block btn-success">Sing Up</button>
                 </form>
@@ -74,11 +66,11 @@
                 <form id="login-form" class="login-form" action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
                     <div class="form-group">
                         <label>Email:</label>
-                        <input type="email" class="form-control" name="email" id="login-email" placeholder="enter your email">
+                        <input type="email" class="form-control" name="email" placeholder="enter your email">
                     </div>
                     <div class="form-group">
                         <label>Password:</label>
-                        <input type="password" class="form-control" name="password" id="login-password" placeholder="enter your password">
+                        <input type="password" class="form-control" name="password" placeholder="enter your password">
                     </div>
                     <div class="form-group">
                         <label>Remember me</label>
