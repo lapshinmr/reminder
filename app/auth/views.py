@@ -67,7 +67,7 @@ def signup():
             db.session.add(new_tab)
             db.session.commit()
             token = user.generate_confirmation_token()
-            message_text = render_template('email/confirm.txt', user=user, token=token)
+            message_text = render_template('email/confirm.html', user=user, token=token)
             send_async_email.apply_async(
                 args=[
                     user.email,
@@ -93,7 +93,7 @@ def confirm(token):
 @login_required
 def resend_confirmation():
     token = current_user.generate_confirmation_token()
-    message_text = render_template('email/confirm.txt', user=current_user, token=token)
+    message_text = render_template('email/confirm.html', user=current_user, token=token)
     send_async_email.apply_async(
         args=[
             current_user.email,

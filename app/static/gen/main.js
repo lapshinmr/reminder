@@ -978,7 +978,7 @@ function DurationPicker(id) {
         self.$replacer.append(timeUnit.$unit);
     }
 
-    self.append( new TimeUnit('days', 999, 86400, false) );
+    self.append( new TimeUnit('days', undefined, 86400, false) );
     self.append( new TimeUnit('hours', 23, 3600, true) );
     self.append( new TimeUnit('minutes', 59, 60, true) );
     self.append( new TimeUnit('seconds', 59, 1, true) );
@@ -996,8 +996,7 @@ function DurationPicker(id) {
     $(`#${self.id}`).on('valueReset',
         function() {
             for (var i = 0; i < self.units.length; i++) {
-              self.units[i].reset();
-              print(self.units[i].value)
+                self.units[i].reset();
             }
         }
     )
@@ -1207,7 +1206,6 @@ function treatTabClosing() {
         } else if (tab_content_length == 0) {
             closeTab(tabId, $tab);
         } else {
-            print('3')
             var mh = new Modal(
                 'Warning',
                 'If you close this tab you will lost all your tasks for this tab.'

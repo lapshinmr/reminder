@@ -1,5 +1,0 @@
-Hello! There are new tasks for you.
-
-{% for task in tasks %}
-    {{ task.name }}
-{% endfor %}

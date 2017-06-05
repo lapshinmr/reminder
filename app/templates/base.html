@@ -13,9 +13,26 @@
         <link rel="stylesheet" type="text/less" href="{{ url_for('static', filename='css/main.less') }}">
     {% endif %}
 
+    {% assets "main_js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+    <script>
+        $(window).on('load', function() {
+            $("#loading").fadeOut("slow");
+            showFlashMessages({{ get_flashed_messages(with_categories=true)|tojson }})
+
+            {% block scripts %}{% endblock %}
+        })
+    </script>
+
     <title>{% block title %}Start{% endblock %}</title>
 </head>
 <body>
+    <div id="loading"></div>
+
+    <div id="modal-box"></div>
+
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <ul class="nav navbar-nav">
@@ -76,20 +93,5 @@
             </div>
         </div>
     </footer>
-
-    <div id="modal-box"></div>
-
-    {% assets "main_js" %}
-        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
-
-<script>
-    $(document).ready(function() {
-        showFlashMessages({{ get_flashed_messages(with_categories=true)|tojson }})
-
-        {% block scripts %}{% endblock %}
-    });
-</script>
-
 </body>
 </html>
