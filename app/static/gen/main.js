@@ -864,10 +864,10 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
     self.totalSeconds = totalSeconds;
     self.zeroes = zeroes;
     self.$unit = $(
-        `<div id="${self.id}" class="time-unit col-md-3 text-center">
-            <div class="arrow up" style="display: none;"></div>
+        `<div id="${self.id}" class="time-unit col-md-3">
+            <div class="arrow up"></div>
             <div class="value" contenteditable="true"></div>
-            <div class="arrow down" style="display: none;"></div>
+            <div class="arrow down"></div>
         </div>`
     );
     self.$value = self.$unit.find('.value');
@@ -898,52 +898,16 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
       }
     }
 
-    self.animateArrow = function(element, side) {
-        if (side == 'top') {
-            $( element ).css({color: '#3498db', fontSize: 40, top: '-25px'});
-            $( element ).stop().animate({color: '#2c3e50', fontSize: 32, top: '-20px'}, 400 );
-        } else if (side == 'bottom') {
-            $( element ).css({color: '#3498db', fontSize: 40, bottom: '-25px'});
-            $( element ).stop().animate({color: '#2c3e50', fontSize: 32, bottom: '-20px'}, 400 );
-        }
-    };
-
-    self.treatArrowsFading = function() {
-        self.$unit.on(
-            {
-                'mouseenter': function(e) {
-                    $(this).find('div.arrow').stop().fadeIn(600);
-                },
-                'mouseleave': function(e) {
-                    $(this).find('div.arrow').stop().fadeOut(600);
-                }
-            }
-        )
-    }
-
     self.treatArrowsClicking = function() {
-        self.$up.click(function() {
-            self.increase();
-            self.animateArrow(self.$up, 'top');
-        });
-        self.$down.click(function() {
-            self.decrease();
-            self.animateArrow(self.$down, 'bottom');
-        });
+        self.$up.on({
+            'mousedown': function() {self.$up.addClass('active'); self.increase()},
+            'mouseup': function() {self.$up.removeClass('active')}
+        })
+        self.$down.on({
+            'mousedown': function() {self.$down.addClass('active'); self.decrease()},
+            'mouseup': function() {self.$down.removeClass('active')}
+        })
     };
-
-    self.treatArrowsHovering = function() {
-        self.$up.on(
-            {
-                'mouseenter': function() {
-                    $(this).stop().animate({color: '#34495e'}, 400 );
-                },
-                'mouseleave': function() {
-                    $(this).stop().animate({color: '#2c3e50'}, 400 );
-                }
-            }
-        )
-    }
 
     self.treatScrolling = function() {
         self.$unit.on('wheel mousewheel', function(e) {
@@ -951,10 +915,14 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
             var delta = e.originalEvent.deltaY;
             if (delta > 0) {
                 self.decrease();
-                self.animateArrow(self.$down, 'bottom');
+                self.$down.addClass('active').delay(50).queue(function() {
+                    $(this).removeClass("active").dequeue();
+                });
             } else if (delta < 0) {
                 self.increase();
-                self.animateArrow(self.$up, 'top');
+                self.$up.addClass('active').delay(50).queue(function() {
+                    $(this).removeClass("active").dequeue();
+                });
             };
         })
     };
@@ -989,8 +957,6 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
     };
 
     self.treatArrowsClicking();
-    self.treatArrowsFading();
-    self.treatArrowsHovering();
     self.treatScrolling();
     self.treatValueEditing();
 }
@@ -1012,7 +978,7 @@ function DurationPicker(id) {
         self.$replacer.append(timeUnit.$unit);
     }
 
-    self.append( new TimeUnit('days', undefined, 86400, false) );
+    self.append( new TimeUnit('days', 999, 86400, false) );
     self.append( new TimeUnit('hours', 23, 3600, true) );
     self.append( new TimeUnit('minutes', 59, 60, true) );
     self.append( new TimeUnit('seconds', 59, 1, true) );
@@ -1227,8 +1193,8 @@ function treatTabClosing() {
     $('#tabs-navigation').on('click', 'span.moved-text', function(e) {
         $(this).mouseleave();
     })
-    $('#tabs-navigation').on('click', 'i', function(event) {
-        event.stopPropagation();
+    $('#tabs-navigation').on('click', 'i', function(e) {
+        e.stopPropagation();
         var $tab = $(this).parents('a[href^="#tab"]');
         var tabId = $tab.attr('href').replace('#tab', '');
         var tab_content_length = $(`div.tab-content div#tab${tabId} ul li.task`).length;
@@ -1241,6 +1207,7 @@ function treatTabClosing() {
         } else if (tab_content_length == 0) {
             closeTab(tabId, $tab);
         } else {
+            print('3')
             var mh = new Modal(
                 'Warning',
                 'If you close this tab you will lost all your tasks for this tab.'

@@ -117,8 +117,8 @@ function treatTabClosing() {
     $('#tabs-navigation').on('click', 'span.moved-text', function(e) {
         $(this).mouseleave();
     })
-    $('#tabs-navigation').on('click', 'i', function(event) {
-        event.stopPropagation();
+    $('#tabs-navigation').on('click', 'i', function(e) {
+        e.stopPropagation();
         var $tab = $(this).parents('a[href^="#tab"]');
         var tabId = $tab.attr('href').replace('#tab', '');
         var tab_content_length = $(`div.tab-content div#tab${tabId} ul li.task`).length;
