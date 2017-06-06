@@ -69,14 +69,24 @@ function treatNewTabButton() {
 }
 
 
+function treatAddNewTabActivation() {
+    if ($('li:has(#add-new-tab)').prev('li').children('a').is('.active')) {
+        $('#add-new-tab').addClass('active');
+    }
+}
+
+
 function treatTabActivation() {
     $('#tabs-navigation').on('click', 'a', function() {
         $('#tabs-navigation a.active').removeClass('active')
         $(this).addClass('active');
+        treatAddNewTabActivation();
         CURRENT_TAB = $(this).attr('href').replace('#tab', '').replace('content', '');
         $.post('/activate_tab', {'current_tab_id': CURRENT_TAB})
     })
 }
+
+
 
 
 function closeTab(tabId, $tab) {

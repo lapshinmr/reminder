@@ -301,8 +301,8 @@ div#duration-picker-replacer {
                 line-height: 1;
                 transition: all 0.25s;
                 &.active {
-                    transform: scale(1.3);
-                    color: @sun_flower;
+                    transform: scale(1.35);
+                    /*color: @sun_flower;*/
                     transition: all 0.05s;
                 }
                 &.up:after {
@@ -333,27 +333,19 @@ div#duration-picker-replacer {
     margin: 0px;
     margin-bottom: 25px;
     font-size: 0px;
-    /*
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    */
 
     li {
         display: inline-block;
         list-style: none;
         margin-right: 3px;
-        /*flex-grow: 1;*/
 
         &.tab-droppable-hover a {
+            transition: background-color 0.25s;
             background-color: @sun_flower;
         }
     }
     li:last-child {
         margin-right: 0px;
-        /*flex-grow: 0;*/
     }
 
     a {
@@ -364,7 +356,6 @@ div#duration-picker-replacer {
         margin-bottom: 3px;
         font-size: 15px;
         height: 51px;
-        /*width: 100%; for flex*/
         div {
             position: relative;
             i {
@@ -386,7 +377,9 @@ div#duration-picker-replacer {
             }
         }
         &.active {
-            background-color: @wisteria;
+            transition: all 0.25s;
+            background-color: white;
+            color: @midnight_blue;
         }
         &.extended {
             padding-right: 75px;
@@ -407,6 +400,9 @@ div#duration-picker-replacer {
                     font-size: 30px;
                     z-index: 200;
                 }
+            }
+            &.active {
+                color: @midnight_blue;
             }
         }
     }
