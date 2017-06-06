@@ -1,17 +1,41 @@
-Hello! There are new tasks for you.
+<html>
+    <head>
+        <style>
+            .container {
+                background-color: #ECF0F1;
+                width: 100%;
+            }
+            .inner {
+                width: 80%;
+                margin: 50px auto;
+                padding: 30px;
+                font-size: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="inner">
+                <p>Hello! There are new tasks for you.</p>
 
-{% for tab in tabs %}
-<div><b>{{ tab.name }}</b></div>
-<ul>
-    {% for task in tasks %}
-        {% if task.tab.name == tab.name %}
-            <li><b>{{ task.name }}</b>
-                {% if task.count_left_time() == 0 %}
-                    is ready
-                {% else %}
-                    will be ready in {{ task.show_left_time() }}</li>
+                {% for tab in tabs %}
+                {% if tab.tasks %}
+                <div><b>{{ tab.name }}</b></div>
+                <ul>
+                    {% for task in tasks %}
+                        {% if task.tab.name == tab.name %}
+                            <li><b>{{ task.name }}</b>
+                                {% if task.count_left_time() == 0 %}
+                                    is ready
+                                {% else %}
+                                    will be ready in {{ task.show_left_time() }}</li>
+                                {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
                 {% endif %}
-        {% endif %}
-    {% endfor %}
-</ul>
-{% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </body>
+</html>

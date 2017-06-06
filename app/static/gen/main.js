@@ -900,11 +900,19 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
 
     self.treatArrowsClicking = function() {
         self.$up.on({
-            'mousedown': function() {self.$up.addClass('active'); self.increase()},
+            'mousedown': function() {
+                self.$up.addClass('active');
+                self.$value.blur();
+                self.increase();
+            },
             'mouseup': function() {self.$up.removeClass('active')}
         })
         self.$down.on({
-            'mousedown': function() {self.$down.addClass('active'); self.decrease()},
+            'mousedown': function() {
+                self.$down.addClass('active');
+                self.$value.blur();
+                self.decrease();
+            },
             'mouseup': function() {self.$down.removeClass('active')}
         })
     };
@@ -928,27 +936,26 @@ function TimeUnit(id, maxValue, totalSeconds, zeroes) {
     };
 
     self.treatValueEditing =  function() {
-        self.$value.on('keypress',
-            function(e) {
-                if (e.which == 13) {
-                    self.$value.blur()
+        self.$value.on('keypress', function(e) {
+            if (e.which == 13) {
+                self.$value.blur()
+            }
+        });
+        self.$value.on('wheel mousewheel', function(e) {
+            self.$value.blur()
+        })
+        self.$value.on('focusout', function() {
+            var curValue = self.$value.text();
+            if (!isNaN(curValue)) {
+                if (curValue > self.maxValue) {
+                    curValue = self.maxValue;
+                } else if (curValue < self.minValue) {
+                    curValue = self.minValue;
                 }
-            }
-        );
-        self.$value.on('focusout',
-            function() {
-                var curValue = self.$value.text();
-                if (!isNaN(curValue)) {
-                    if (curValue > self.maxValue) {
-                        curValue = self.maxValue;
-                    } else if (curValue < self.minValue) {
-                        curValue = self.minValue;
-                    }
-                    self.value = Number(curValue);
-                };
-                self.updateValue();
-            }
-        );
+                self.value = Number(curValue);
+            };
+            self.updateValue();
+        });
     };
 
     self.reset = function() {

@@ -1,5 +1,6 @@
 import os
 import datetime
+from premailer import transform
 from flask import render_template, request, jsonify, get_template_attribute, redirect, url_for, flash
 from flask_login import current_user, login_required
 from . import main
@@ -303,3 +304,12 @@ def check_email_usage():
     return jsonify(False if user else True)
 
 
+@main.route('/send_tasks', methods=['POST'])
+@login_required
+def send_tasks():
+    user = current_user
+    to = user.email
+    subject = make_subject("New tasks for you")
+    message_text = render_template('email/ready_tasks.html', tasks=user.tasks, tabs=user.tabs)
+    send_async_email(to, subject, transform(message_text))
+    return jsonify()

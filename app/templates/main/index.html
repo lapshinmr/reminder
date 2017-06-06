@@ -33,6 +33,10 @@
                     <li><a data-value="by_time_left">left time</a></li>
                 </ul>
             </div>
+            {% if config == 'dev' %}
+                <br />
+                <a id="send-email" class="btn btn-inverse btn-block">Send email</a>
+            {% endif %}
         </div>
         <div class="col-md-8 col-md-offset-1">
             <div class="page-header">
@@ -83,4 +87,7 @@
     treatTabsDragging();
     treatTabsDroppable();
     treatSettingsButton();
+    $('#send-email').on('click', function() {
+        $.post('/send_tasks');
+    });
 {% endblock %}
