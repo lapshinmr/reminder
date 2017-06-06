@@ -310,6 +310,6 @@ def send_tasks():
     user = current_user
     to = user.email
     subject = make_subject("New tasks for you")
-    message_text = render_template('email/ready_tasks.html', tasks=user.tasks, tabs=user.tabs)
+    message_text = render_template('email/ready_tasks.html', tasks=user.tasks, tabs=user.tabs, user=user)
     send_async_email(to, subject, transform(message_text))
     return jsonify()
