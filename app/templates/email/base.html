@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            background-color: #ECF0F1;
+            padding: 20px;
+        }
+        .header {
+            padding: 20px 0px;
+            text-transform: uppercase;
+            font-size: 30px;
+            text-align: center;
+        }
+        .header img {
+            display: inline-block;
+            vertical-align: middle;
+            width: 35px;
+            height: 35px
+        }
+        .header a {
+            display: inline-block;
+            vertical-align: -5px;
+            text-decoration: none;
+            color: #7f8c8d;
+        }
+        .inner {
+            width: 80%;
+            margin: 0px auto;
+            padding: 20px;
+            font-size: 16px;
+            color: #34495e;
+            background-color: white;
+        }
+        .inner .regards {
+            font-size: 14px;
+            margin-top: 25px;
+            margin-bottom: 0px;
+            color: #34495e;
+        }
+        .hr {
+            width: 70%;
+            border-top: 1px solid #bdc3c7;
+            margin: 10px auto 15px auto;
+        }
+        .footer {
+            font-size: 12px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        .footer a {
+            text-decoration: none;
+            color: #7f8c8d;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        {% block style %}{% endblock %}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="https://www.dropbox.com/s/pyvkogbidn9hl1i/Clipboard.png?raw=1" alt="" title="logo">
+        <a href="{{ url_for('main.index', _external=True) }}">reminder</a>
+    </div>
+    <div class="inner">
+        {% block content %}{% endblock %}
+        <p class="regards">
+            Best regards,<br/>Reminder team
+        </p>
+    </div>
+    <div class="hr"></div>
+    <div class="footer">
+        <p><a href="{{ url_for('main.settings', _external=True) }}#settings-subscribe">unsubscribe</a></p>
+        <p>&copy; 2017 Reminder Team</p>
+    </div>
+</div>
+</body>
+</html>

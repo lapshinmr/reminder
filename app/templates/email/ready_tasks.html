@@ -1,19 +1,51 @@
 {% extends "email/base.html" %}
 
+{% block style %}
+    .user-name {
+        text-transform: capitalize;
+    }
+    .tasks {
+        padding: 10px;
+        color: #34495e;
+    }
+    .tab-name {
+        font-size: 18px;
+        margin-left: 20px;
+        text-transform: capitalize;
+        text-decoration: underline;
+    }
+    .task {
+        list-style: none;
+        margin-bottom: 20px;
+    }
+    .task .circle {
+        display: inline-block;
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        border: 1.5px solid #7f8c8d;
+        vertical-align: baseline;
+        margin-right: 15px;
+    }
+{% endblock %}
+
 {% block content %}
 <p>Hello <span class="user-name">{{user.username}}</span>!</p>
-<p>We want to notice you that you have new tasks ready for completion today.</p>
+<p>We want notice you that you have new tasks ready for completion today.</p>
 
+<div class="tasks">
 {% for tab in tabs %}
     {% if tab.tasks %}
-    <div><b>{{ tab.name }}</b></div>
+    <div class="tab-name">{{ tab.name }}</div>
     <ul>
         {% for task in tasks %}
-            {% if task.tab.name == tab.name and task.is_active() %}
-                <li><b>{{ task.name }}</b>
+            {% if task.tab.name == tab.name and task.is_active() and task.is_ready() %}
+                <li class="task"><span class="circle"></span>{{ task.name }}</li>
             {% endif %}
         {% endfor %}
     </ul>
     {% endif %}
 {% endfor %}
+</div>
+
 {% endblock %}

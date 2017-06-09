@@ -170,8 +170,9 @@ class Task(db.Model):
     def is_close(self):
         return self.time_close
 
-    def is_complete(self):
-        pass
+    def is_ready(self):
+        if self.count_left_time() == 0:
+            return True
 
 
 class Time(db.Model):
