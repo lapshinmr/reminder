@@ -18,6 +18,7 @@ def send_tasks():
     for user in users:
         if not user.subscribed:
             continue
+        print(datetime.strftime(datetime.utcnow() + timedelta(hours=user.timezone), "%H"))
         if datetime.strftime(datetime.utcnow() + timedelta(hours=user.timezone), "%H") in user.schedule:
             to = user.email
             subject = make_subject("New tasks")

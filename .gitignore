@@ -1,3 +1,10 @@
 __pycache__/
 env/
 .idea/
+app/client_secret.json
+app/static/.webassets-cache
+celerybeat-schedule
+dump.rdb
+gmail_credential.json
+migrations/
+redis-stable
