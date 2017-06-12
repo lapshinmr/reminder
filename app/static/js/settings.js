@@ -7,12 +7,12 @@ function treatSubscribeButton(subscribed) {
         $button.addClass('btn-inverse')
         $button.text('Unsubscribe')
     } else {
-        $button.addClass('btn-success')
+        $button.addClass('btn-warning')
         $button.text('Subscribe')
     };
     $button.on('click', function(e) {
         e.preventDefault();
-        $button.toggleClass('btn-inverse').toggleClass('btn-success');
+        $button.toggleClass('btn-inverse').toggleClass('btn-warning');
         var isSubscribed = $button.hasClass('btn-inverse')
         if (isSubscribed) {
             $button.text('Unsubscribe')

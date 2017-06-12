@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 from app import celery
 from app.email_tools import send_email
 from celery.schedules import crontab
@@ -18,9 +18,9 @@ def send_tasks():
     for user in users:
         if not user.subscribed:
             continue
-        if datetime.datetime.strftime(datetime.datetime.now(), "%H") in user.schedule:
+        if datetime.strftime(datetime.utcnow() + timedelta(hours=user.timezone), "%H") in user.schedule:
             to = user.email
-            subject = make_subject("New tasks for you")
+            subject = make_subject("New tasks")
             message_text = render_template('email/ready_tasks.html', tasks=user.tasks, tabs=user.tabs)
             send_async_email(to, subject, message_text)
 
