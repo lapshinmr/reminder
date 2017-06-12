@@ -17,6 +17,7 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, default=False)
     subscribed = db.Column(db.Boolean, default=True)
     schedule = db.Column(db.String(128), default='09')
+    timezone = db.Column(db.Integer, default=0)
 
     def __init__(self, email, username, password):
         self.email = email

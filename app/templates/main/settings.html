@@ -20,7 +20,17 @@
                 <div class="form-group">
                     <label class="control-label col-md-3">Timezone</label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder="Timezone">
+                        <div id="timezone" class="dropdown">
+                            <button class="btn btn-inverse btn-block dropdown-toggle" type="button" data-toggle="dropdown">
+                                <span class="timezone">UTC+04:00</span><span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-inverse">
+                                {% for n in range(25) %}
+                                    {% set time = '{:0=+3}'.format(n - 11) %}
+                                    <li><a data-value="{{ n - 11 }}">UTC{{ time }}:00</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -130,4 +140,5 @@
     validateChangeEmailForm();
     treatSubscribeButton('{{ user.subscribed }}' == 'True');
     treatSubscribeSchedule({{ schedule|tojson }});
+    changeUserTimezone();
 {% endblock %}

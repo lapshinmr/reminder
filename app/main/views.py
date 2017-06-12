@@ -294,7 +294,16 @@ def change_username():
     username = request.form.get('new_username')
     current_user.username = username
     db.session.add(current_user)
-    return jsonify({'response': True})
+    return jsonify(True)
+
+
+@main.route('/settings/change-timezone', methods=['POST'])
+@login_required
+def change_timezone():
+    timezone = request.form.get('timezone')
+    current_user.timezone = timezone
+    db.session.add(current_user)
+    return jsonify()
 
 
 @main.route('/check_email_usage', methods=['POST'])

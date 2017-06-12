@@ -53,7 +53,7 @@ function editUserName() {
     function(event) {
       var newUserName = $element.val();
       $.post('/settings/change-username', {'new_username': newUserName}).done(function(response) {
-        if (response['response']) {
+        if (response == true) {
           var mh = new Modal(
               'Success',
               "You have been changed your name"
@@ -67,3 +67,10 @@ function editUserName() {
 }
 
 
+// CHANGE TIMEZONE
+function changeUserTimezone() {
+    $('#timezone').on('click', 'ul li a', function() {
+        $('button span.timezone').text($(this).text())
+        $.post('/settings/change-timezone', {'timezone': $(this).attr('data-value')})
+    });
+}
