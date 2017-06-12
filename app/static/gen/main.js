@@ -672,7 +672,7 @@ function validateSignUp() {
                 minlength: 8
             },
             confirm_password: {
-                equalTo: '#signup-password input[name="password"]'
+                equalTo: '#signup-form input[name="password"]'
             }
         },
         messages: {

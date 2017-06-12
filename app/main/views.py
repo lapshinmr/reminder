@@ -258,7 +258,7 @@ def change_email_request():
     if current_user.verify_password(request.form.get('password')):
         new_email = request.form.get('email')
         token = current_user.generate_email_change_token(new_email)
-        message_text = render_template('email/change_email.txt', user=current_user, token=token)
+        message_text = render_template('email/change_email.html', user=current_user, token=token)
         send_async_email.apply_async(
             args=[
                 new_email,
