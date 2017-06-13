@@ -24,6 +24,8 @@ js = [
 
 if os.environ.get('CONFIG') == 'dev':
     js.append('js/less-2.7.2.min.js')
+else:
+    css.append('css/main.css')
 
 
 bundles = {
