@@ -32,11 +32,11 @@
 <p>We want notice you that you have new tasks ready for completion today.</p>
 
 <div class="tasks">
-{% for tab in tabs %}
+{% for tab in user.tabs %}
     {% if tab.tasks %}
     <div class="tab-name">{{ tab.name }}</div>
     <ul>
-        {% for task in tasks %}
+        {% for task in user.tasks %}
             {% if task.tab.name == tab.name and task.is_active() and task.is_ready() %}
                 <li class="task"><span class="circle"></span>{{ task.name }}</li>
             {% endif %}

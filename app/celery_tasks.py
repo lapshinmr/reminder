@@ -18,22 +18,16 @@ def send_tasks():
     for user in users:
         if not user.subscribed:
             continue
-        print(datetime.strftime(datetime.utcnow() + timedelta(hours=user.timezone), "%H"))
         if datetime.strftime(datetime.utcnow() + timedelta(hours=user.timezone), "%H") in user.schedule:
             to = user.email
             subject = make_subject("New tasks")
-            message_text = render_template('email/ready_tasks.html', tasks=user.tasks, tabs=user.tabs)
+            message_text = render_template('email/ready_tasks.html', user=user)
             send_async_email(to, subject, message_text)
 
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(
-        crontab(
-            hour='*'
-        ),
-        send_tasks.s(),
-    )
+    sender.add_periodic_task(crontab(minute='0', hour='*/1'), send_tasks.s())
 
 
 
