@@ -12,6 +12,8 @@
 
     {% if config == 'dev' %}
         <link rel="stylesheet" type="text/less" href="{{ url_for('static', filename='css/main.less') }}">
+    {% else %}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
     {% endif %}
 
     {% assets "main_js" %}

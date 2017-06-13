@@ -22,9 +22,7 @@ js = [
     'js/tabs.js'
 ]
 
-if os.environ.get('CONFIG') == 'prod':
-    css.append('css/main.css')
-else:
+if os.environ.get('CONFIG') == 'dev':
     js.append('js/less-2.7.2.min.js')
 
 
@@ -35,8 +33,7 @@ bundles = {
     ),
     'main_css': Bundle(
         *css,
-        output='gen/main.css',
-        filters='cssmin'
+        output='gen/main.css'
     )
 }
 
