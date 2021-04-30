@@ -33,7 +33,7 @@ python-editor==1.0.3
 pytz==2016.10
 redis==2.10.5
 requests==2.17.3
-rsa==3.4.2
+rsa==4.7
 six==1.10.0
 SQLAlchemy==1.1.5
 uritemplate==3.0.0
